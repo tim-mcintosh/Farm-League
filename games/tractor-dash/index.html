@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tractor Dash</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main class="app">
+<a class="back-link" href="../../index.html">← Back to Farm League</a>
+<section class="topbar">
+<div class="metric"><span>Score</span><strong id="score">0</strong></div>
+<div class="metric"><span>Time Left</span><strong id="time">2:00</strong></div>
+<div class="metric"><span>Speed</span><strong id="speed">1.00x</strong></div>
+<div class="metric"><span>Best</span><strong id="best">0</strong></div>
+</section>
+<section class="game-wrap">
+<canvas id="game" width="960" height="600"></canvas>
+<button id="exitButton" class="exit-button hidden" type="button">Exit game</button>
+<div id="startOverlay" class="overlay"><div class="card"><div class="eyebrow">Farm League Prototype V5</div><h1>Tractor Dash</h1><p>Mow as much grass as possible in two minutes. The tractor can build toward 5× speed, animals end the run, and hitting a rock or tree resets your speed.</p><div class="rules"><div class="rule">Use arrow keys, WASD or the mobile controls.</div><div class="rule">Hitting a tree or rock briefly stops you and resets your speed to 1×.</div><div class="rule">Hit a cow or sheep and the run ends immediately. Survive two minutes for a full score.</div></div><button id="startButton" type="button">Start mowing</button></div></div>
+<div id="gameOverOverlay" class="overlay hidden"><div class="card"><div class="eyebrow">Run over</div><h1 id="gameOverTitle">Game over</h1><p id="finalText">You scored 0 points.</p><div class="rules"><div class="rule" id="finalTime">Time survived: 0:00</div><div class="rule" id="finalSpeed">Top speed: 1.00x</div></div><button id="restartButton" type="button">Play again</button></div></div>
+</section>
+<section class="controls"><button class="blank" tabindex="-1"></button><button data-dir="up" type="button">▲</button><button class="blank" tabindex="-1"></button><button data-dir="left" type="button">◀</button><button data-dir="down" type="button">▼</button><button data-dir="right" type="button">▶</button></section>
+<p class="notes">Two-minute score attack: every grass tile is 1 point, speed can rise to 5×, obstacles reset speed, and the paddock continues endlessly.</p>
+</main>
+<script src="game.js"></script>
+</body>
+</html>
