@@ -2,7 +2,7 @@
 
 Farm League is a mobile-first website for fast, addictive farming mini-games. Each game is designed as a short, replayable score challenge that can run independently while sharing a consistent Farm League home and navigation experience.
 
-Tractor Dash is the first playable game. Ghost on Ice, Chicken Chase, and Sheep Herder are placeholders and have not been implemented.
+Tractor Dash and Feed Run are playable. Ghost on Ice, Chicken Chase, and Sheep Herder are placeholders and have not been implemented.
 
 ## Folder structure
 
@@ -11,6 +11,7 @@ farm-league/
 ├── index.html                  # Farm League homepage and game catalogue
 ├── games/
 │   ├── tractor-dash/           # Existing playable game
+│   ├── feed-run/               # Two-minute resource-management game
 │   ├── ghost-on-ice/           # Coming Soon placeholder
 │   ├── chicken-chase/          # Coming Soon placeholder
 │   ├── sheep-herder/           # Coming Soon placeholder
