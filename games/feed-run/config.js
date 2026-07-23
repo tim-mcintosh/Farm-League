@@ -7,8 +7,6 @@ window.FEED_RUN_CONFIG = Object.freeze({
   hunger: {
     maximum: 100,
     starting: 100,
-    hearts: 3,
-    recoveryAfterHeartLoss: 48,
     criticalAt: 25,
     drainPerSecond: {
       horses: 1.28,

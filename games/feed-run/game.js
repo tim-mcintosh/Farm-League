@@ -41,7 +41,6 @@ let nextFoodId = 1;
 function createAnimalState() {
   return Object.fromEntries(animalKeys.map(key => [key, {
     hunger: CONFIG.hunger.starting,
-    hearts: CONFIG.hunger.hearts,
     wasCritical: false
   }]));
 }
@@ -175,9 +174,9 @@ function finishRound(outcome, failedAnimalKey = null) {
     emitSoundCue('victory');
   } else {
     const animal = ANIMAL_DEFINITIONS[failedAnimalKey];
-    elements.endEyebrow.textContent = 'Out of hearts';
+    elements.endEyebrow.textContent = 'Out of food';
     elements.endTitle.textContent = `${animal.name} went hungry`;
-    elements.endMessage.textContent = `${animal.icon} The ${animal.name.toLowerCase()} lost all three hearts.`;
+    elements.endMessage.textContent = `${animal.icon} The ${animal.name.toLowerCase()} hunger bar reached zero.`;
     emitSoundCue('gameOver');
   }
 
@@ -276,7 +275,7 @@ function updatePenAnimals(dt) {
   });
 }
 
-// Hunger drains by phase. Losing a heart recovers some hunger and breaks the combo.
+// Hunger drains by phase. A group reaching zero ends the round immediately.
 function updateHunger(dt) {
   const multiplier = currentPhase().drainMultiplier;
   for (const animalKey of animalKeys) {
@@ -286,20 +285,9 @@ function updateHunger(dt) {
     if (isCritical && !animal.wasCritical) emitSoundCue('hungerWarning');
     animal.wasCritical = isCritical;
     if (animal.hunger > 0) continue;
-
-    animal.hearts -= 1;
-    animal.hunger = CONFIG.hunger.recoveryAfterHeartLoss;
-    animal.wasCritical = false;
-    state.combo = 0;
-    emitSoundCue('heartLost');
-
-    if (animal.hearts <= 0) {
-      animal.hunger = 0;
-      finishRound('defeat', animalKey);
-      return false;
-    }
-
-    showFeedback(`${ANIMAL_DEFINITIONS[animalKey].icon} ${ANIMAL_DEFINITIONS[animalKey].name} lost a heart!`, 'bad');
+    animal.hunger = 0;
+    finishRound('defeat', animalKey);
+    return false;
   }
   return true;
 }
@@ -498,7 +486,6 @@ function updateHud() {
     const progress = card.querySelector('[role="progressbar"]');
     meter.style.width = `${percentage}%`;
     progress.setAttribute('aria-valuenow', String(Math.round(percentage)));
-    card.querySelector('[data-hearts]').textContent = `${'♥'.repeat(animal.hearts)}${'♡'.repeat(CONFIG.hunger.hearts - animal.hearts)}`;
     card.querySelector('[data-label]').textContent = hungerStatus(percentage);
     card.classList.toggle('critical', percentage <= CONFIG.hunger.criticalAt);
     card.classList.toggle('warning', percentage > CONFIG.hunger.criticalAt && percentage <= 50);
@@ -783,16 +770,17 @@ function drawPenAnimals() {
 function drawFoods() {
   state.foods.forEach(food => {
     const remaining = CONFIG.food.expirySeconds - food.age;
+    context.save();
     context.globalAlpha = remaining < 3 ? Math.max(0.3, remaining / 3) : 1;
-    context.fillStyle = 'rgba(255,255,245,.94)';
-    context.beginPath();
-    context.arc(food.x, food.y, CONFIG.food.radius + 5, 0, Math.PI * 2);
-    context.fill();
-    context.font = '25px system-ui';
+    context.shadowColor = 'rgba(8, 20, 11, .9)';
+    context.shadowBlur = 7;
+    context.shadowOffsetX = 1;
+    context.shadowOffsetY = 3;
+    context.font = '30px system-ui';
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillText(food.icon, food.x, food.y + 1);
-    context.globalAlpha = 1;
+    context.restore();
   });
 }
 

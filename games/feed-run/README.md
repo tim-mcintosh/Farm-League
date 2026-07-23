@@ -1,6 +1,6 @@
 # Feed Run
 
-Feed Run is a two-minute resource-management game. Collect one food item at a time, deliver it to a compatible animal pen, and prevent any animal group from losing all three hearts.
+Feed Run is a two-minute resource-management game. Collect one food item at a time, deliver it to a compatible animal pen, and prevent any animal group’s hunger bar from reaching zero.
 
 The contained farm is rendered with original top-down canvas artwork. The farmer enters each fenced paddock through its gate, while one decorative animal actor wanders inside each pen without affecting gameplay collisions or scoring.
 
@@ -17,4 +17,4 @@ Adjust gameplay through `config.js`. Food values, animal drain rates, phase mult
 
 ## Sound integration
 
-Gameplay emits `feedrun:sound` events on `document`. The event detail contains a `type` such as `pickup`, `delivery`, `wrongAnimal`, `hungerWarning`, `heartLost`, `victory`, or `gameOver`. A future shared sound system can listen for these events without changing game mechanics.
+Gameplay emits `feedrun:sound` events on `document`. The event detail contains a `type` such as `pickup`, `delivery`, `wrongAnimal`, `hungerWarning`, `victory`, or `gameOver`. A future shared sound system can listen for these events without changing game mechanics.
