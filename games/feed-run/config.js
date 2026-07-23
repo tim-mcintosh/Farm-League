@@ -3,6 +3,7 @@ window.FEED_RUN_CONFIG = Object.freeze({
   roundSeconds: 120,
   arena: { width: 800, height: 600, edgePadding: 18 },
   player: { radius: 17, speed: 245, pickupPadding: 8 },
+  pens: { fenceWidth: 6, gateSize: 76, animalInset: 28 },
   hunger: {
     maximum: 100,
     starting: 100,

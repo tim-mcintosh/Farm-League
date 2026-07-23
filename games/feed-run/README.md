@@ -2,6 +2,8 @@
 
 Feed Run is a two-minute resource-management game. Collect one food item at a time, deliver it to a compatible animal pen, and prevent any animal group from losing all three hearts.
 
+The contained farm is rendered with original top-down canvas artwork. The farmer enters each fenced paddock through its gate, while one decorative animal actor wanders inside each pen without affecting gameplay collisions or scoring.
+
 ## Files
 
 - `index.html` contains the HUD, game canvas, overlays, navigation, and mobile controls.
