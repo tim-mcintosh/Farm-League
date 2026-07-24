@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Pack fast, accurate farm deliveries in Farm Orders.">
+<title>Farm Orders — Farm League</title>
+<link rel="stylesheet" href="styles.css">
+<script src="config.js" defer></script>
+<script src="game.js" defer></script>
+</head>
+<body>
+<main class="game-shell">
+<nav><a class="back-link" href="../../index.html">← Back to Farm League</a></nav>
+<section class="status-bar" aria-label="Round status">
+<div><span>Score</span><strong id="score">0</strong></div>
+<div><span>Round</span><strong id="roundTime">2:00</strong></div>
+<div><span>Orders</span><strong id="completed">0</strong></div>
+<div><span>Streak</span><strong id="streak">0×</strong></div>
+</section>
+<section class="order-board" aria-label="Current order">
+<header><div><span id="driverStatus">Driver arriving</span><strong id="orderNumber">Order —</strong></div><div class="deadline"><span>Driver leaves</span><strong id="orderTime">—</strong></div></header>
+<div class="deadline-track"><span id="deadlineBar"></span></div>
+<div class="order-columns">
+<section><h2>Requested</h2><div id="requestedList" class="item-list"></div></section>
+<section><h2>Packed</h2><div id="packedList" class="item-list"></div></section>
+<section><h2>Remaining</h2><div id="remainingList" class="item-list"></div></section>
+</div>
+</section>
+<section class="game-stage" aria-label="Farm Orders packing shed">
+<canvas id="game" width="800" height="600"></canvas>
+<div id="feedback" class="feedback hidden" role="status" aria-live="polite"></div>
+<div class="carry-panel">Carrying <strong id="carryCount">0/4</strong><span id="carryList">Nothing</span></div>
+<div id="startOverlay" class="overlay"><div class="screen-card">
+<p class="eyebrow">Farm League</p><h1>Farm Orders</h1>
+<p class="tagline">Pack each farm order before the driver leaves.</p>
+<div class="instructions"><p>Collect the requested products, add them to the box and submit an exact order.</p><p>Use Space/Enter to collect or pack, Q to submit, and R to empty the box.</p></div>
+<button id="startButton" type="button">Open the shed</button><a href="../../index.html">Back to Farm League</a>
+</div></div>
+<div id="resultsOverlay" class="overlay hidden"><div class="screen-card">
+<p class="eyebrow">Shed closed</p><h1>Orders packed!</h1>
+<div class="results"><p>Final score <strong id="finalScore">0</strong></p><p>Best score <strong id="finalBest">0</strong></p><p>Completed <strong id="finalCompleted">0</strong></p><p>Missed <strong id="finalMissed">0</strong></p><p>Accuracy <strong id="finalAccuracy">0%</strong></p><p>Best streak <strong id="finalStreak">0</strong></p></div>
+<button id="restartButton" type="button">Pack again</button><a href="../../index.html">Back to Farm League</a>
+</div></div>
+</section>
+<section class="mobile-controls" aria-label="Game controls">
+<div class="dpad"><i></i><button data-direction="up" aria-label="Move up">▲</button><i></i><button data-direction="left" aria-label="Move left">◀</button><button data-direction="down" aria-label="Move down">▼</button><button data-direction="right" aria-label="Move right">▶</button></div>
+<div class="actions"><button id="useButton" type="button">Use</button><button id="submitButton" type="button">Submit</button><button id="resetButton" type="button">Empty Box</button></div>
+</section>
+<p class="key-help">Move: arrows/WASD · Use: Space/Enter · Submit: Q · Empty box: R</p>
+</main>
+</body>
+</html>
