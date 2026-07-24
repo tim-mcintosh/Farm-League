@@ -1,14 +1,16 @@
 # Farm Defence
 
-Farm Defence is a two-minute, movement-only farm management game. Harvest crops, repair rabbit-damaged fences, and buy sheepdogs and fence upgrades from in-world workshop stations.
+Farm Defence is a two-minute, movement-only farm management game. Harvest crops, repair the arena's rabbit-damaged border fence, and buy sheepdogs and fence upgrades from in-world stations.
 
 ## Controls
 
 - Desktop: Arrow keys or WASD.
 - Mobile: On-screen directional controls.
-- Harvesting, repairing, purchasing, and dog placement are automatic proximity interactions.
+- Harvesting, repairing, purchasing, rabbit-scaring, and dog placement are automatic proximity interactions.
 
-After purchasing a dog, walk to the desired patrol point and stand still briefly to place it.
+Rabbits stay on the farm and continue eating until the farmer touches them or a dog chases them away. A fence section cannot be repaired while a rabbit is still breaking it.
+
+After purchasing a dog, walk to the desired starting point and stand still briefly to place it. Dogs pursue the nearest rabbit that enters the farm, then return to their starting point.
 
 ## Architecture
 

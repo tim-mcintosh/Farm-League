@@ -134,19 +134,26 @@
     return { id, side, index, x1, y1, x2, y2, x: (x1 + x2) / 2, y: (y1 + y2) / 2, health: maxHealth, maxHealth, broken: false };
   }
 
-  function createFences(field) {
+  function createFences() {
     const fences = [];
-    const tile = CONFIG.crops.tileSize;
-    const gateIndexes = new Set([Math.floor(field.columns / 2) - 1, Math.floor(field.columns / 2)]);
-    for (let index = 0; index < field.columns; index++) {
-      const x1 = field.left + index * tile;
-      fences.push(makeFence(`top-${index}`, 'top', index, x1, field.top, x1 + tile, field.top));
-      if (!gateIndexes.has(index)) fences.push(makeFence(`bottom-${index}`, 'bottom', index, x1, field.bottom, x1 + tile, field.bottom));
+    const inset = CONFIG.fences.boundaryInset;
+    const right = CONFIG.arena.width - inset;
+    const bottom = CONFIG.arena.height - inset;
+    const horizontalSegments = Math.ceil((right - inset) / CONFIG.fences.segmentLength);
+    const verticalSegments = Math.ceil((bottom - inset) / CONFIG.fences.segmentLength);
+    const horizontalLength = (right - inset) / horizontalSegments;
+    const verticalLength = (bottom - inset) / verticalSegments;
+    for (let index = 0; index < horizontalSegments; index++) {
+      const x1 = inset + index * horizontalLength;
+      const x2 = inset + (index + 1) * horizontalLength;
+      fences.push(makeFence(`top-${index}`, 'top', index, x1, inset, x2, inset));
+      fences.push(makeFence(`bottom-${index}`, 'bottom', index, x1, bottom, x2, bottom));
     }
-    for (let index = 0; index < field.rows; index++) {
-      const y1 = field.top + index * tile;
-      fences.push(makeFence(`left-${index}`, 'left', index, field.left, y1, field.left, y1 + tile));
-      fences.push(makeFence(`right-${index}`, 'right', index, field.right, y1, field.right, y1 + tile));
+    for (let index = 0; index < verticalSegments; index++) {
+      const y1 = inset + index * verticalLength;
+      const y2 = inset + (index + 1) * verticalLength;
+      fences.push(makeFence(`left-${index}`, 'left', index, inset, y1, inset, y2));
+      fences.push(makeFence(`right-${index}`, 'right', index, right, y1, right, y2));
     }
     return fences;
   }
@@ -188,21 +195,22 @@
     };
     state = initial;
     state.crops = createCrops(field);
-    state.fences = createFences(field);
+    state.fences = createFences();
     return state;
   }
 
-  // Rabbits wander on arrival, chew one fence section, eat one crop, then leave the map.
+  // Rabbits arrive beyond the border, break in, and remain until a farmer or dog scares them away.
   function currentRabbitPhase() {
     return CONFIG.rabbits.spawnPhases.find(phase => state.elapsed < phase.until);
   }
 
   function outsideSpawnPoint() {
+    const margin = 18;
     const side = Math.floor(Math.random() * 4);
-    if (side === 0) return { x: -18, y: 55 + Math.random() * 390 };
-    if (side === 1) return { x: 818, y: 55 + Math.random() * 390 };
-    if (side === 2) return { x: 40 + Math.random() * 720, y: -18 };
-    return { x: 40 + Math.random() * 720, y: 475 };
+    if (side === 0) return { x: -margin, y: Math.random() * CONFIG.arena.height };
+    if (side === 1) return { x: CONFIG.arena.width + margin, y: Math.random() * CONFIG.arena.height };
+    if (side === 2) return { x: Math.random() * CONFIG.arena.width, y: -margin };
+    return { x: Math.random() * CONFIG.arena.width, y: CONFIG.arena.height + margin };
   }
 
   function chooseFence(rabbit) {
@@ -219,8 +227,7 @@
       y: point.y,
       vx: 0,
       vy: 0,
-      state: 'wander',
-      wanderTime: .7 + Math.random() * 1.1,
+      state: 'approach',
       targetFenceId: null,
       targetCropId: null,
       eatTime: 0,
@@ -229,9 +236,6 @@
     };
     const fence = chooseFence(rabbit);
     rabbit.targetFenceId = fence?.id || null;
-    const wanderAngle = Math.atan2(fieldCentre.y - rabbit.y, fieldCentre.x - rabbit.x) + (Math.random() - .5) * 1.5;
-    rabbit.vx = Math.cos(wanderAngle) * CONFIG.rabbits.wanderSpeed;
-    rabbit.vy = Math.sin(wanderAngle) * CONFIG.rabbits.wanderSpeed;
     state.rabbits.push(rabbit);
   }
 
@@ -254,11 +258,12 @@
   }
 
   function rabbitExitTarget(rabbit) {
+    const margin = 30;
     const targets = [
-      { x: -30, y: rabbit.y },
-      { x: 830, y: rabbit.y },
-      { x: rabbit.x, y: -30 },
-      { x: rabbit.x, y: 490 }
+      { x: -margin, y: rabbit.y },
+      { x: CONFIG.arena.width + margin, y: rabbit.y },
+      { x: rabbit.x, y: -margin },
+      { x: rabbit.x, y: CONFIG.arena.height + margin }
     ];
     return targets.reduce((best, target) => distance(rabbit, target) < distance(rabbit, best) ? target : best, targets[0]);
   }
@@ -272,15 +277,6 @@
   }
 
   function updateRabbit(rabbit, dt) {
-    if (rabbit.state === 'wander') {
-      rabbit.wanderTime -= dt;
-      rabbit.x += rabbit.vx * dt;
-      rabbit.y += rabbit.vy * dt;
-      rabbit.hop += dt * 3;
-      if (rabbit.wanderTime <= 0) rabbit.state = 'approach';
-      return;
-    }
-
     if (rabbit.state === 'leaving') {
       moveToward(rabbit, rabbit.exitTarget || rabbitExitTarget(rabbit), CONFIG.rabbits.insideSpeed * 1.3, dt);
       return;
@@ -325,7 +321,8 @@
         rabbit.targetCropId = crop?.id || null;
       }
       if (!crop) {
-        sendRabbitAway(rabbit);
+        rabbit.vx = 0;
+        rabbit.vy = 0;
         return;
       }
       if (moveToward(rabbit, crop, CONFIG.rabbits.insideSpeed, dt) < 14) {
@@ -344,14 +341,18 @@
           crop.age = 0;
           burst(crop.x, crop.y, '#8f6e45', 10);
         }
-        sendRabbitAway(rabbit);
+        rabbit.state = 'inside';
+        rabbit.targetCropId = nearestLivingCrop(rabbit)?.id || null;
       }
     }
   }
 
   function updateRabbits(dt) {
     state.rabbits.forEach(rabbit => updateRabbit(rabbit, dt));
-    state.rabbits = state.rabbits.filter(rabbit => rabbit.x > -55 && rabbit.x < 855 && rabbit.y > -55 && rabbit.y < 635);
+    state.rabbits = state.rabbits.filter(rabbit => rabbit.x > -55
+      && rabbit.x < CONFIG.arena.width + 55
+      && rabbit.y > -55
+      && rabbit.y < CONFIG.arena.height + 55);
     const phase = currentRabbitPhase();
     state.spawnClock -= dt;
     if (state.spawnClock <= 0 && state.rabbits.length < phase.cap) {
@@ -362,20 +363,17 @@
 
   function updateDogs(dt) {
     state.dogs.forEach(dog => {
-      const nearby = state.rabbits
-        .filter(rabbit => !rabbit.scared && Math.hypot(rabbit.x - dog.anchorX, rabbit.y - dog.anchorY) <= dog.radius)
+      const target = state.rabbits
+        .filter(rabbit => !rabbit.scared && (rabbit.state === 'inside' || rabbit.state === 'eating'))
         .sort((a, b) => distance(dog, a) - distance(dog, b))[0];
-      let target;
-      if (nearby) {
-        target = nearby;
+      if (target) {
+        moveToward(dog, target, CONFIG.dogs.speed, dt);
+      } else if (distance(dog, { x: dog.anchorX, y: dog.anchorY }) > 3) {
+        moveToward(dog, { x: dog.anchorX, y: dog.anchorY }, CONFIG.dogs.speed, dt);
       } else {
-        dog.angle += dt * (.65 + dog.level * .08);
-        target = {
-          x: dog.anchorX + Math.cos(dog.angle) * dog.radius * .55,
-          y: dog.anchorY + Math.sin(dog.angle) * dog.radius * .35
-        };
+        dog.vx = 0;
+        dog.vy = 0;
       }
-      moveToward(dog, target, CONFIG.dogs.speed, dt);
       dog.phase += dt * 5;
       state.rabbits.forEach(rabbit => {
         if (!rabbit.scared && distance(dog, rabbit) <= CONFIG.dogs.scareRange) {
@@ -384,6 +382,16 @@
           emitSound('dogScare');
         }
       });
+    });
+  }
+
+  function scareRabbitsNearPlayer() {
+    state.rabbits.forEach(rabbit => {
+      if (!rabbit.scared && distance(state.player, rabbit) <= state.player.radius + CONFIG.rabbits.radius) {
+        sendRabbitAway(rabbit);
+        notify('Rabbit scared away!', rabbit.x, rabbit.y - 18);
+        emitSound('rabbitScare');
+      }
     });
   }
 
@@ -450,8 +458,6 @@
     const nextField = fieldForLevel(state.field.level + 1);
     state.field = nextField;
     state.crops = createCrops(nextField, state.crops);
-    state.fences = createFences(nextField);
-    state.repair = null;
     state.expansionCooldown = CONFIG.crops.expansionCooldown;
     state.expansionPulse = 1;
     notify(`Field expanded to Level ${nextField.level + 1}!`, 400, nextField.top - 18);
@@ -473,10 +479,6 @@
     return state.fences.some(fence => !fence.broken && pointSegmentDistance({ x, y }, fence) < state.player.radius + 4);
   }
 
-  function playerHitsWorkshop(x, y) {
-    return pointInRect(x, y, { x: 225, y: 445, width: 350, height: 145 }, state.player.radius - 2);
-  }
-
   function movementVector() {
     const held = new Set(pointers.values());
     let x = 0;
@@ -490,8 +492,13 @@
   }
 
   function nearestDamagedFence() {
+    const chewedFenceIds = new Set(state.rabbits
+      .filter(rabbit => rabbit.state === 'chewing')
+      .map(rabbit => rabbit.targetFenceId));
     return state.fences
-      .filter(fence => fence.health < fence.maxHealth && distance(state.player, fence) <= CONFIG.repair.range)
+      .filter(fence => fence.health < fence.maxHealth
+        && !chewedFenceIds.has(fence.id)
+        && distance(state.player, fence) <= CONFIG.repair.range)
       .sort((a, b) => distance(state.player, a) - distance(state.player, b))[0] || null;
   }
 
@@ -506,7 +513,8 @@
       return false;
     }
     const fence = state.fences.find(item => item.id === state.repair.fenceId);
-    if (!fence) {
+    const beingChewed = state.rabbits.some(rabbit => rabbit.state === 'chewing' && rabbit.targetFenceId === state.repair.fenceId);
+    if (!fence || beingChewed) {
       state.repair = null;
       return false;
     }
@@ -536,13 +544,13 @@
     const speed = CONFIG.player.speed;
     const nextX = Math.max(state.player.radius, Math.min(CONFIG.arena.width - state.player.radius, state.player.x + vector.x * speed * dt));
     const nextY = Math.max(state.player.radius, Math.min(CONFIG.arena.height - state.player.radius, state.player.y + vector.y * speed * dt));
-    if (!playerHitsFence(nextX, state.player.y) && !playerHitsWorkshop(nextX, state.player.y)) state.player.x = nextX;
-    if (!playerHitsFence(state.player.x, nextY) && !playerHitsWorkshop(state.player.x, nextY)) state.player.y = nextY;
+    if (!playerHitsFence(nextX, state.player.y)) state.player.x = nextX;
+    if (!playerHitsFence(state.player.x, nextY)) state.player.y = nextY;
   }
 
   function placePendingDog() {
     if (!state.pendingDog || state.pendingDog.still < CONFIG.dogs.placementSeconds) return;
-    if (state.player.y > 465 || pointInRect(state.player.x, state.player.y, state.stations[0], 12)) return;
+    if (pointInRect(state.player.x, state.player.y, state.stations[0], 12)) return;
     const level = state.pendingDog.level;
     state.dogs.push({
       x: state.player.x,
@@ -550,8 +558,6 @@
       anchorX: state.player.x,
       anchorY: state.player.y,
       level,
-      radius: CONFIG.dogs.patrolRadii[level - 1],
-      angle: Math.random() * Math.PI * 2,
       phase: Math.random() * 4,
       vx: 1,
       vy: 0
@@ -686,6 +692,7 @@
     maybeExpandField();
     updateDogs(dt);
     updateRabbits(dt);
+    scareRabbitsNearPlayer();
     updateEffects(dt);
   }
 

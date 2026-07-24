@@ -145,28 +145,6 @@ window.FarmDefenceRenderer = (() => {
     }
   }
 
-  function drawWorkshop(context) {
-    context.fillStyle = 'rgba(53, 39, 25, .18)';
-    context.fillRect(231, 503, 338, 78);
-    context.fillStyle = '#815130';
-    context.fillRect(245, 492, 310, 82);
-    context.fillStyle = '#c66243';
-    context.beginPath();
-    context.moveTo(225, 502);
-    context.lineTo(400, 445);
-    context.lineTo(575, 502);
-    context.closePath();
-    context.fill();
-    context.fillStyle = '#f2d19a';
-    context.fillRect(367, 518, 66, 56);
-    context.fillStyle = '#4e3826';
-    context.fillRect(379, 529, 42, 45);
-    context.fillStyle = '#fff4d5';
-    context.font = 'bold 15px system-ui';
-    context.textAlign = 'center';
-    context.fillText('FARM WORKSHOP', 400, 492);
-  }
-
   function drawStation(context, station) {
     context.fillStyle = station.type === 'dog' ? '#315d45' : '#5a4b3d';
     context.beginPath();
@@ -350,7 +328,6 @@ window.FarmDefenceRenderer = (() => {
     state.fences.forEach(fence => drawFence(context, fence));
     state.rabbits.forEach(rabbit => drawRabbit(context, rabbit, state.elapsed));
     state.dogs.forEach(dog => drawDog(context, dog, state.elapsed));
-    drawWorkshop(context);
     state.stations.forEach(station => drawStation(context, station));
     drawRepair(context, state.repair, state.fences);
     drawFarmer(context, state.player, state.elapsed, state.pendingDog);

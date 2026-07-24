@@ -16,6 +16,8 @@ window.FARM_DEFENCE_CONFIG = Object.freeze({
     expansionCooldown: 12
   },
   fences: {
+    boundaryInset: 24,
+    segmentLength: 50,
     baseHealth: 42,
     upgradeMultipliers: [1, 1.5, 2],
     upgradeCosts: [150, 300],
@@ -23,11 +25,9 @@ window.FARM_DEFENCE_CONFIG = Object.freeze({
   },
   rabbits: {
     radius: 12,
-    wanderSpeed: 30,
     approachSpeed: 43,
     insideSpeed: 50,
     cropEatSeconds: 1.8,
-    leaveSeconds: 2.8,
     spawnPhases: [
       { until: 30, interval: 8, cap: 3 },
       { until: 60, interval: 5.5, cap: 5 },
@@ -37,7 +37,6 @@ window.FARM_DEFENCE_CONFIG = Object.freeze({
   },
   dogs: {
     costs: [100, 200, 350],
-    patrolRadii: [72, 108, 148],
     speed: 72,
     scareRange: 42,
     placementSeconds: 0.8
