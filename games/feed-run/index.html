@@ -18,8 +18,6 @@
 <section class="status-bar" aria-label="Round status">
 <div class="status-item"><span>Score</span><strong id="score">0</strong></div>
 <div class="status-item"><span>Time</span><strong id="time">2:00</strong></div>
-<div class="status-item"><span>Best</span><strong id="best">0</strong></div>
-<div class="status-item"><span>Combo</span><strong id="combo">0×</strong></div>
 </section>
 
 <section id="hungerPanel" class="hunger-panel" aria-label="Animal hunger">
@@ -47,7 +45,7 @@
 
 <section class="game-stage" aria-label="Feed Run game area">
 <canvas id="game" width="800" height="600"></canvas>
-<div id="feedback" class="feedback hidden" role="status" aria-live="polite"></div>
+<div id="feedback" class="sr-only" role="status" aria-live="polite"></div>
 <div class="carry-indicator">Carrying: <strong id="carriedItem">Nothing</strong></div>
 
 <div id="startOverlay" class="overlay">
@@ -73,6 +71,7 @@
 <div class="results">
 <p>Final score <strong id="finalScore">0</strong></p>
 <p>Best score <strong id="finalBest">0</strong></p>
+<p>Combo <strong id="finalCombo">0×</strong></p>
 <p>Time survived <strong id="finalTime">0:00</strong></p>
 </div>
 <button id="restartButton" type="button">Play again</button>

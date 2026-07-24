@@ -47,6 +47,5 @@ window.FEED_RUN_CONFIG = Object.freeze({
     maximumComboBonus: 120,
     completionBonus: 500
   },
-  feedbackSeconds: 1.4,
   bestScoreKey: 'farmLeague.feedRun.bestScore'
 });

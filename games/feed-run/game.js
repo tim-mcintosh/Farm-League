@@ -5,8 +5,6 @@ const context = canvas.getContext('2d');
 const elements = {
   score: document.getElementById('score'),
   time: document.getElementById('time'),
-  best: document.getElementById('best'),
-  combo: document.getElementById('combo'),
   carriedItem: document.getElementById('carriedItem'),
   feedback: document.getElementById('feedback'),
   startOverlay: document.getElementById('startOverlay'),
@@ -16,6 +14,7 @@ const elements = {
   endMessage: document.getElementById('endMessage'),
   finalScore: document.getElementById('finalScore'),
   finalBest: document.getElementById('finalBest'),
+  finalCombo: document.getElementById('finalCombo'),
   finalTime: document.getElementById('finalTime')
 };
 
@@ -76,7 +75,6 @@ function createInitialState() {
     carriedFood: null,
     spawnHistory: [],
     spawnsSinceHay: 0,
-    feedbackTime: 0,
     lastWrongPen: null
   };
 }
@@ -126,11 +124,8 @@ function emitSoundCue(type) {
   document.dispatchEvent(new CustomEvent('feedrun:sound', { detail: { type } }));
 }
 
-function showFeedback(message, tone = 'good') {
+function showFeedback(message) {
   elements.feedback.textContent = message;
-  elements.feedback.classList.toggle('bad', tone === 'bad');
-  elements.feedback.classList.remove('hidden');
-  state.feedbackTime = CONFIG.feedbackSeconds;
 }
 
 function clearInput() {
@@ -184,6 +179,7 @@ function finishRound(outcome, failedAnimalKey = null) {
   updateHud();
   elements.finalScore.textContent = state.score.toLocaleString();
   elements.finalBest.textContent = state.best.toLocaleString();
+  elements.finalCombo.textContent = `${state.combo}×`;
   elements.finalTime.textContent = formatTime(state.elapsed);
   elements.endOverlay.classList.remove('hidden');
 }
@@ -438,16 +434,10 @@ function updateDeliveries() {
     return;
   }
   if (state.lastWrongPen !== currentPen) {
-    showFeedback(`${state.carriedFood.icon} ${state.carriedFood.name} belongs somewhere else`, 'bad');
+    showFeedback(`${state.carriedFood.icon} ${state.carriedFood.name} belongs somewhere else`);
     emitSoundCue('wrongAnimal');
     state.lastWrongPen = currentPen;
   }
-}
-
-function updateFeedback(dt) {
-  if (state.feedbackTime <= 0) return;
-  state.feedbackTime -= dt;
-  if (state.feedbackTime <= 0) elements.feedback.classList.add('hidden');
 }
 
 function update(dt) {
@@ -463,7 +453,6 @@ function update(dt) {
   if (!updateHunger(dt)) return;
   updateFood(dt);
   updateDeliveries();
-  updateFeedback(dt);
 }
 
 function hungerStatus(hunger) {
@@ -475,8 +464,6 @@ function hungerStatus(hunger) {
 function updateHud() {
   elements.score.textContent = state.score.toLocaleString();
   elements.time.textContent = formatTime(state.timeLeft);
-  elements.best.textContent = state.best.toLocaleString();
-  elements.combo.textContent = `${state.combo}×`;
   elements.carriedItem.textContent = state.carriedFood ? `${state.carriedFood.icon} ${state.carriedFood.name}` : 'Nothing';
 
   document.querySelectorAll('.hunger-card').forEach(card => {

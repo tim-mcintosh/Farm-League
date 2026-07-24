@@ -123,23 +123,17 @@ canvas {
   pointer-events: none;
 }
 
-.feedback {
+.sr-only {
   position: absolute;
-  top: 48px;
-  left: 50%;
-  z-index: 4;
-  max-width: calc(100% - 24px);
-  padding: 8px 12px;
-  border-radius: 10px;
-  background: rgba(13, 32, 19, 0.94);
-  color: var(--text);
-  font-size: 0.78rem;
-  font-weight: 900;
-  text-align: center;
-  transform: translateX(-50%);
-  pointer-events: none;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
-.feedback.bad { background: rgba(116, 37, 31, 0.96); }
 .hidden { display: none !important; }
 
 .overlay {
@@ -250,7 +244,7 @@ h1 { margin: 7px 0 10px; font-size: clamp(2.7rem, 11vw, 4.8rem); line-height: 0.
 
 @media (min-width: 720px) {
   body { padding: 12px; }
-  .status-bar { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .status-bar { gap: 8px; }
   .hunger-panel { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
   .status-item, .hunger-card { padding: 10px 12px; }
   .animal-heading { font-size: 0.86rem; }
