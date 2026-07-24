@@ -14,6 +14,8 @@ Crows begin appearing after the first minute, fly over fences, and attack crops 
 
 After purchasing a dog, walk to the desired starting point and stand still briefly to place it. Dogs pursue the nearest rabbit that enters the farm, then return to their starting point. Each dog tier has a distinct coat, higher movement speed, and larger scare radius. Fence tiers gain additional rails, stronger posts, and increased durability.
 
+The upgrade economy is tuned so buying every dog and fence tier requires sustained, aggressive harvesting while rabbit pressure escalates throughout the round.
+
 ## Architecture
 
 - `config.js` centralises all balance and pricing.

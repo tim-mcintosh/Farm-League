@@ -9,7 +9,7 @@ window.FENCE_FRENZY_CONFIG = Object.freeze({
     initialRows: 3,
     maxExpansionLevel: 3,
     stageSeconds: { seed: 3.5, growing: 5.5, ready: 7, overripe: 5, dead: 3 },
-    harvestCoins: 25,
+    harvestCoins: 20,
     harvestRange: 27,
     expansionHarvests: [4, 11, 21],
     expansionHealthyRatio: 0.62,
@@ -20,19 +20,20 @@ window.FENCE_FRENZY_CONFIG = Object.freeze({
     segmentLength: 50,
     baseHealth: 42,
     upgradeMultipliers: [1, 1.5, 2],
-    upgradeCosts: [150, 300],
+    upgradeCosts: [180, 360],
     rabbitDamagePerSecond: 10
   },
   rabbits: {
+    initialSpawnDelay: 1.5,
     radius: 12,
     approachSpeed: 43,
     insideSpeed: 50,
     cropEatSeconds: 1.8,
     spawnPhases: [
-      { until: 30, interval: 4.5, cap: 5 },
-      { until: 60, interval: 3, cap: 9 },
-      { until: 90, interval: 1.8, cap: 14 },
-      { until: Infinity, interval: 1, cap: 20 }
+      { until: 30, interval: 3.2, cap: 7 },
+      { until: 60, interval: 2, cap: 12 },
+      { until: 90, interval: 1.4, cap: 18 },
+      { until: Infinity, interval: .75, cap: 26 }
     ]
   },
   crows: {
@@ -46,7 +47,7 @@ window.FENCE_FRENZY_CONFIG = Object.freeze({
     ]
   },
   dogs: {
-    costs: [100, 200, 350],
+    costs: [120, 240, 400],
     speeds: [72, 88, 104],
     scareRanges: [36, 44, 54],
     placementSeconds: 0.8

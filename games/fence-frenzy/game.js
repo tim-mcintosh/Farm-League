@@ -191,7 +191,7 @@
       fenceLevel: 1,
       pendingDog: null,
       repair: null,
-      spawnClock: 2.5,
+      spawnClock: CONFIG.rabbits.initialSpawnDelay,
       nextCrowSpawnAt: CONFIG.crows.startAt,
       player: { x: 400, y: 420, radius: CONFIG.player.radius, facingX: 0, facingY: -1, step: 0 },
       stations: createStations(),
