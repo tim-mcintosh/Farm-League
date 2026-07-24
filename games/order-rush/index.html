@@ -14,22 +14,18 @@
 <nav><a class="back-link" href="../../index.html">← Back to Farm League</a></nav>
 <section class="status-bar" aria-label="Round status">
 <div><span>Score</span><strong id="score">0</strong></div>
-<div><span>Round</span><strong id="roundTime">2:00</strong></div>
-<div><span>Orders</span><strong id="completed">0</strong></div>
-<div><span>Streak</span><strong id="streak">0×</strong></div>
+<div><span>Time</span><strong id="roundTime">2:00</strong></div>
 </section>
 <section class="order-board" aria-label="Current Order Rush order">
-<header><div><span id="driverStatus">Driver arriving</span><strong id="orderNumber">Order —</strong></div><div class="deadline"><span>Driver leaves</span><strong id="orderTime">—</strong></div></header>
+<header><div><span>Current order</span><strong id="orderNumber">Order —</strong></div><div class="deadline"><span>Driver leaves</span><strong id="orderTime">—</strong></div></header>
 <div class="deadline-track"><span id="deadlineBar"></span></div>
 <div class="order-columns">
 <section><h2>Requested</h2><div id="requestedList" class="item-list"></div></section>
-<section><h2>Remaining</h2><div id="remainingList" class="item-list"></div></section>
 </div>
 </section>
 <section class="game-stage" aria-label="Order Rush packing shed">
 <canvas id="game" width="800" height="600"></canvas>
-<div id="feedback" class="feedback hidden" role="status" aria-live="polite"></div>
-<div class="carry-panel">Carrying <strong id="carryStatus">Nothing</strong></div>
+<div id="feedback" class="sr-only" role="status" aria-live="polite"></div>
 <div id="startOverlay" class="overlay"><div class="screen-card">
 <p class="eyebrow">Farm League</p><h1>Order Rush</h1>
 <p class="tagline">Pack each farm order before the driver leaves.</p>
