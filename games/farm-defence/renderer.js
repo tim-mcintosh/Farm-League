@@ -212,6 +212,45 @@ window.FarmDefenceRenderer = (() => {
     context.restore();
   }
 
+  function drawCrow(context, crow) {
+    const wingLift = Math.sin(crow.wingPhase) * 7;
+    context.save();
+    context.translate(crow.x, crow.y);
+    context.rotate(Math.atan2(crow.vy, crow.vx));
+    context.fillStyle = 'rgba(28, 34, 31, .2)';
+    context.beginPath();
+    context.ellipse(-5, 14, 18, 7, 0, 0, Math.PI * 2);
+    context.fill();
+    context.fillStyle = crow.scared ? '#525b62' : '#24292d';
+    context.beginPath();
+    context.ellipse(0, 0, 15, 8, 0, 0, Math.PI * 2);
+    context.fill();
+    context.beginPath();
+    context.moveTo(-2, -2);
+    context.quadraticCurveTo(-12, -18 - wingLift, -24, -9 - wingLift);
+    context.quadraticCurveTo(-14, 2, -2, 4);
+    context.moveTo(-2, 2);
+    context.quadraticCurveTo(-12, 18 + wingLift, -24, 9 + wingLift);
+    context.quadraticCurveTo(-14, -2, -2, -4);
+    context.fill();
+    context.fillStyle = '#171a1c';
+    context.beginPath();
+    context.arc(13, 0, 7, 0, Math.PI * 2);
+    context.fill();
+    context.fillStyle = '#d3a94f';
+    context.beginPath();
+    context.moveTo(19, -2);
+    context.lineTo(27, 0);
+    context.lineTo(19, 3);
+    context.closePath();
+    context.fill();
+    context.fillStyle = '#e7e2c6';
+    context.beginPath();
+    context.arc(15, -2, 1.4, 0, Math.PI * 2);
+    context.fill();
+    context.restore();
+  }
+
   function drawDog(context, dog, time) {
     const stride = Math.sin(time * 7 + dog.phase) * 2;
     const level = Math.max(1, Math.min(3, dog.level));
@@ -364,6 +403,7 @@ window.FarmDefenceRenderer = (() => {
     state.crops.forEach(crop => drawCrop(context, crop, state.elapsed));
     state.fences.forEach(fence => drawFence(context, fence, state.fenceLevel));
     state.rabbits.forEach(rabbit => drawRabbit(context, rabbit, state.elapsed));
+    state.crows.forEach(crow => drawCrow(context, crow));
     state.dogs.forEach(dog => drawDog(context, dog, state.elapsed));
     state.stations.forEach(station => drawStation(context, station));
     drawRepair(context, state.repair, state.fences);

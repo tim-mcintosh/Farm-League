@@ -6,6 +6,7 @@
   const elements = {
     time: document.getElementById('time'),
     coins: document.getElementById('coins'),
+    score: document.getElementById('score'),
     announcement: document.getElementById('announcement'),
     startOverlay: document.getElementById('startOverlay'),
     resultsOverlay: document.getElementById('resultsOverlay'),
@@ -23,6 +24,7 @@
   let animationFrame = 0;
   let lastFrame = 0;
   let nextRabbitId = 1;
+  let nextCrowId = 1;
   let nextCropId = 1;
 
   // Persistence and presentation hooks remain optional so the local game loop is self-contained.
@@ -160,8 +162,8 @@
 
   function createStations() {
     return [
-      { type: 'dog', label: 'DOG KENNEL', x: 54, y: 510, width: 142, height: 68, level: 0, cost: CONFIG.dogs.costs[0], maxed: false, ready: true },
-      { type: 'fence', label: 'FENCE SUPPLIES', x: 604, y: 510, width: 142, height: 68, level: 1, cost: CONFIG.fences.upgradeCosts[0], maxed: false, ready: true }
+      { type: 'dog', label: 'DOG KENNEL', x: 78, y: 462, width: 120, height: 64, level: 0, cost: CONFIG.dogs.costs[0], maxed: false, ready: true },
+      { type: 'fence', label: 'FENCE SUPPLIES', x: 602, y: 462, width: 120, height: 64, level: 1, cost: CONFIG.fences.upgradeCosts[0], maxed: false, ready: true }
     ];
   }
 
@@ -181,12 +183,14 @@
       crops: [],
       fences: [],
       rabbits: [],
+      crows: [],
       dogs: [],
       dogPurchases: 0,
       fenceLevel: 1,
       pendingDog: null,
       repair: null,
       spawnClock: 2.5,
+      crowSpawnClock: 7,
       player: { x: 400, y: 420, radius: CONFIG.player.radius, facingX: 0, facingY: -1, step: 0 },
       stations: createStations(),
       particles: [],
@@ -202,6 +206,10 @@
   // Rabbits arrive beyond the border, break in, and remain until a farmer or dog scares them away.
   function currentRabbitPhase() {
     return CONFIG.rabbits.spawnPhases.find(phase => state.elapsed < phase.until);
+  }
+
+  function currentCrowPhase() {
+    return CONFIG.crows.spawnPhases.find(phase => state.elapsed < phase.until);
   }
 
   function outsideSpawnPoint() {
@@ -257,28 +265,28 @@
     return available.reduce((best, crop) => distance(actor, crop) < distance(actor, best) ? crop : best, available[0]);
   }
 
-  function rabbitExitTarget(rabbit) {
+  function nearestExitTarget(actor) {
     const margin = 30;
     const targets = [
-      { x: -margin, y: rabbit.y },
-      { x: CONFIG.arena.width + margin, y: rabbit.y },
-      { x: rabbit.x, y: -margin },
-      { x: rabbit.x, y: CONFIG.arena.height + margin }
+      { x: -margin, y: actor.y },
+      { x: CONFIG.arena.width + margin, y: actor.y },
+      { x: actor.x, y: -margin },
+      { x: actor.x, y: CONFIG.arena.height + margin }
     ];
-    return targets.reduce((best, target) => distance(rabbit, target) < distance(rabbit, best) ? target : best, targets[0]);
+    return targets.reduce((best, target) => distance(actor, target) < distance(actor, best) ? target : best, targets[0]);
   }
 
-  function sendRabbitAway(rabbit) {
-    rabbit.scared = true;
-    rabbit.state = 'leaving';
-    rabbit.exitTarget = rabbitExitTarget(rabbit);
-    rabbit.targetFenceId = null;
-    rabbit.targetCropId = null;
+  function sendThreatAway(threat) {
+    threat.scared = true;
+    threat.state = 'leaving';
+    threat.exitTarget = nearestExitTarget(threat);
+    threat.targetFenceId = null;
+    threat.targetCropId = null;
   }
 
   function updateRabbit(rabbit, dt) {
     if (rabbit.state === 'leaving') {
-      moveToward(rabbit, rabbit.exitTarget || rabbitExitTarget(rabbit), CONFIG.rabbits.insideSpeed * 1.3, dt);
+      moveToward(rabbit, rabbit.exitTarget || nearestExitTarget(rabbit), CONFIG.rabbits.insideSpeed * 1.3, dt);
       return;
     }
 
@@ -361,13 +369,86 @@
     }
   }
 
+  function spawnCrow() {
+    const point = outsideSpawnPoint();
+    state.crows.push({
+      id: nextCrowId++,
+      x: point.x,
+      y: point.y,
+      vx: 0,
+      vy: 0,
+      state: 'approach',
+      targetCropId: nearestLivingCrop(point)?.id || null,
+      eatTime: 0,
+      wingPhase: Math.random() * Math.PI * 2,
+      scared: false
+    });
+  }
+
+  function updateCrow(crow, dt) {
+    crow.wingPhase += dt * 9;
+    if (crow.state === 'leaving') {
+      moveToward(crow, crow.exitTarget || nearestExitTarget(crow), CONFIG.crows.flySpeed * 1.35, dt);
+      return;
+    }
+
+    let crop = state.crops.find(item => item.id === crow.targetCropId && item.stage !== 'dead');
+    if (!crop) {
+      crop = nearestLivingCrop(crow);
+      crow.targetCropId = crop?.id || null;
+    }
+    if (!crop) {
+      crow.vx = 0;
+      crow.vy = 0;
+      return;
+    }
+
+    if (crow.state === 'approach') {
+      if (moveToward(crow, crop, CONFIG.crows.flySpeed, dt) < 16) {
+        crow.state = 'eating';
+        crow.eatTime = CONFIG.crows.cropEatSeconds;
+      }
+      return;
+    }
+
+    crow.eatTime -= dt;
+    if (crow.eatTime <= 0) {
+      crop.stage = 'dead';
+      crop.age = 0;
+      burst(crop.x, crop.y, '#4c4a42', 8);
+      crow.state = 'approach';
+      crow.targetCropId = nearestLivingCrop(crow)?.id || null;
+    }
+  }
+
+  function updateCrows(dt) {
+    state.crows.forEach(crow => updateCrow(crow, dt));
+    state.crows = state.crows.filter(crow => crow.x > -55
+      && crow.x < CONFIG.arena.width + 55
+      && crow.y > -55
+      && crow.y < CONFIG.arena.height + 55);
+    const phase = currentCrowPhase();
+    state.crowSpawnClock -= dt;
+    if (state.crowSpawnClock <= 0 && state.crows.length < phase.cap) {
+      spawnCrow();
+      state.crowSpawnClock = phase.interval * (.85 + Math.random() * .3);
+    }
+  }
+
+  function dogTargets() {
+    const rabbits = state.rabbits.filter(rabbit => !rabbit.scared && (rabbit.state === 'inside' || rabbit.state === 'eating'));
+    const crows = state.crows.filter(crow => !crow.scared
+      && crow.x >= 0 && crow.x <= CONFIG.arena.width
+      && crow.y >= 0 && crow.y <= CONFIG.arena.height);
+    return rabbits.concat(crows);
+  }
+
   function updateDogs(dt) {
     state.dogs.forEach(dog => {
       const levelIndex = Math.max(0, Math.min(CONFIG.dogs.speeds.length - 1, dog.level - 1));
       const speed = CONFIG.dogs.speeds[levelIndex];
       const scareRange = CONFIG.dogs.scareRanges[levelIndex];
-      const target = state.rabbits
-        .filter(rabbit => !rabbit.scared && (rabbit.state === 'inside' || rabbit.state === 'eating'))
+      const target = dogTargets()
         .sort((a, b) => distance(dog, a) - distance(dog, b))[0];
       if (target) {
         moveToward(dog, target, speed, dt);
@@ -380,20 +461,34 @@
       dog.phase += dt * 5;
       state.rabbits.forEach(rabbit => {
         if (!rabbit.scared && distance(dog, rabbit) <= scareRange) {
-          sendRabbitAway(rabbit);
+          sendThreatAway(rabbit);
           notify('Rabbit chased away!', rabbit.x, rabbit.y - 18);
+          emitSound('dogScare');
+        }
+      });
+      state.crows.forEach(crow => {
+        if (!crow.scared && distance(dog, crow) <= scareRange) {
+          sendThreatAway(crow);
+          notify('Crow chased away!', crow.x, crow.y - 18);
           emitSound('dogScare');
         }
       });
     });
   }
 
-  function scareRabbitsNearPlayer() {
+  function scareThreatsNearPlayer() {
     state.rabbits.forEach(rabbit => {
       if (!rabbit.scared && distance(state.player, rabbit) <= state.player.radius + CONFIG.rabbits.radius) {
-        sendRabbitAway(rabbit);
+        sendThreatAway(rabbit);
         notify('Rabbit scared away!', rabbit.x, rabbit.y - 18);
         emitSound('rabbitScare');
+      }
+    });
+    state.crows.forEach(crow => {
+      if (!crow.scared && distance(state.player, crow) <= state.player.radius + CONFIG.crows.radius) {
+        sendThreatAway(crow);
+        notify('Crow scared away!', crow.x, crow.y - 18);
+        emitSound('crowScare');
       }
     });
   }
@@ -656,6 +751,7 @@
   function updateHud() {
     elements.time.textContent = formatTime(state.timeLeft);
     elements.coins.textContent = state.coins.toLocaleString();
+    elements.score.textContent = scoreBreakdown().total.toLocaleString();
   }
 
   function scoreBreakdown() {
@@ -695,7 +791,8 @@
     maybeExpandField();
     updateDogs(dt);
     updateRabbits(dt);
-    scareRabbitsNearPlayer();
+    updateCrows(dt);
+    scareThreatsNearPlayer();
     updateEffects(dt);
   }
 
@@ -722,6 +819,7 @@
   function resetRound() {
     cancelAnimationFrame(animationFrame);
     nextRabbitId = 1;
+    nextCrowId = 1;
     nextCropId = 1;
     state = createState();
     updateStationLabels();

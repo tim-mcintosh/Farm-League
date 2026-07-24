@@ -29,10 +29,21 @@ window.FARM_DEFENCE_CONFIG = Object.freeze({
     insideSpeed: 50,
     cropEatSeconds: 1.8,
     spawnPhases: [
-      { until: 30, interval: 5.5, cap: 4 },
-      { until: 60, interval: 3.8, cap: 7 },
-      { until: 90, interval: 2.5, cap: 11 },
-      { until: Infinity, interval: 1.4, cap: 16 }
+      { until: 30, interval: 4.5, cap: 5 },
+      { until: 60, interval: 3, cap: 9 },
+      { until: 90, interval: 1.8, cap: 14 },
+      { until: Infinity, interval: 1, cap: 20 }
+    ]
+  },
+  crows: {
+    radius: 15,
+    flySpeed: 78,
+    cropEatSeconds: 1.5,
+    spawnPhases: [
+      { until: 30, interval: 10, cap: 2 },
+      { until: 60, interval: 7, cap: 3 },
+      { until: 90, interval: 4.5, cap: 5 },
+      { until: Infinity, interval: 2.8, cap: 7 }
     ]
   },
   dogs: {
