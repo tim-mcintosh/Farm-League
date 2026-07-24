@@ -1,4 +1,4 @@
-window.FARM_DEFENCE_CONFIG = Object.freeze({
+window.FENCE_FRENZY_CONFIG = Object.freeze({
   roundSeconds: 120,
   arena: { width: 800, height: 600 },
   player: { speed: 245, radius: 17 },
@@ -36,12 +36,11 @@ window.FARM_DEFENCE_CONFIG = Object.freeze({
     ]
   },
   crows: {
+    startAt: 60,
     radius: 15,
     flySpeed: 78,
     cropEatSeconds: 1.5,
     spawnPhases: [
-      { until: 30, interval: 10, cap: 2 },
-      { until: 60, interval: 7, cap: 3 },
       { until: 90, interval: 4.5, cap: 5 },
       { until: Infinity, interval: 2.8, cap: 7 }
     ]
@@ -53,5 +52,6 @@ window.FARM_DEFENCE_CONFIG = Object.freeze({
     placementSeconds: 0.8
   },
   scoring: { harvestBonus: 50, fieldTileBonus: 10 },
-  bestScoreKey: 'farmLeague.farmDefence.bestScore'
+  bestScoreKey: 'farmLeague.fenceFrenzy.bestScore',
+  legacyBestScoreKey: 'farmLeague.farmDefence.bestScore'
 });

@@ -1,5 +1,5 @@
-window.FarmDefenceRenderer = (() => {
-  const CONFIG = window.FARM_DEFENCE_CONFIG;
+window.FenceFrenzyRenderer = (() => {
+  const CONFIG = window.FENCE_FRENZY_CONFIG;
   const cropColours = {
     seed: '#745236',
     growing: '#58a94d',

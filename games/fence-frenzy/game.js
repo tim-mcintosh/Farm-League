@@ -1,6 +1,6 @@
 (() => {
-  const CONFIG = window.FARM_DEFENCE_CONFIG;
-  const renderer = window.FarmDefenceRenderer;
+  const CONFIG = window.FENCE_FRENZY_CONFIG;
+  const renderer = window.FenceFrenzyRenderer;
   const canvas = document.getElementById('game');
   const context = canvas.getContext('2d');
   const elements = {
@@ -30,7 +30,9 @@
   // Persistence and presentation hooks remain optional so the local game loop is self-contained.
   function loadBest() {
     try {
-      return Math.max(0, Number.parseInt(localStorage.getItem(CONFIG.bestScoreKey), 10) || 0);
+      const current = Number.parseInt(localStorage.getItem(CONFIG.bestScoreKey), 10) || 0;
+      const legacy = Number.parseInt(localStorage.getItem(CONFIG.legacyBestScoreKey), 10) || 0;
+      return Math.max(0, current, legacy);
     } catch {
       return 0;
     }
@@ -61,7 +63,7 @@
   }
 
   function emitSound(type) {
-    document.dispatchEvent(new CustomEvent('farmdefence:sound', { detail: { type } }));
+    document.dispatchEvent(new CustomEvent('fencefrenzy:sound', { detail: { type } }));
   }
 
   function announce(text) {
@@ -190,7 +192,7 @@
       pendingDog: null,
       repair: null,
       spawnClock: 2.5,
-      crowSpawnClock: 7,
+      nextCrowSpawnAt: CONFIG.crows.startAt,
       player: { x: 400, y: 420, radius: CONFIG.player.radius, facingX: 0, facingY: -1, step: 0 },
       stations: createStations(),
       particles: [],
@@ -427,11 +429,11 @@
       && crow.x < CONFIG.arena.width + 55
       && crow.y > -55
       && crow.y < CONFIG.arena.height + 55);
+    if (state.elapsed < CONFIG.crows.startAt) return;
     const phase = currentCrowPhase();
-    state.crowSpawnClock -= dt;
-    if (state.crowSpawnClock <= 0 && state.crows.length < phase.cap) {
+    if (state.elapsed >= state.nextCrowSpawnAt && state.crows.length < phase.cap) {
       spawnCrow();
-      state.crowSpawnClock = phase.interval * (.85 + Math.random() * .3);
+      state.nextCrowSpawnAt = state.elapsed + phase.interval * (.85 + Math.random() * .3);
     }
   }
 
