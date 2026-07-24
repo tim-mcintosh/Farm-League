@@ -576,7 +576,16 @@
   }
 
   function playerHitsFence(x, y) {
-    return state.fences.some(fence => !fence.broken && pointSegmentDistance({ x, y }, fence) < state.player.radius + 4);
+    const collisionRange = state.player.radius + 4;
+    const nextPosition = { x, y };
+    return state.fences.some(fence => {
+      if (fence.broken) return false;
+      const nextDistance = pointSegmentDistance(nextPosition, fence);
+      if (nextDistance >= collisionRange) return false;
+      const currentDistance = pointSegmentDistance(state.player, fence);
+      const escapingOverlap = currentDistance < collisionRange && nextDistance > currentDistance;
+      return !escapingOverlap;
+    });
   }
 
   function movementVector() {
