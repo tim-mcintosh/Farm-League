@@ -1,0 +1,20 @@
+window.TRACTOR_DASH_CONFIG = Object.freeze({
+  roundSeconds: 120,
+  tileSize: 28,
+  transitionSeconds: 1.2,
+  fieldClearBonus: 50,
+  tractor: { baseSpeed: 165, radius: 16, maxMultiplier: 5, tilesPerMultiplier: 220 },
+  fields: {
+    baseColumns: 34,
+    baseRows: 21,
+    columnsPerLevel: 0,
+    rowsPerLevel: 0,
+    maxColumns: 34,
+    maxRows: 21,
+    baseObstacles: 2,
+    obstaclesPerLevel: 2,
+    maxObstacles: 18,
+    firstAnimalLevel: 2,
+    maxAnimals: 8
+  }
+});
