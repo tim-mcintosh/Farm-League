@@ -178,7 +178,8 @@ function end(type) {
     type === 'sheep' ? 'You hit a sheep' : 'Run ended';
   document.getElementById('finalText').textContent = `You scored ${Math.floor(score).toLocaleString()} points.`;
   document.getElementById('finalBest').textContent = `Best score: ${Math.floor(best).toLocaleString()}`;
-  document.getElementById('finalTime').textContent = `Time survived: ${formatTime(elapsed)}`;
+  const survived = Math.min(elapsed, CONFIG.roundSeconds);
+  document.getElementById('finalTime').textContent = `Time survived: ${formatTime(survived)}`;
   document.getElementById('finalSpeed').textContent = `Fields cleared: ${fieldsCleared}`;
   gameOverOverlay.classList.remove('hidden');
 }
@@ -460,24 +461,115 @@ function drawAnimal(animal) {
   ctx.translate(screen.x, screen.y);
   ctx.rotate(Math.atan2(animal.vy, animal.vx));
   if (animal.type === 'cow') {
-    ctx.fillStyle = '#f2eadb';
-    ctx.fillRect(-18, -12, 34, 24);
-    ctx.fillStyle = '#2b2d2b';
-    ctx.fillRect(-12, -8, 8, 8);
-    ctx.fillRect(4, 2, 9, 7);
-    ctx.fillStyle = '#d9b889';
+    ctx.fillStyle = 'rgba(28, 35, 29, .22)';
     ctx.beginPath();
-    ctx.arc(18, -2, 10, 0, Math.PI * 2);
+    ctx.ellipse(-2, 7, 24, 12, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#3a322b';
+    for (const [x, y] of [[-12, -12], [-12, 12], [8, -12], [8, 12]]) {
+      ctx.beginPath();
+      ctx.ellipse(x, y, 5, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.fillStyle = '#f2eadb';
+    ctx.beginPath();
+    ctx.ellipse(-3, 0, 21, 15, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#2b2d2b';
+    ctx.beginPath();
+    ctx.ellipse(-10, -6, 8, 6, -.25, 0, Math.PI * 2);
+    ctx.ellipse(4, 7, 7, 5, .3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = '#554334';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(-22, 0);
+    ctx.quadraticCurveTo(-28, -5, -28, -11);
+    ctx.stroke();
+    ctx.fillStyle = '#332c27';
+    ctx.beginPath();
+    ctx.arc(-28, -12, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#e8dcc8';
+    ctx.beginPath();
+    ctx.ellipse(17, 0, 11, 12, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(14, -11, 7, 4, -.35, 0, Math.PI * 2);
+    ctx.ellipse(14, 11, 7, 4, .35, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = '#e4c67b';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(17, -8);
+    ctx.quadraticCurveTo(21, -15, 25, -13);
+    ctx.moveTo(17, 8);
+    ctx.quadraticCurveTo(21, 15, 25, 13);
+    ctx.stroke();
+
+    ctx.fillStyle = '#d9a99d';
+    ctx.beginPath();
+    ctx.ellipse(24, 0, 7, 8, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#54413b';
+    ctx.beginPath();
+    ctx.arc(26, -3, 1.3, 0, Math.PI * 2);
+    ctx.arc(26, 3, 1.3, 0, Math.PI * 2);
+    ctx.arc(19, -5, 1.5, 0, Math.PI * 2);
+    ctx.arc(19, 5, 1.5, 0, Math.PI * 2);
     ctx.fill();
   } else {
-    ctx.fillStyle = '#f3f0df';
+    ctx.fillStyle = 'rgba(28, 35, 29, .2)';
     ctx.beginPath();
-    ctx.arc(-5, 0, 14, 0, Math.PI * 2);
-    ctx.arc(5, 0, 14, 0, Math.PI * 2);
+    ctx.ellipse(-2, 7, 21, 10, 0, 0, Math.PI * 2);
     ctx.fill();
+
+    ctx.fillStyle = '#343832';
+    for (const [x, y] of [[-10, -10], [-10, 10], [7, -10], [7, 10]]) {
+      ctx.beginPath();
+      ctx.ellipse(x, y, 4, 3.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.fillStyle = '#f3f0df';
+    for (const [x, y, radius] of [
+      [-12, -5, 9], [-12, 5, 9], [-4, -8, 10], [-4, 8, 10],
+      [5, -7, 10], [5, 7, 10], [11, 0, 9], [-4, 0, 12]
+    ]) {
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.fillStyle = '#faf8ed';
+    ctx.beginPath();
+    ctx.arc(-19, 0, 5, 0, Math.PI * 2);
+    ctx.fill();
+
     ctx.fillStyle = '#303630';
     ctx.beginPath();
-    ctx.arc(16, 0, 8, 0, Math.PI * 2);
+    ctx.ellipse(16, 0, 9, 8, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(13, -8, 6, 3, -.35, 0, Math.PI * 2);
+    ctx.ellipse(13, 8, 6, 3, .35, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#eee9d8';
+    ctx.beginPath();
+    ctx.arc(19, -3, 1.4, 0, Math.PI * 2);
+    ctx.arc(19, 3, 1.4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#191c19';
+    ctx.beginPath();
+    ctx.arc(19.4, -3, .65, 0, Math.PI * 2);
+    ctx.arc(19.4, 3, .65, 0, Math.PI * 2);
     ctx.fill();
   }
   ctx.restore();
@@ -562,6 +654,7 @@ function loop(timestamp) {
     timeLeft -= dt;
     if (timeLeft <= 0) {
       timeLeft = 0;
+      elapsed = CONFIG.roundSeconds;
       updateHud();
       draw();
       end('timer');
