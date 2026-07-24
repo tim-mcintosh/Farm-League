@@ -86,7 +86,7 @@ window.FarmDefenceRenderer = (() => {
     context.restore();
   }
 
-  function drawFence(context, fence) {
+  function drawFence(context, fence, level) {
     const ratio = fence.maxHealth ? fence.health / fence.maxHealth : 0;
     const damaged = ratio < .66;
     const badlyDamaged = ratio < .33;
@@ -94,21 +94,29 @@ window.FarmDefenceRenderer = (() => {
     const y1 = fence.y1;
     const x2 = fence.x2;
     const y2 = fence.y2;
+    const horizontal = Math.abs(x2 - x1) >= Math.abs(y2 - y1);
+    const railOffsets = level === 1 ? [0] : level === 2 ? [-4, 4] : [-6, 0, 6];
+    const timberDark = level === 1 ? '#563522' : level === 2 ? '#473729' : '#33434a';
+    const timberLight = level === 1 ? '#c28a4e' : level === 2 ? '#d7a45e' : '#8fb1b9';
 
     context.lineCap = 'round';
     if (!fence.broken) {
-      context.strokeStyle = damaged ? '#563522' : '#694527';
-      context.lineWidth = 11;
-      context.beginPath();
-      context.moveTo(x1, y1);
-      context.lineTo(x2, y2);
-      context.stroke();
-      context.strokeStyle = badlyDamaged ? '#9e5a3f' : damaged ? '#ad7145' : '#c28a4e';
-      context.lineWidth = 6;
-      context.beginPath();
-      context.moveTo(x1, y1);
-      context.lineTo(x2, y2);
-      context.stroke();
+      railOffsets.forEach(offset => {
+        const offsetX = horizontal ? 0 : offset;
+        const offsetY = horizontal ? offset : 0;
+        context.strokeStyle = damaged ? '#563522' : timberDark;
+        context.lineWidth = level === 1 ? 11 : 7;
+        context.beginPath();
+        context.moveTo(x1 + offsetX, y1 + offsetY);
+        context.lineTo(x2 + offsetX, y2 + offsetY);
+        context.stroke();
+        context.strokeStyle = badlyDamaged ? '#9e5a3f' : damaged ? '#ad7145' : timberLight;
+        context.lineWidth = level === 1 ? 6 : 4;
+        context.beginPath();
+        context.moveTo(x1 + offsetX, y1 + offsetY);
+        context.lineTo(x2 + offsetX, y2 + offsetY);
+        context.stroke();
+      });
       if (damaged) {
         const midX = (x1 + x2) / 2;
         const midY = (y1 + y2) / 2;
@@ -134,14 +142,21 @@ window.FarmDefenceRenderer = (() => {
     for (const amount of [0, 1]) {
       const x = x1 + (x2 - x1) * amount;
       const y = y1 + (y2 - y1) * amount;
-      context.fillStyle = '#5b3820';
+      const postRadius = 6 + level;
+      context.fillStyle = timberDark;
       context.beginPath();
-      context.arc(x + 2, y + 3, 7, 0, Math.PI * 2);
+      context.arc(x + 2, y + 3, postRadius + 1, 0, Math.PI * 2);
       context.fill();
-      context.fillStyle = '#d39a59';
+      context.fillStyle = timberLight;
       context.beginPath();
-      context.arc(x, y, 6, 0, Math.PI * 2);
+      context.arc(x, y, postRadius, 0, Math.PI * 2);
       context.fill();
+      if (level === 3) {
+        context.fillStyle = '#d9ebee';
+        context.beginPath();
+        context.arc(x, y, 3, 0, Math.PI * 2);
+        context.fill();
+      }
     }
   }
 
@@ -165,9 +180,12 @@ window.FarmDefenceRenderer = (() => {
 
   function drawRabbit(context, rabbit, time) {
     const hop = Math.abs(Math.sin(rabbit.hop + time * 5)) * 5;
+    const movingLeft = rabbit.vx < 0;
+    const angle = Math.atan2(movingLeft ? -rabbit.vy : rabbit.vy, movingLeft ? -rabbit.vx : rabbit.vx);
     context.save();
     context.translate(rabbit.x, rabbit.y - hop);
-    context.rotate(Math.atan2(rabbit.vy, rabbit.vx));
+    context.rotate(angle);
+    if (movingLeft) context.scale(-1, 1);
     context.fillStyle = 'rgba(38, 41, 34, .2)';
     context.beginPath();
     context.ellipse(0, 9 + hop, 13, 6, 0, 0, Math.PI * 2);
@@ -196,26 +214,45 @@ window.FarmDefenceRenderer = (() => {
 
   function drawDog(context, dog, time) {
     const stride = Math.sin(time * 7 + dog.phase) * 2;
+    const level = Math.max(1, Math.min(3, dog.level));
+    const coat = level === 1 ? '#8e5c37' : level === 2 ? '#252b2c' : '#d79c3d';
+    const muzzle = level === 1 ? '#f1d2a1' : level === 2 ? '#f4f1e8' : '#f5cc78';
+    const markings = level === 1 ? '#4a3024' : level === 2 ? '#f4f1e8' : '#7b4a25';
+    const scale = 1 + (level - 1) * .08;
     context.save();
     context.translate(dog.x, dog.y);
     context.rotate(Math.atan2(dog.vy, dog.vx));
+    context.scale(scale, scale);
     context.fillStyle = 'rgba(38, 42, 30, .22)';
     context.beginPath();
     context.ellipse(0, 9, 17, 7, 0, 0, Math.PI * 2);
     context.fill();
-    context.fillStyle = '#8e5c37';
+    context.fillStyle = coat;
     context.beginPath();
     context.ellipse(0, 0, 18, 10, 0, 0, Math.PI * 2);
     context.fill();
-    context.fillStyle = '#f1d2a1';
+    context.fillStyle = muzzle;
     context.beginPath();
     context.arc(15, -1, 8, 0, Math.PI * 2);
     context.fill();
-    context.fillStyle = '#4a3024';
+    context.fillStyle = markings;
     context.beginPath();
     context.ellipse(13, -8, 5, 8, -.5, 0, Math.PI * 2);
     context.fill();
-    context.strokeStyle = '#5a3827';
+    if (level >= 2) {
+      context.fillStyle = markings;
+      context.beginPath();
+      context.ellipse(-5, 0, level === 2 ? 7 : 5, 9, 0, 0, Math.PI * 2);
+      context.fill();
+    }
+    if (level === 3) {
+      context.strokeStyle = '#3f77a1';
+      context.lineWidth = 3;
+      context.beginPath();
+      context.arc(8, 0, 9, -1.1, 1.1);
+      context.stroke();
+    }
+    context.strokeStyle = markings;
     context.lineWidth = 4;
     context.beginPath();
     context.moveTo(-10, 6);
@@ -325,7 +362,7 @@ window.FarmDefenceRenderer = (() => {
     drawGrass(context, state.elapsed);
     drawFieldGround(context, state.field, state.expansionPulse);
     state.crops.forEach(crop => drawCrop(context, crop, state.elapsed));
-    state.fences.forEach(fence => drawFence(context, fence));
+    state.fences.forEach(fence => drawFence(context, fence, state.fenceLevel));
     state.rabbits.forEach(rabbit => drawRabbit(context, rabbit, state.elapsed));
     state.dogs.forEach(dog => drawDog(context, dog, state.elapsed));
     state.stations.forEach(station => drawStation(context, station));

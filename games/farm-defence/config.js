@@ -29,16 +29,16 @@ window.FARM_DEFENCE_CONFIG = Object.freeze({
     insideSpeed: 50,
     cropEatSeconds: 1.8,
     spawnPhases: [
-      { until: 30, interval: 8, cap: 3 },
-      { until: 60, interval: 5.5, cap: 5 },
-      { until: 90, interval: 3.5, cap: 8 },
-      { until: Infinity, interval: 1.9, cap: 12 }
+      { until: 30, interval: 5.5, cap: 4 },
+      { until: 60, interval: 3.8, cap: 7 },
+      { until: 90, interval: 2.5, cap: 11 },
+      { until: Infinity, interval: 1.4, cap: 16 }
     ]
   },
   dogs: {
     costs: [100, 200, 350],
-    speed: 72,
-    scareRange: 42,
+    speeds: [72, 88, 104],
+    scareRanges: [36, 44, 54],
     placementSeconds: 0.8
   },
   scoring: { harvestBonus: 50, fieldTileBonus: 10 },

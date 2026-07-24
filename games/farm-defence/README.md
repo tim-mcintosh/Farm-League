@@ -10,7 +10,7 @@ Farm Defence is a two-minute, movement-only farm management game. Harvest crops,
 
 Rabbits stay on the farm and continue eating until the farmer touches them or a dog chases them away. A fence section cannot be repaired while a rabbit is still breaking it.
 
-After purchasing a dog, walk to the desired starting point and stand still briefly to place it. Dogs pursue the nearest rabbit that enters the farm, then return to their starting point.
+After purchasing a dog, walk to the desired starting point and stand still briefly to place it. Dogs pursue the nearest rabbit that enters the farm, then return to their starting point. Each dog tier has a distinct coat, higher movement speed, and larger scare radius. Fence tiers gain additional rails, stronger posts, and increased durability.
 
 ## Architecture
 

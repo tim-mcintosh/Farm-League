@@ -18,7 +18,7 @@
   const keys = {};
   const pointers = new Map();
   const cropStages = ['seed', 'growing', 'ready', 'overripe', 'dead'];
-  const fieldCentre = { x: 400, y: 205 };
+  const fieldCentre = { x: CONFIG.arena.width / 2, y: CONFIG.arena.height / 2 };
   let state;
   let animationFrame = 0;
   let lastFrame = 0;
@@ -363,20 +363,23 @@
 
   function updateDogs(dt) {
     state.dogs.forEach(dog => {
+      const levelIndex = Math.max(0, Math.min(CONFIG.dogs.speeds.length - 1, dog.level - 1));
+      const speed = CONFIG.dogs.speeds[levelIndex];
+      const scareRange = CONFIG.dogs.scareRanges[levelIndex];
       const target = state.rabbits
         .filter(rabbit => !rabbit.scared && (rabbit.state === 'inside' || rabbit.state === 'eating'))
         .sort((a, b) => distance(dog, a) - distance(dog, b))[0];
       if (target) {
-        moveToward(dog, target, CONFIG.dogs.speed, dt);
+        moveToward(dog, target, speed, dt);
       } else if (distance(dog, { x: dog.anchorX, y: dog.anchorY }) > 3) {
-        moveToward(dog, { x: dog.anchorX, y: dog.anchorY }, CONFIG.dogs.speed, dt);
+        moveToward(dog, { x: dog.anchorX, y: dog.anchorY }, speed, dt);
       } else {
         dog.vx = 0;
         dog.vy = 0;
       }
       dog.phase += dt * 5;
       state.rabbits.forEach(rabbit => {
-        if (!rabbit.scared && distance(dog, rabbit) <= CONFIG.dogs.scareRange) {
+        if (!rabbit.scared && distance(dog, rabbit) <= scareRange) {
           sendRabbitAway(rabbit);
           notify('Rabbit chased away!', rabbit.x, rabbit.y - 18);
           emitSound('dogScare');
