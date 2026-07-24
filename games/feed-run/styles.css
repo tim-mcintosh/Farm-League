@@ -203,6 +203,7 @@ h1 { margin: 7px 0 10px; font-size: clamp(2.7rem, 11vw, 4.8rem); line-height: 0.
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 .mobile-controls button.active { background: #315c38; transform: translateY(1px); }
 .mobile-controls .control-spacer { visibility: hidden; pointer-events: none; }

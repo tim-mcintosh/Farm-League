@@ -7,3 +7,7 @@ function drawInitialScreen() {
 }
 
 drawInitialScreen();
+
+document.querySelectorAll('.game-controls button').forEach(button => {
+  button.addEventListener('contextmenu', event => event.preventDefault());
+});

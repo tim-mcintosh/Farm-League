@@ -35,3 +35,14 @@
   display: grid;
   margin-top: 12px;
 }
+
+.game-controls,
+.game-controls button {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.game-controls button {
+  touch-action: none;
+}

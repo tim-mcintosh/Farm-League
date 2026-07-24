@@ -903,6 +903,7 @@ document.querySelectorAll('[data-direction]').forEach(button => {
   button.addEventListener('pointerup', release);
   button.addEventListener('pointercancel', release);
   button.addEventListener('lostpointercapture', release);
+  button.addEventListener('contextmenu', event => event.preventDefault());
 });
 
 document.getElementById('startButton').addEventListener('click', startRound);
