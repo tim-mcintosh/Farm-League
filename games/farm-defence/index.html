@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Protect a growing crop field from hungry rabbits in Farm Defence.">
+<title>Farm Defence — Farm League</title>
+<link rel="stylesheet" href="styles.css">
+<script src="config.js" defer></script>
+<script src="renderer.js" defer></script>
+<script src="game.js" defer></script>
+</head>
+<body>
+<main class="game-shell">
+<nav><a class="back-link" href="../../index.html">← Back to Farm League</a></nav>
+
+<section class="status-bar" aria-label="Round status">
+<div><span>Time</span><strong id="time">2:00</strong></div>
+<div><span>Coins</span><strong id="coins">0</strong></div>
+</section>
+
+<section class="game-stage" aria-label="Farm Defence game area">
+<canvas id="game" width="800" height="600"></canvas>
+<div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
+
+<div id="startOverlay" class="overlay">
+<div class="screen-card">
+<p class="eyebrow">Farm League</p>
+<h1>Farm Defence</h1>
+<p class="tagline">Grow the farm. Keep the rabbits out.</p>
+<div class="instructions">
+<p>Walk beside damaged fences to repair them. Repairs take two seconds.</p>
+<p>Harvest ripe crops for coins, then walk into workshop stations to buy dogs and stronger fences.</p>
+<p>After buying a dog, choose its patrol point by standing still on the farm.</p>
+</div>
+<button id="startButton" type="button">Protect the farm</button>
+<a href="../../index.html">Back to Farm League</a>
+</div>
+</div>
+
+<div id="resultsOverlay" class="overlay hidden">
+<div class="screen-card">
+<p class="eyebrow">Sunset</p>
+<h1>Farm secured!</h1>
+<div class="results">
+<p>Harvest bonus <strong id="harvestBonus">0</strong></p>
+<p>Field size bonus <strong id="fieldBonus">0</strong></p>
+<p>Coin bonus <strong id="coinBonus">0</strong></p>
+<p>Total score <strong id="finalScore">0</strong></p>
+<p>Best score <strong id="bestScore">0</strong></p>
+</div>
+<button id="restartButton" type="button">Defend again</button>
+<a href="../../index.html">Back to Farm League</a>
+</div>
+</div>
+</section>
+
+<section class="mobile-controls" aria-label="Movement controls">
+<i></i><button data-direction="up" type="button" aria-label="Move up">▲</button><i></i>
+<button data-direction="left" type="button" aria-label="Move left">◀</button>
+<button data-direction="down" type="button" aria-label="Move down">▼</button>
+<button data-direction="right" type="button" aria-label="Move right">▶</button>
+</section>
+<p class="key-help">Move with arrow keys or WASD. All farm actions happen automatically.</p>
+</main>
+</body>
+</html>

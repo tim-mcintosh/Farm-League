@@ -1,0 +1,47 @@
+window.FARM_DEFENCE_CONFIG = Object.freeze({
+  roundSeconds: 120,
+  arena: { width: 800, height: 600 },
+  player: { speed: 245, radius: 17 },
+  repair: { seconds: 2, range: 31 },
+  crops: {
+    tileSize: 42,
+    initialColumns: 4,
+    initialRows: 3,
+    maxExpansionLevel: 3,
+    stageSeconds: { seed: 3.5, growing: 5.5, ready: 7, overripe: 5, dead: 3 },
+    harvestCoins: 25,
+    harvestRange: 27,
+    expansionHarvests: [4, 11, 21],
+    expansionHealthyRatio: 0.62,
+    expansionCooldown: 12
+  },
+  fences: {
+    baseHealth: 42,
+    upgradeMultipliers: [1, 1.5, 2],
+    upgradeCosts: [150, 300],
+    rabbitDamagePerSecond: 10
+  },
+  rabbits: {
+    radius: 12,
+    wanderSpeed: 30,
+    approachSpeed: 43,
+    insideSpeed: 50,
+    cropEatSeconds: 1.8,
+    leaveSeconds: 2.8,
+    spawnPhases: [
+      { until: 30, interval: 8, cap: 3 },
+      { until: 60, interval: 5.5, cap: 5 },
+      { until: 90, interval: 3.5, cap: 8 },
+      { until: Infinity, interval: 1.9, cap: 12 }
+    ]
+  },
+  dogs: {
+    costs: [100, 200, 350],
+    patrolRadii: [72, 108, 148],
+    speed: 72,
+    scareRange: 42,
+    placementSeconds: 0.8
+  },
+  scoring: { harvestBonus: 50, fieldTileBonus: 10 },
+  bestScoreKey: 'farmLeague.farmDefence.bestScore'
+});
