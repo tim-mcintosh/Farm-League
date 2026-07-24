@@ -2,7 +2,7 @@
 
 Farm League is a mobile-first website for fast, addictive farming mini-games. Each game is designed as a short, replayable score challenge that can run independently while sharing a consistent Farm League home and navigation experience.
 
-Tractor Dash, Feed Run, and Farm Orders are the currently playable games.
+Tractor Dash, Feed Run, and Order Rush are the currently playable games.
 
 ## Folder structure
 
@@ -12,7 +12,7 @@ farm-league/
 ├── games/
 │   ├── tractor-dash/           # Existing playable game
 │   ├── feed-run/               # Two-minute resource-management game
-│   ├── farm-orders/            # Two-minute order-packing game
+│   ├── order-rush/             # Two-minute movement-only packing game
 │   └── _template/              # Starting point for a future game
 ├── assets/
 │   ├── shared/                 # Shared site styles and future platform assets
