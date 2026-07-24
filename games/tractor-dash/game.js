@@ -4,10 +4,9 @@ const ctx = canvas.getContext('2d');
 const scoreEl = document.getElementById('score');
 const timeEl = document.getElementById('time');
 const speedEl = document.getElementById('speed');
-const bestEl = document.getElementById('best');
+const fieldProgressEl = document.getElementById('fieldProgress');
 const startOverlay = document.getElementById('startOverlay');
 const gameOverOverlay = document.getElementById('gameOverOverlay');
-const exitButton = document.getElementById('exitButton');
 const W = canvas.width;
 const H = canvas.height;
 const TILE = CONFIG.tileSize;
@@ -164,7 +163,6 @@ function start() {
   running = true;
   startOverlay.classList.add('hidden');
   gameOverOverlay.classList.add('hidden');
-  exitButton.classList.remove('hidden');
   last = performance.now();
   cancelAnimationFrame(raf);
   raf = requestAnimationFrame(loop);
@@ -173,16 +171,15 @@ function start() {
 function end(type) {
   running = false;
   cancelAnimationFrame(raf);
-  exitButton.classList.add('hidden');
   best = Math.max(best, score);
   document.getElementById('gameOverTitle').textContent =
     type === 'timer' ? 'Time!' :
     type === 'cow' ? 'You hit a cow' :
     type === 'sheep' ? 'You hit a sheep' : 'Run ended';
   document.getElementById('finalText').textContent = `You scored ${Math.floor(score).toLocaleString()} points.`;
+  document.getElementById('finalBest').textContent = `Best score: ${Math.floor(best).toLocaleString()}`;
   document.getElementById('finalTime').textContent = `Time survived: ${formatTime(elapsed)}`;
   document.getElementById('finalSpeed').textContent = `Fields cleared: ${fieldsCleared}`;
-  bestEl.textContent = Math.floor(best).toLocaleString();
   gameOverOverlay.classList.remove('hidden');
 }
 
@@ -195,7 +192,8 @@ function updateHud() {
   scoreEl.textContent = Math.floor(score).toLocaleString();
   timeEl.textContent = formatTime(timeLeft);
   speedEl.textContent = `${tractor.crashTimer > 0 ? '0.00' : tractor.mult.toFixed(2)}x`;
-  bestEl.textContent = Math.floor(best).toLocaleString();
+  const progress = field.totalTiles ? Math.min(100, Math.round(mown.size / field.totalTiles * 100)) : 0;
+  fieldProgressEl.textContent = `${level} · ${progress}%`;
 }
 
 function resolveDir() {
@@ -356,18 +354,17 @@ function worldToScreen(x, y) {
 }
 
 function drawGround() {
-  ctx.fillStyle = '#8a7048';
-  ctx.fillRect(0, 0, W, H);
-  const startX = Math.max(field.minTileX, Math.floor((tractor.x - W / 2) / TILE) - 1);
-  const endX = Math.min(field.maxTileX, Math.ceil((tractor.x + W / 2) / TILE) + 1);
-  const startY = Math.max(field.minTileY, Math.floor((tractor.y - H / 2) / TILE) - 1);
-  const endY = Math.min(field.maxTileY, Math.ceil((tractor.y + H / 2) / TILE) + 1);
+  const startX = Math.floor((tractor.x - W / 2) / TILE) - 1;
+  const endX = Math.ceil((tractor.x + W / 2) / TILE) + 1;
+  const startY = Math.floor((tractor.y - H / 2) / TILE) - 1;
+  const endY = Math.ceil((tractor.y + H / 2) / TILE) + 1;
 
   for (let y = startY; y <= endY; y++) {
     for (let x = startX; x <= endX; x++) {
       const screen = worldToScreen(x * TILE, y * TILE);
-      const blocked = tileBlocked(x, y);
-      const cut = blocked || mown.has(tileKey(x, y));
+      const insideField = x >= field.minTileX && x <= field.maxTileX && y >= field.minTileY && y <= field.maxTileY;
+      const blocked = insideField && tileBlocked(x, y);
+      const cut = insideField && (blocked || mown.has(tileKey(x, y)));
       ctx.fillStyle = cut ? ((x + y) % 2 ? '#b9cb75' : '#adc268') : ((x + y) % 2 ? '#5ca34d' : '#63ad51');
       ctx.fillRect(screen.x, screen.y, TILE + 1, TILE + 1);
       if (!cut) {
@@ -385,12 +382,44 @@ function drawGround() {
   }
 
   const topLeft = worldToScreen(field.left, field.top);
-  ctx.strokeStyle = '#d1aa62';
-  ctx.lineWidth = 10;
-  ctx.strokeRect(topLeft.x, topLeft.y, field.width, field.height);
-  ctx.strokeStyle = '#684a2e';
-  ctx.lineWidth = 3;
-  ctx.strokeRect(topLeft.x, topLeft.y, field.width, field.height);
+  const right = topLeft.x + field.width;
+  const bottom = topLeft.y + field.height;
+  drawFenceSegment(topLeft.x, topLeft.y, right, topLeft.y);
+  drawFenceSegment(topLeft.x, bottom, right, bottom);
+  drawFenceSegment(topLeft.x, topLeft.y, topLeft.x, bottom);
+  drawFenceSegment(right, topLeft.y, right, bottom);
+}
+
+function drawFenceSegment(x1, y1, x2, y2) {
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#694527';
+  ctx.lineWidth = 11;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  ctx.strokeStyle = '#c28a4e';
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+
+  const length = Math.hypot(x2 - x1, y2 - y1);
+  const posts = Math.max(1, Math.floor(length / 46));
+  for (let index = 0; index <= posts; index++) {
+    const amount = index / posts;
+    const x = x1 + (x2 - x1) * amount;
+    const y = y1 + (y2 - y1) * amount;
+    ctx.fillStyle = '#5b3820';
+    ctx.beginPath();
+    ctx.arc(x + 2, y + 3, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#d39a59';
+    ctx.beginPath();
+    ctx.arc(x, y, 6, 0, Math.PI * 2);
+    ctx.fill();
+  }
 }
 
 function drawObstacle(obstacle) {
@@ -493,21 +522,6 @@ function drawParticles() {
   ctx.globalAlpha = 1;
 }
 
-function drawFieldStatus() {
-  const progress = field.totalTiles ? Math.min(100, Math.round(mown.size / field.totalTiles * 100)) : 0;
-  ctx.fillStyle = 'rgba(16,33,22,.9)';
-  ctx.beginPath();
-  ctx.roundRect(16, 16, 154, 54, 12);
-  ctx.fill();
-  ctx.fillStyle = '#f7f6ea';
-  ctx.font = 'bold 16px system-ui';
-  ctx.textAlign = 'left';
-  ctx.fillText(`Field ${level}`, 30, 39);
-  ctx.fillStyle = '#a6e36d';
-  ctx.font = 'bold 14px system-ui';
-  ctx.fillText(`${progress}% mown`, 30, 59);
-}
-
 function drawTransition() {
   if (!transition) return;
   ctx.fillStyle = 'rgba(8,22,12,.78)';
@@ -527,7 +541,6 @@ function draw() {
   animals.forEach(drawAnimal);
   drawParticles();
   drawTractor();
-  drawFieldStatus();
   drawTransition();
 }
 
@@ -603,7 +616,6 @@ document.querySelectorAll('[data-dir]').forEach(button => {
 
 document.getElementById('startButton').addEventListener('click', start);
 document.getElementById('restartButton').addEventListener('click', start);
-exitButton.addEventListener('click', () => end('exit'));
 
 reset();
 draw();

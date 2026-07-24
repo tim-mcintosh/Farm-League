@@ -15,13 +15,12 @@
 <div class="metric"><span>Score</span><strong id="score">0</strong></div>
 <div class="metric"><span>Time Left</span><strong id="time">2:00</strong></div>
 <div class="metric"><span>Speed</span><strong id="speed">1.00x</strong></div>
-<div class="metric"><span>Best</span><strong id="best">0</strong></div>
+<div class="metric"><span>Field</span><strong id="fieldProgress">1 · 0%</strong></div>
 </section>
 <section class="game-wrap">
 <canvas id="game" width="960" height="600"></canvas>
-<button id="exitButton" class="exit-button hidden" type="button">Exit game</button>
 <div id="startOverlay" class="overlay"><div class="card"><div class="eyebrow">Farm League</div><h1>Tractor Dash</h1><p>Clear as many fields as you can in two minutes. Every new field has a fresh layout and more hazards.</p><div class="rules"><div class="rule">Mow every reachable patch of grass to unlock the next field.</div><div class="rule">Trees and rocks stop you and reset your speed to 1×.</div><div class="rule">Later fields contain wandering animals. Hit a cow or sheep and the run ends.</div></div><button id="startButton" type="button">Start mowing</button></div></div>
-<div id="gameOverOverlay" class="overlay hidden"><div class="card"><div class="eyebrow">Run over</div><h1 id="gameOverTitle">Game over</h1><p id="finalText">You scored 0 points.</p><div class="rules"><div class="rule" id="finalTime">Time survived: 0:00</div><div class="rule" id="finalSpeed">Fields cleared: 0</div></div><button id="restartButton" type="button">Play again</button></div></div>
+<div id="gameOverOverlay" class="overlay hidden"><div class="card"><div class="eyebrow">Run over</div><h1 id="gameOverTitle">Game over</h1><p id="finalText">You scored 0 points.</p><div class="rules"><div class="rule" id="finalBest">Best score: 0</div><div class="rule" id="finalTime">Time survived: 0:00</div><div class="rule" id="finalSpeed">Fields cleared: 0</div></div><button id="restartButton" type="button">Play again</button></div></div>
 </section>
 <section class="controls"><button class="blank" tabindex="-1"></button><button data-dir="up" type="button">▲</button><button class="blank" tabindex="-1"></button><button data-dir="left" type="button">◀</button><button data-dir="down" type="button">▼</button><button data-dir="right" type="button">▶</button></section>
 <p class="notes">Clear increasingly difficult fields before time runs out. Every grass tile scores, complete fields earn a bonus, and speed can rise to 5×.</p>
