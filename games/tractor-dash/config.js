@@ -3,6 +3,7 @@ window.TRACTOR_DASH_CONFIG = Object.freeze({
   tileSize: 28,
   transitionSeconds: 1.2,
   fieldClearBonus: 50,
+  bestScoreKey: 'farmLeague.tractorDash.bestScore',
   tractor: { baseSpeed: 165, radius: 16, maxMultiplier: 5, tilesPerMultiplier: 220 },
   fields: {
     baseColumns: 34,

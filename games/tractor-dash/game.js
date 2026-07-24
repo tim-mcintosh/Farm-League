@@ -15,7 +15,7 @@ const keys = {};
 let running = false;
 let last = 0;
 let score = 0;
-let best = 0;
+let best = loadBestScore();
 let timeLeft = CONFIG.roundSeconds;
 let elapsed = 0;
 let speedPoints = 0;
@@ -42,6 +42,26 @@ const tractor = {
   crashTimer: 0,
   crashCooldown: 0
 };
+
+function loadBestScore() {
+  try {
+    const stored = Number(localStorage.getItem(CONFIG.bestScoreKey));
+    return Number.isFinite(stored) && stored >= 0 ? Math.floor(stored) : 0;
+  } catch {
+    return 0;
+  }
+}
+
+function saveBestScore() {
+  const candidate = Math.max(0, Math.floor(score));
+  if (candidate <= best) return;
+  best = candidate;
+  try {
+    localStorage.setItem(CONFIG.bestScoreKey, String(best));
+  } catch {
+    // The current session still tracks the best score when storage is unavailable.
+  }
+}
 
 function seededRandom(seed) {
   let value = seed + 0x6D2B79F5;
@@ -171,7 +191,7 @@ function start() {
 function end(type) {
   running = false;
   cancelAnimationFrame(raf);
-  best = Math.max(best, score);
+  saveBestScore();
   document.getElementById('gameOverTitle').textContent =
     type === 'timer' ? 'Time!' :
     type === 'cow' ? 'You hit a cow' :

@@ -30,19 +30,22 @@
   // Persistence and presentation hooks remain optional so the local game loop is self-contained.
   function loadBest() {
     try {
-      const current = Number.parseInt(localStorage.getItem(CONFIG.bestScoreKey), 10) || 0;
-      const legacy = Number.parseInt(localStorage.getItem(CONFIG.legacyBestScoreKey), 10) || 0;
-      return Math.max(0, current, legacy);
+      const storedScore = key => {
+        const value = Number(localStorage.getItem(key));
+        return Number.isFinite(value) && value >= 0 ? Math.floor(value) : 0;
+      };
+      return Math.max(storedScore(CONFIG.bestScoreKey), storedScore(CONFIG.legacyBestScoreKey));
     } catch {
       return 0;
     }
   }
 
   function saveBest(score) {
-    const best = Math.max(state.best, score);
-    state.best = best;
+    const candidate = Math.max(0, Math.floor(score));
+    if (candidate <= state.best) return;
+    state.best = candidate;
     try {
-      localStorage.setItem(CONFIG.bestScoreKey, String(best));
+      localStorage.setItem(CONFIG.bestScoreKey, String(state.best));
     } catch {
       // Local storage is optional; gameplay remains available when it is blocked.
     }

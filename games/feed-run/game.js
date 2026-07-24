@@ -82,14 +82,17 @@ function createInitialState() {
 // Persistence is deliberately limited to the local best score.
 function loadBestScore() {
   try {
-    return Math.max(0, Number.parseInt(localStorage.getItem(CONFIG.bestScoreKey), 10) || 0);
+    const stored = Number(localStorage.getItem(CONFIG.bestScoreKey));
+    return Number.isFinite(stored) && stored >= 0 ? Math.floor(stored) : 0;
   } catch (error) {
     return 0;
   }
 }
 
 function saveBestScore() {
-  state.best = Math.max(state.best, state.score);
+  const candidate = Math.max(0, Math.floor(state.score));
+  if (candidate <= state.best) return;
+  state.best = candidate;
   try {
     localStorage.setItem(CONFIG.bestScoreKey, String(state.best));
   } catch (error) {
