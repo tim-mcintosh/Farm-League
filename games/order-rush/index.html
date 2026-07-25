@@ -28,11 +28,37 @@
 <section class="game-stage" aria-label="Order Rush packing shed">
 <canvas id="game" width="800" height="600"></canvas>
 <div id="feedback" class="sr-only" role="status" aria-live="polite"></div>
-<div id="startOverlay" class="overlay"><div class="screen-card">
-<p class="eyebrow">Farm League</p><h1>Order Rush</h1>
-<p class="tagline">Pack each farm order before the driver leaves.</p>
-<div class="instructions"><p>Walk over produce to collect it, then carry it into an open packing box. Take unwanted produce to the compost area.</p><p>A correct box closes with a tick. Pick it up and take it to the truck. Damaged boxes disappear when the driver leaves.</p></div>
-<button id="startButton" type="button">Open the shed</button><a href="../../index.html">Back to Farm League</a>
+<div id="startOverlay" class="overlay order-intro-overlay"><div class="screen-card order-intro-card">
+<p class="order-intro-brand"><span aria-hidden="true">🌿</span> Farm League <span aria-hidden="true">🌿</span></p>
+<div class="order-title-lockup"><h1>Order Rush</h1><span class="order-title-image" role="img" aria-label="Delivery truck">🚚</span></div>
+
+<section class="order-intro-panel order-objective" aria-labelledby="orderObjectiveTitle">
+<div class="order-panel-heading"><span aria-hidden="true">🎯</span><h2 id="orderObjectiveTitle">Objective</h2></div>
+<p>Collect the requested produce, pack the order and deliver it before the driver leaves.</p>
+<div class="order-round-length"><span aria-hidden="true">⏱️</span><strong>2:00</strong><small>minutes</small></div>
+</section>
+
+<section class="order-intro-panel order-rules" aria-labelledby="orderRulesTitle">
+<div class="order-panel-heading"><span aria-hidden="true">📋</span><h2 id="orderRulesTitle">Rules</h2></div>
+<div class="order-rules-list">
+<div class="order-rule"><span aria-hidden="true">👨‍🌾</span><p>Walk over produce to <strong>collect it</strong>, then carry it to an <strong>open packing box.</strong></p></div>
+<div class="order-rule"><span aria-hidden="true">♻️</span><p>Take any unwanted produce to the <strong>compost area.</strong></p></div>
+<div class="order-rule"><span aria-hidden="true">📦</span><p>A correct box closes with a <strong>tick</strong>. Pick it up and take it to the truck.</p></div>
+<div class="order-rule"><span aria-hidden="true">❌</span><p>Extra produce <strong>damages the box</strong>; damaged boxes clear when the driver leaves.</p></div>
+<div class="order-rule"><span aria-hidden="true">⏱️</span><p>Deliver the packed box <strong>before the driver leaves.</strong></p></div>
+</div>
+</section>
+
+<section class="order-intro-panel order-controls-guide" aria-labelledby="orderControlsTitle">
+<div class="order-panel-heading"><span aria-hidden="true">✥</span><h2 id="orderControlsTitle">Controls</h2></div>
+<div class="order-control-content">
+<p>Use the D-pad, arrow keys or WASD to move. Packing happens automatically.</p>
+<div class="order-mini-dpad" aria-hidden="true"><span class="order-mini-up">▲</span><span class="order-mini-left">◀</span><i></i><span class="order-mini-right">▶</span><span class="order-mini-down">▼</span></div>
+</div>
+</section>
+
+<button id="startButton" class="open-shed" type="button"><span aria-hidden="true">📦</span> Open the shed</button>
+<a class="order-intro-back" href="../../index.html">← Back to Farm League</a>
 </div></div>
 <div id="resultsOverlay" class="overlay hidden"><div class="screen-card">
 <p class="eyebrow">Shed closed</p><h1>Orders packed!</h1>
