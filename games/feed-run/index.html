@@ -50,18 +50,43 @@
 <div id="feedback" class="sr-only" role="status" aria-live="polite"></div>
 <div class="carry-indicator">Carrying: <strong id="carriedItem">Nothing</strong></div>
 
-<div id="startOverlay" class="overlay">
-<div class="screen-card">
-<p class="eyebrow">Farm League</p>
+<div id="startOverlay" class="overlay feed-intro-overlay">
+<div class="screen-card feed-intro-card">
+<p class="feed-intro-brand"><span aria-hidden="true">🌿</span> Farm League <span aria-hidden="true">🌿</span></p>
+<div class="feed-title-lockup">
 <h1>Feed Run</h1>
-<p class="tagline">Keep every animal fed until the breakfast bell rings.</p>
-<div class="instructions">
-<p>Collect one food item at a time and carry it through the gate of the matching animal pen.</p>
-<p>Preferred food restores the most hunger. Hay works for everyone, but restores less.</p>
-<p>If any animal group’s hunger bar reaches zero, the round is over.</p>
+<span class="animal-lineup" role="img" aria-label="Horse, cow, sheep and chicken">🐴🐄🐑🐔</span>
 </div>
-<button id="startButton" type="button">Start feeding</button>
-<a class="overlay-back" href="../../index.html">Back to Farm League</a>
+
+<section class="feed-intro-panel feed-objective" aria-labelledby="feedObjectiveTitle">
+<div class="feed-panel-heading"><span aria-hidden="true">🎯</span><h2 id="feedObjectiveTitle">Objective</h2></div>
+<p>Deliver food, keep every animal fed and survive for two minutes.</p>
+<div class="feed-round-length"><span aria-hidden="true">⏱️</span><strong>2:00</strong><small>minutes</small></div>
+</section>
+
+<section class="feed-intro-panel feed-rules" aria-labelledby="feedRulesTitle">
+<div class="feed-panel-heading"><span aria-hidden="true">📋</span><h2 id="feedRulesTitle">Rules</h2></div>
+<div class="feed-rules-list">
+<div class="feed-rule feed-rule-wide"><span aria-hidden="true">🧺</span><p>Collect <strong>one food item</strong> at a time and carry it through the matching pen’s gate.</p></div>
+<div class="feed-rule"><span aria-hidden="true">🐴</span><p>Horses eat <strong>carrots and apples.</strong></p></div>
+<div class="feed-rule"><span aria-hidden="true">🐄</span><p>Cows eat <strong>cow feed and grass bundles.</strong></p></div>
+<div class="feed-rule"><span aria-hidden="true">🐑</span><p>Sheep eat <strong>grass bundles and clover.</strong></p></div>
+<div class="feed-rule"><span aria-hidden="true">🐔</span><p>Chickens eat <strong>corn and grain.</strong></p></div>
+<div class="feed-rule"><span aria-hidden="true">🟨</span><p><strong>Hay feeds everyone</strong>, but restores less hunger.</p></div>
+<div class="feed-rule"><span aria-hidden="true">❤️</span><p>If any hunger bar reaches <strong>zero</strong>, the round ends.</p></div>
+</div>
+</section>
+
+<section class="feed-intro-panel feed-controls-guide" aria-labelledby="feedControlsTitle">
+<div class="feed-panel-heading"><span aria-hidden="true">✥</span><h2 id="feedControlsTitle">Controls</h2></div>
+<div class="feed-control-content">
+<p>Use the D-pad, arrow keys or WASD to move.</p>
+<div class="feed-mini-dpad" aria-hidden="true"><span class="feed-mini-up">▲</span><span class="feed-mini-left">◀</span><i></i><span class="feed-mini-right">▶</span><span class="feed-mini-down">▼</span></div>
+</div>
+</section>
+
+<button id="startButton" class="start-feeding" type="button"><span aria-hidden="true">🧺</span> Start feeding</button>
+<a class="overlay-back feed-intro-back" href="../../index.html">← Back to Farm League</a>
 </div>
 </div>
 
