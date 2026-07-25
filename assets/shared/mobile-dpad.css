@@ -1,6 +1,7 @@
 .farm-controls {
   --farm-dpad-size: clamp(200px, 56vw, 224px);
   display: grid;
+  flex: 0 0 auto;
   justify-content: center;
   margin-top: 14px;
   padding-bottom: max(12px, env(safe-area-inset-bottom));
