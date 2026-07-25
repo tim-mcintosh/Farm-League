@@ -387,13 +387,6 @@ window.FenceFrenzyRenderer = (() => {
       context.fillText(`+$${coin.amount}`, coin.x, coin.y);
     });
     context.globalAlpha = 1;
-    state.notifications.forEach(note => {
-      context.globalAlpha = Math.min(1, note.life * 2);
-      context.fillStyle = note.bad ? '#ffaea6' : '#fff';
-      context.font = 'bold 17px system-ui';
-      context.textAlign = 'center';
-      context.fillText(note.text, note.x, note.y);
-    });
     context.globalAlpha = 1;
   }
 

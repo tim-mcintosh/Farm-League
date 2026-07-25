@@ -71,6 +71,29 @@ canvas {
   aspect-ratio: 4 / 3;
   touch-action: none;
 }
+.action-indicator {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  z-index: 2;
+  max-width: calc(100% - 20px);
+  padding: 6px 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, .25);
+  border-radius: 999px;
+  background: rgba(13, 32, 19, .84);
+  color: var(--text);
+  font-size: .69rem;
+  font-weight: 800;
+  opacity: 0;
+  pointer-events: none;
+  text-overflow: ellipsis;
+  transform: translate(-50%, -5px);
+  transition: opacity 120ms ease, transform 120ms ease;
+  white-space: nowrap;
+}
+.action-indicator.visible { opacity: 1; transform: translate(-50%, 0); }
+.action-indicator.bad { border-color: rgba(255, 107, 95, .48); color: #ffaea6; }
 .hidden { display: none !important; }
 .sr-only {
   position: absolute;
@@ -197,6 +220,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outlin
 
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto !important; }
+  .action-indicator { transition: none; }
 }
 
 @media (pointer: coarse) and (orientation: portrait) {

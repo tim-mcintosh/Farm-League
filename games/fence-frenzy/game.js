@@ -8,6 +8,7 @@
     coins: document.getElementById('coins'),
     score: document.getElementById('score'),
     announcement: document.getElementById('announcement'),
+    actionNotice: document.getElementById('actionNotice'),
     startOverlay: document.getElementById('startOverlay'),
     resultsOverlay: document.getElementById('resultsOverlay'),
     harvestBonus: document.getElementById('harvestBonus'),
@@ -20,6 +21,7 @@
   let mobileDirection = null;
   const mobileCameraQuery = window.matchMedia?.('(pointer: coarse) and (orientation: portrait)');
   const cropStages = ['seed', 'growing', 'ready', 'overripe', 'dead'];
+  const notificationSeconds = 1.5;
   const fieldCentre = { x: CONFIG.arena.width / 2, y: CONFIG.arena.height / 2 };
   let state;
   let animationFrame = 0;
@@ -74,8 +76,11 @@
     elements.announcement.textContent = text;
   }
 
-  function notify(text, x = state.player.x, y = state.player.y - 28, bad = false) {
-    state.notifications.push({ text, x, y, life: 1.25, bad });
+  function notify(text, bad = false) {
+    elements.actionNotice.textContent = text;
+    elements.actionNotice.classList.toggle('bad', bad);
+    elements.actionNotice.classList.add('visible');
+    state.notificationTime = notificationSeconds;
     announce(text);
   }
 
@@ -201,7 +206,7 @@
       stations: createStations(),
       particles: [],
       coinPops: [],
-      notifications: []
+      notificationTime: 0
     };
     state = initial;
     state.crops = createCrops(field);
@@ -468,14 +473,14 @@
       state.rabbits.forEach(rabbit => {
         if (!rabbit.scared && distance(dog, rabbit) <= scareRange) {
           sendThreatAway(rabbit);
-          notify('Rabbit chased away!', rabbit.x, rabbit.y - 18);
+          notify('Rabbit chased away!');
           emitSound('dogScare');
         }
       });
       state.crows.forEach(crow => {
         if (!crow.scared && distance(dog, crow) <= scareRange) {
           sendThreatAway(crow);
-          notify('Crow chased away!', crow.x, crow.y - 18);
+          notify('Crow chased away!');
           emitSound('dogScare');
         }
       });
@@ -486,14 +491,14 @@
     state.rabbits.forEach(rabbit => {
       if (!rabbit.scared && distance(state.player, rabbit) <= state.player.radius + CONFIG.rabbits.radius) {
         sendThreatAway(rabbit);
-        notify('Rabbit scared away!', rabbit.x, rabbit.y - 18);
+        notify('Rabbit scared away!');
         emitSound('rabbitScare');
       }
     });
     state.crows.forEach(crow => {
       if (!crow.scared && distance(state.player, crow) <= state.player.radius + CONFIG.crows.radius) {
         sendThreatAway(crow);
-        notify('Crow scared away!', crow.x, crow.y - 18);
+        notify('Crow scared away!');
         emitSound('crowScare');
       }
     });
@@ -564,7 +569,7 @@
     state.crops = createCrops(nextField, state.crops);
     state.expansionCooldown = CONFIG.crops.expansionCooldown;
     state.expansionPulse = 1;
-    notify(`Field expanded to Level ${nextField.level + 1}!`, 400, nextField.top - 18);
+    notify(`Field expanded to Level ${nextField.level + 1}!`);
     emitSound('expand');
   }
 
@@ -635,7 +640,7 @@
     if (state.repair.progress >= 1) {
       fence.health = fence.maxHealth;
       fence.broken = false;
-      notify('Fence repaired!', fence.x, fence.y - 18);
+      notify('Fence repaired!');
       state.repair = null;
       emitSound('repairComplete');
     }
@@ -692,24 +697,24 @@
 
   function buyDog(station) {
     if (state.pendingDog) {
-      notify('Place your current dog first', station.x + station.width / 2, station.y - 8, true);
+      notify('Place your current dog first', true);
       return;
     }
     if (station.maxed || state.coins < station.cost) {
-      if (!station.maxed) notify('Not enough coins', station.x + station.width / 2, station.y - 8, true);
+      if (!station.maxed) notify('Not enough coins', true);
       return;
     }
     state.coins -= station.cost;
     state.dogPurchases++;
     state.pendingDog = { level: state.dogPurchases, still: 0 };
     updateStationLabels();
-    notify(`Dog purchased — stand still to place`, station.x + station.width / 2, station.y - 8);
+    notify('Dog purchased — stand still to place');
     emitSound('purchase');
   }
 
   function buyFenceUpgrade(station) {
     if (station.maxed || state.coins < station.cost) {
-      if (!station.maxed) notify('Not enough coins', station.x + station.width / 2, station.y - 8, true);
+      if (!station.maxed) notify('Not enough coins', true);
       return;
     }
     state.coins -= station.cost;
@@ -721,7 +726,7 @@
       fence.broken = false;
     });
     updateStationLabels();
-    notify(`Fence Level ${state.fenceLevel}`, station.x + station.width / 2, station.y - 8);
+    notify(`Fence Level ${state.fenceLevel}`);
     emitSound('purchase');
   }
 
@@ -754,11 +759,8 @@
       coin.y -= 28 * dt;
     });
     state.coinPops = state.coinPops.filter(coin => coin.life > 0);
-    state.notifications.forEach(note => {
-      note.life -= dt;
-      note.y -= 21 * dt;
-    });
-    state.notifications = state.notifications.filter(note => note.life > 0);
+    state.notificationTime = Math.max(0, state.notificationTime - dt);
+    elements.actionNotice.classList.toggle('visible', state.notificationTime > 0);
   }
 
   // Platform-facing results stay reducible to a small score breakdown and local best value.
@@ -856,6 +858,8 @@
     updateStationLabels();
     clearInput();
     elements.announcement.textContent = '';
+    elements.actionNotice.textContent = '';
+    elements.actionNotice.classList.remove('visible', 'bad');
     updateHud();
     draw();
   }
