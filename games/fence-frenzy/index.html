@@ -26,19 +26,39 @@
 <canvas id="game" width="800" height="600"></canvas>
 <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
 
-<div id="startOverlay" class="overlay">
-<div class="screen-card">
-<p class="eyebrow">Farm League</p>
+<div id="startOverlay" class="overlay fence-intro-overlay">
+<div class="screen-card fence-intro-card">
+<p class="fence-intro-brand"><span aria-hidden="true">🌿</span> Farm League <span aria-hidden="true">🌿</span></p>
+<div class="fence-title-lockup">
 <h1>Fence Frenzy</h1>
-<p class="tagline">Grow the farm. Keep hungry pests away.</p>
-<div class="instructions">
-<p>Rabbits break fences. After one minute, crows begin flying over them. Chase both away from the crops.</p>
-<p>Walk beside a damaged fence after the rabbit finishes breaking it to repair it.</p>
-<p>Harvest ripe crops for coins. Buy faster dogs and stronger fences at the bottom stations.</p>
-<p>Move with arrow keys or WASD. All farm actions happen automatically.</p>
+<span class="pest-lineup" role="img" aria-label="Rabbit and crow">🐇🐦‍⬛</span>
 </div>
-<button id="startButton" type="button">Protect the farm</button>
-<a href="../../index.html">Back to Farm League</a>
+
+<section class="fence-intro-panel fence-objective" aria-labelledby="fenceObjectiveTitle">
+<div class="fence-panel-heading"><span aria-hidden="true">🎯</span><h2 id="fenceObjectiveTitle">Objective</h2></div>
+<p>Harvest your crops and keep hungry pests away for two minutes.</p>
+<div class="fence-round-length"><span aria-hidden="true">⏱️</span><strong>2:00</strong><small>minutes</small></div>
+</section>
+
+<section class="fence-intro-panel fence-rules" aria-labelledby="fenceRulesTitle">
+<div class="fence-panel-heading"><span aria-hidden="true">📋</span><h2 id="fenceRulesTitle">Rules</h2></div>
+<div class="fence-rules-list">
+<div class="fence-rule"><span aria-hidden="true">🐇</span><p><strong>Rabbits break fences.</strong> After one minute, crows fly over them. Chase both away from the crops.</p></div>
+<div class="fence-rule"><span aria-hidden="true">🪵</span><p>Walk beside a damaged fence after the rabbit finishes breaking it to <strong>repair it.</strong></p></div>
+<div class="fence-rule"><span aria-hidden="true">🧺</span><p>Harvest ripe crops for coins. Buy faster <strong>dogs</strong> and stronger <strong>fences</strong> at the bottom stations.</p></div>
+</div>
+</section>
+
+<section class="fence-intro-panel fence-controls-guide" aria-labelledby="fenceControlsTitle">
+<div class="fence-panel-heading"><span aria-hidden="true">✥</span><h2 id="fenceControlsTitle">Controls</h2></div>
+<div class="fence-control-content">
+<p>Use the D-pad, arrow keys or WASD to move. All farm actions happen automatically.</p>
+<div class="fence-mini-dpad" aria-hidden="true"><span class="fence-mini-up">▲</span><span class="fence-mini-left">◀</span><i></i><span class="fence-mini-right">▶</span><span class="fence-mini-down">▼</span></div>
+</div>
+</section>
+
+<button id="startButton" class="protect-farm" type="button"><span aria-hidden="true">🛡️</span> Protect the farm</button>
+<a class="fence-intro-back" href="../../index.html">← Back to Farm League</a>
 </div>
 </div>
 
