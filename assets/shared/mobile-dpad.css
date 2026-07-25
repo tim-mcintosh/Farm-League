@@ -1,3 +1,7 @@
+.farm-game {
+  touch-action: manipulation;
+}
+
 .farm-controls {
   --farm-dpad-size: clamp(200px, 56vw, 224px);
   display: grid;
