@@ -65,11 +65,16 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: #fff;
-  font: 900 clamp(1.45rem, 6vw, 1.8rem)/1 system-ui, sans-serif;
   pointer-events: none;
-  text-shadow: 0 2px 2px rgba(0, 0, 0, .38);
   transition: none;
+}
+
+.farm-dpad__direction::before {
+  width: clamp(16px, 4.8vw, 20px);
+  height: clamp(16px, 4.8vw, 20px);
+  background: #fff;
+  content: "";
+  filter: drop-shadow(0 2px 1px rgba(0, 0, 0, .38));
 }
 
 .farm-dpad__direction[data-direction="up"] {
@@ -77,9 +82,17 @@
   left: var(--farm-dpad-arm);
 }
 
+.farm-dpad__direction[data-direction="up"]::before {
+  clip-path: polygon(50% 12%, 94% 82%, 6% 82%);
+}
+
 .farm-dpad__direction[data-direction="right"] {
   top: var(--farm-dpad-arm);
   right: 0;
+}
+
+.farm-dpad__direction[data-direction="right"]::before {
+  clip-path: polygon(18% 6%, 88% 50%, 18% 94%);
 }
 
 .farm-dpad__direction[data-direction="down"] {
@@ -87,9 +100,17 @@
   left: var(--farm-dpad-arm);
 }
 
+.farm-dpad__direction[data-direction="down"]::before {
+  clip-path: polygon(6% 18%, 94% 18%, 50% 88%);
+}
+
 .farm-dpad__direction[data-direction="left"] {
   top: var(--farm-dpad-arm);
   left: 0;
+}
+
+.farm-dpad__direction[data-direction="left"]::before {
+  clip-path: polygon(82% 6%, 82% 94%, 12% 50%);
 }
 
 .farm-dpad__direction.active {

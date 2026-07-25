@@ -11,7 +11,7 @@
       this.direction = null;
       this.directionElements = new Map(
         [...element.querySelectorAll('[data-direction]')]
-          .map(button => [button.dataset.direction, button])
+          .map(indicator => [indicator.dataset.direction, indicator])
           .filter(([direction]) => DIRECTIONS.includes(direction))
       );
 
@@ -55,8 +55,8 @@
     setDirection(direction) {
       if (direction === this.direction) return;
       this.direction = direction;
-      this.directionElements.forEach((button, name) => {
-        button.classList.toggle('active', name === direction);
+      this.directionElements.forEach((indicator, name) => {
+        indicator.classList.toggle('active', name === direction);
       });
       this.element.dispatchEvent(new CustomEvent(CHANGE_EVENT, {
         bubbles: true,
