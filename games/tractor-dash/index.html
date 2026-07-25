@@ -21,7 +21,37 @@
 </section>
 <section class="game-wrap">
 <canvas id="game" width="960" height="600"></canvas>
-<div id="startOverlay" class="overlay"><div class="card"><div class="eyebrow">Farm League</div><h1>Tractor Dash</h1><p>Clear as many fields as you can in two minutes. Every new field has a fresh layout and more hazards.</p><div class="rules"><div class="rule">Mow every reachable patch of grass to unlock the next field.</div><div class="rule">Every grass tile scores, cleared fields earn a bonus, and speed can rise to 5×.</div><div class="rule">Trees and rocks stop you and reset your speed to 1×.</div><div class="rule">Later fields contain wandering animals. Hit a cow or sheep and the run ends.</div></div><button id="startButton" type="button">Start mowing</button></div></div>
+<div id="startOverlay" class="overlay intro-overlay">
+<div class="card intro-card">
+<div class="intro-brand"><span aria-hidden="true">🌿</span> Farm League <span aria-hidden="true">🌿</span></div>
+<div class="title-lockup"><span class="title-tractor" aria-hidden="true">🚜</span><h1><span>Tractor</span> <strong>Dash</strong></h1></div>
+
+<section class="intro-panel objective-panel" aria-labelledby="objectiveTitle">
+<div class="panel-heading"><span aria-hidden="true">🎯</span><h2 id="objectiveTitle">Objective</h2></div>
+<p>Clear as many increasingly difficult fields as you can before time runs out.</p>
+<div class="round-length"><span aria-hidden="true">⏱️</span><strong>2:00</strong><small>minutes</small></div>
+</section>
+
+<section class="intro-panel rules-panel" aria-labelledby="rulesTitle">
+<div class="panel-heading"><span aria-hidden="true">📋</span><h2 id="rulesTitle">Rules</h2></div>
+<div class="intro-rule"><span aria-hidden="true">🌱</span><p>Mow <strong>every patch of grass</strong> to unlock the next field.</p></div>
+<div class="intro-rule"><span aria-hidden="true">🪨</span><p>Avoid <strong>trees and rocks</strong> or your speed resets.</p></div>
+<div class="intro-rule"><span aria-hidden="true">🐄</span><p>Hit a <strong>wandering animal</strong> and your run ends.</p></div>
+</section>
+
+<section class="intro-panel controls-panel" aria-labelledby="controlsTitle">
+<div class="panel-heading"><span aria-hidden="true">✥</span><h2 id="controlsTitle">Controls</h2></div>
+<div class="control-guide">
+<div class="mini-dpad" aria-hidden="true"><span class="mini-up">▲</span><span class="mini-left">◀</span><i></i><span class="mini-right">▶</span><span class="mini-down">▼</span></div>
+<p>Use the D-pad, arrow keys or WASD to drive.</p>
+</div>
+</section>
+
+<button id="startButton" class="start-mowing" type="button"><span aria-hidden="true">🚜</span> Start mowing</button>
+<p class="score-tip"><span aria-hidden="true">💡</span> Every grass tile scores. The faster you go, the more you earn!</p>
+<a class="intro-back" href="../../index.html">← Back to Farm League</a>
+</div>
+</div>
 <div id="gameOverOverlay" class="overlay hidden"><div class="card"><div class="eyebrow">Run over</div><h1 id="gameOverTitle">Game over</h1><p id="finalText">You scored 0 points.</p><div class="rules"><div class="rule" id="finalBest">Best score: 0</div><div class="rule" id="finalTime">Time survived: 0:00</div><div class="rule" id="finalSpeed">Fields cleared: 0</div></div><button id="restartButton" type="button">Play again</button></div></div>
 </section>
 <section class="farm-controls" aria-label="Movement controls">
