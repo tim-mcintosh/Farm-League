@@ -18,6 +18,7 @@
   };
   const keys = {};
   const pointers = new Map();
+  const mobileCameraQuery = window.matchMedia?.('(pointer: coarse) and (orientation: portrait)');
   const cropStages = ['seed', 'growing', 'ready', 'overripe', 'dead'];
   const fieldCentre = { x: CONFIG.arena.width / 2, y: CONFIG.arena.height / 2 };
   let state;
@@ -811,7 +812,24 @@
   }
 
   function draw() {
+    updateMobileCamera();
     renderer.draw(context, state);
+  }
+
+  function updateMobileCamera() {
+    if (!mobileCameraQuery?.matches) {
+      canvas.style.removeProperty('left');
+      canvas.style.removeProperty('transform');
+      return;
+    }
+    const stage = canvas.parentElement;
+    if (!stage?.clientHeight || !stage.clientWidth) return;
+    const scale = stage.clientHeight / canvas.height;
+    const renderedWidth = canvas.width * scale;
+    const minimumLeft = Math.min(0, stage.clientWidth - renderedWidth);
+    const centredOnPlayer = stage.clientWidth / 2 - state.player.x * scale;
+    canvas.style.left = `${Math.max(minimumLeft, Math.min(0, centredOnPlayer))}px`;
+    canvas.style.transform = 'none';
   }
 
   function gameLoop(timestamp) {
@@ -864,11 +882,14 @@
   });
   addEventListener('keyup', event => { keys[normaliseKey(event)] = false; });
   addEventListener('blur', clearInput);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) clearInput();
+  });
 
   document.querySelectorAll('[data-direction]').forEach(button => {
     const release = event => {
       pointers.delete(event.pointerId);
-      button.classList.remove('active');
+      button.classList.toggle('active', [...pointers.values()].includes(button.dataset.direction));
     };
     button.addEventListener('pointerdown', event => {
       event.preventDefault();

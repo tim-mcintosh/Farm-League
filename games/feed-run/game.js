@@ -31,6 +31,7 @@ const directionKeys = { up: 'ArrowUp', down: 'ArrowDown', left: 'ArrowLeft', rig
 const keys = {};
 const pointerDirections = new Map();
 const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || false;
+const mobileCameraQuery = window.matchMedia?.('(pointer: coarse) and (orientation: portrait)');
 
 let state;
 let animationFrame = 0;
@@ -844,12 +845,29 @@ function drawPlayer() {
 }
 
 function draw() {
+  updateMobileCamera();
   drawFarmBackground();
   drawPenGrounds();
   drawPenAnimals();
   drawPenFences();
   drawFoods();
   drawPlayer();
+}
+
+function updateMobileCamera() {
+  if (!mobileCameraQuery?.matches) {
+    canvas.style.removeProperty('left');
+    canvas.style.removeProperty('transform');
+    return;
+  }
+  const stage = canvas.parentElement;
+  if (!stage?.clientHeight || !stage.clientWidth) return;
+  const scale = stage.clientHeight / canvas.height;
+  const renderedWidth = canvas.width * scale;
+  const minimumLeft = Math.min(0, stage.clientWidth - renderedWidth);
+  const centredOnPlayer = stage.clientWidth / 2 - state.player.x * scale;
+  canvas.style.left = `${Math.max(minimumLeft, Math.min(0, centredOnPlayer))}px`;
+  canvas.style.transform = 'none';
 }
 
 function gameLoop(timestamp) {
@@ -878,6 +896,9 @@ addEventListener('keyup', event => {
 });
 
 addEventListener('blur', clearInput);
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) clearInput();
+});
 
 document.querySelectorAll('[data-direction]').forEach(button => {
   const release = event => {

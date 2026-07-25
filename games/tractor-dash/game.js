@@ -164,6 +164,7 @@ function buildField(fieldLevel) {
 }
 
 function reset() {
+  clearInput();
   score = 0;
   speedPoints = 0;
   timeLeft = CONFIG.roundSeconds;
@@ -191,6 +192,7 @@ function start() {
 function end(type) {
   running = false;
   cancelAnimationFrame(raf);
+  clearInput();
   saveBestScore();
   document.getElementById('gameOverTitle').textContent =
     type === 'timer' ? 'Time!' :
@@ -699,6 +701,11 @@ function setDir(direction, on) {
   keys[{ up: 'ArrowUp', down: 'ArrowDown', left: 'ArrowLeft', right: 'ArrowRight' }[direction]] = on;
 }
 
+function clearInput() {
+  Object.keys(keys).forEach(key => { keys[key] = false; });
+  document.querySelectorAll('[data-dir]').forEach(button => button.classList.remove('active'));
+}
+
 addEventListener('keydown', event => {
   const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
   if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd'].includes(key)) {
@@ -712,18 +719,27 @@ addEventListener('keyup', event => {
   keys[key] = false;
 });
 
-addEventListener('blur', () => Object.keys(keys).forEach(key => keys[key] = false));
+addEventListener('blur', clearInput);
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) clearInput();
+});
 
 document.querySelectorAll('[data-dir]').forEach(button => {
   const direction = button.dataset.dir;
-  ['pointerdown', 'touchstart'].forEach(name => button.addEventListener(name, event => {
-    event.preventDefault();
-    setDir(direction, true);
-  }, { passive: false }));
-  ['pointerup', 'pointercancel', 'pointerleave', 'touchend'].forEach(name => button.addEventListener(name, event => {
+  const release = event => {
     event.preventDefault();
     setDir(direction, false);
-  }, { passive: false }));
+    button.classList.remove('active');
+  };
+  button.addEventListener('pointerdown', event => {
+    event.preventDefault();
+    setDir(direction, true);
+    button.classList.add('active');
+    button.setPointerCapture(event.pointerId);
+  });
+  button.addEventListener('pointerup', release);
+  button.addEventListener('pointercancel', release);
+  button.addEventListener('lostpointercapture', release);
   button.addEventListener('contextmenu', event => event.preventDefault());
 });
 

@@ -292,3 +292,40 @@ h1 { margin: 7px 0 10px; font-size: clamp(2.7rem, 11vw, 4.8rem); line-height: 0.
 @media (prefers-reduced-motion: reduce) {
   .hunger-card.critical { animation: none; }
 }
+
+/* Arcade-style D-pad shared visually with the other Farm League games. */
+.mobile-controls { --control-size: clamp(68px, 19vw, 82px); grid-template-columns: repeat(3, var(--control-size)); gap: 8px; }
+.mobile-controls button {
+  min-height: var(--control-size);
+  border-color: rgba(255,255,255,.16);
+  border-radius: 18px;
+  background: linear-gradient(#244a2e, #1a3723);
+  box-shadow: inset 0 -4px 0 rgba(0,0,0,.22), 0 5px 14px rgba(0,0,0,.2);
+  font-size: 1.65rem;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 70ms ease, box-shadow 70ms ease, background 70ms ease;
+}
+.mobile-controls button.active {
+  background: linear-gradient(#3b7045, #2a5737);
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,.2), 0 2px 6px rgba(0,0,0,.18);
+  transform: translateY(3px) scale(.98);
+}
+@media (hover: hover) and (pointer: fine) { .mobile-controls { display: none; } }
+@media (pointer: coarse) { .mobile-controls { display: grid; } }
+@media (pointer: coarse) and (orientation: portrait) {
+  .hunger-panel { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+  .hunger-card { min-width: 0; padding: 5px 4px; }
+  .animal-heading { overflow: hidden; font-size: clamp(.58rem, 2.7vw, .72rem); text-overflow: ellipsis; white-space: nowrap; }
+  .meter { margin-top: 4px; }
+  .hunger-label { font-size: .56rem; }
+  .game-stage { height: auto; min-height: 330px; max-height: 58dvh; flex: 1 1 58dvh; }
+  .game-stage canvas { position: absolute; left: 50%; width: auto; max-width: none; height: 100%; transform: translateX(-50%); }
+}
+@media (pointer: coarse) and (orientation: portrait) and (max-height: 650px) {
+  .mobile-controls { --control-size: clamp(58px, 16vw, 66px); }
+  .game-stage { min-height: 280px; }
+}
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 700px) {
+  .mobile-controls { --control-size: 56px; right: max(8px, env(safe-area-inset-right)); }
+  .mobile-controls button { border-radius: 15px; font-size: 1.35rem; }
+}
