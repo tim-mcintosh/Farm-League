@@ -26,6 +26,16 @@
   touch-action: none;
 }
 
+.farm-dpad,
+.farm-dpad * {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none !important;
+}
+
 .farm-dpad::before,
 .farm-dpad::after {
   position: absolute;

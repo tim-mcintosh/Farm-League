@@ -18,6 +18,7 @@
       this.onPointerDown = this.onPointerDown.bind(this);
       this.onPointerMove = this.onPointerMove.bind(this);
       this.onPointerEnd = this.onPointerEnd.bind(this);
+      this.preventBrowserGesture = this.preventBrowserGesture.bind(this);
       this.reset = this.reset.bind(this);
       this.onVisibilityChange = () => {
         if (document.hidden) this.reset();
@@ -28,9 +29,16 @@
       element.addEventListener('pointerup', this.onPointerEnd);
       element.addEventListener('pointercancel', this.onPointerEnd);
       element.addEventListener('lostpointercapture', this.onPointerEnd);
-      element.addEventListener('contextmenu', event => event.preventDefault());
+      element.addEventListener('contextmenu', this.preventBrowserGesture);
+      element.addEventListener('dblclick', this.preventBrowserGesture);
+      ['touchstart', 'touchmove', 'touchend', 'gesturestart', 'gesturechange', 'gestureend']
+        .forEach(type => element.addEventListener(type, this.preventBrowserGesture, { passive: false }));
       window.addEventListener('blur', this.reset);
       document.addEventListener('visibilitychange', this.onVisibilityChange);
+    }
+
+    preventBrowserGesture(event) {
+      if (event.cancelable) event.preventDefault();
     }
 
     directionAt(clientX, clientY) {
