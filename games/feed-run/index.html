@@ -5,8 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Keep every animal fed in Feed Run, a two-minute Farm League challenge.">
 <title>Feed Run — Farm League</title>
+<link rel="stylesheet" href="../../assets/shared/mobile-dpad.css">
 <link rel="stylesheet" href="styles.css">
 <script src="config.js" defer></script>
+<script src="../../assets/shared/mobile-dpad.js" defer></script>
 <script src="game.js" defer></script>
 </head>
 <body>
@@ -80,13 +82,14 @@
 </div>
 </section>
 
-<section class="mobile-controls" aria-label="Movement controls">
-<button class="control-spacer" tabindex="-1" aria-hidden="true"></button>
-<button data-direction="up" type="button" aria-label="Move up">▲</button>
-<button class="control-spacer" tabindex="-1" aria-hidden="true"></button>
-<button data-direction="left" type="button" aria-label="Move left">◀</button>
-<button data-direction="down" type="button" aria-label="Move down">▼</button>
-<button data-direction="right" type="button" aria-label="Move right">▶</button>
+<section class="farm-controls" aria-label="Movement controls">
+<div class="farm-dpad" data-farm-dpad role="group" aria-label="Directional pad">
+<button class="farm-dpad__direction" data-direction="up" type="button" tabindex="-1" aria-label="Move up">▲</button>
+<button class="farm-dpad__direction" data-direction="right" type="button" tabindex="-1" aria-label="Move right">▶</button>
+<button class="farm-dpad__direction" data-direction="down" type="button" tabindex="-1" aria-label="Move down">▼</button>
+<button class="farm-dpad__direction" data-direction="left" type="button" tabindex="-1" aria-label="Move left">◀</button>
+<span class="farm-dpad__centre" aria-hidden="true"></span>
+</div>
 </section>
 </main>
 </body>

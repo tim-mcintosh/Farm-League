@@ -27,9 +27,8 @@ const ANIMAL_DEFINITIONS = {
 
 const animalKeys = Object.keys(ANIMAL_DEFINITIONS);
 const foodEntries = Object.entries(CONFIG.food.types);
-const directionKeys = { up: 'ArrowUp', down: 'ArrowDown', left: 'ArrowLeft', right: 'ArrowRight' };
 const keys = {};
-const pointerDirections = new Map();
+let mobileDirection = null;
 const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || false;
 const mobileCameraQuery = window.matchMedia?.('(pointer: coarse) and (orientation: portrait)');
 
@@ -134,8 +133,8 @@ function showFeedback(message) {
 
 function clearInput() {
   Object.keys(keys).forEach(key => { keys[key] = false; });
-  pointerDirections.clear();
-  document.querySelectorAll('[data-direction]').forEach(button => button.classList.remove('active'));
+  mobileDirection = null;
+  document.querySelector('[data-farm-dpad]')?.farmLeagueDPad?.reset();
 }
 
 function resetRound() {
@@ -188,15 +187,14 @@ function finishRound(outcome, failedAnimalKey = null) {
   elements.endOverlay.classList.remove('hidden');
 }
 
-// Input resolves keyboard and simultaneous touch directions into direct movement.
+// Input resolves keyboard state and the shared D-pad's single active direction.
 function movementVector() {
-  const heldDirections = new Set(pointerDirections.values());
   let x = 0;
   let y = 0;
-  if (keys.ArrowUp || keys.w || heldDirections.has('up')) y -= 1;
-  if (keys.ArrowDown || keys.s || heldDirections.has('down')) y += 1;
-  if (keys.ArrowLeft || keys.a || heldDirections.has('left')) x -= 1;
-  if (keys.ArrowRight || keys.d || heldDirections.has('right')) x += 1;
+  if (keys.ArrowUp || keys.w || mobileDirection === 'up') y -= 1;
+  if (keys.ArrowDown || keys.s || mobileDirection === 'down') y += 1;
+  if (keys.ArrowLeft || keys.a || mobileDirection === 'left') x -= 1;
+  if (keys.ArrowRight || keys.d || mobileDirection === 'right') x += 1;
   const length = Math.hypot(x, y);
   return length ? { x: x / length, y: y / length } : { x: 0, y: 0 };
 }
@@ -900,21 +898,8 @@ document.addEventListener('visibilitychange', () => {
   if (document.hidden) clearInput();
 });
 
-document.querySelectorAll('[data-direction]').forEach(button => {
-  const release = event => {
-    pointerDirections.delete(event.pointerId);
-    button.classList.toggle('active', [...pointerDirections.values()].includes(button.dataset.direction));
-  };
-  button.addEventListener('pointerdown', event => {
-    event.preventDefault();
-    pointerDirections.set(event.pointerId, button.dataset.direction);
-    button.classList.add('active');
-    button.setPointerCapture(event.pointerId);
-  });
-  button.addEventListener('pointerup', release);
-  button.addEventListener('pointercancel', release);
-  button.addEventListener('lostpointercapture', release);
-  button.addEventListener('contextmenu', event => event.preventDefault());
+document.querySelector('[data-farm-dpad]').addEventListener('farmleague:directionchange', event => {
+  mobileDirection = event.detail.direction;
 });
 
 document.getElementById('startButton').addEventListener('click', startRound);

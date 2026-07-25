@@ -1,0 +1,147 @@
+.farm-controls {
+  --farm-dpad-size: clamp(200px, 56vw, 224px);
+  display: grid;
+  justify-content: center;
+  margin-top: 14px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.farm-dpad {
+  --farm-dpad-arm: calc(var(--farm-dpad-size) / 3);
+  position: relative;
+  width: var(--farm-dpad-size);
+  height: var(--farm-dpad-size);
+  border-radius: 34%;
+  outline: none;
+  touch-action: none;
+}
+
+.farm-dpad::before,
+.farm-dpad::after {
+  position: absolute;
+  z-index: 0;
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: 20px;
+  background: linear-gradient(145deg, #294d32, #183420);
+  box-shadow: inset 0 -5px 0 rgba(0, 0, 0, .24), 0 7px 18px rgba(0, 0, 0, .24);
+  content: "";
+}
+
+.farm-dpad::before {
+  inset: 0 var(--farm-dpad-arm);
+}
+
+.farm-dpad::after {
+  inset: var(--farm-dpad-arm) 0;
+}
+
+.farm-dpad__direction {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  width: var(--farm-dpad-arm);
+  height: var(--farm-dpad-arm);
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font: 900 clamp(1.45rem, 6vw, 1.8rem)/1 system-ui, sans-serif;
+  pointer-events: none;
+  text-shadow: 0 2px 2px rgba(0, 0, 0, .38);
+  transition: none;
+}
+
+.farm-dpad__direction[data-direction="up"] {
+  top: 0;
+  left: var(--farm-dpad-arm);
+}
+
+.farm-dpad__direction[data-direction="right"] {
+  top: var(--farm-dpad-arm);
+  right: 0;
+}
+
+.farm-dpad__direction[data-direction="down"] {
+  bottom: 0;
+  left: var(--farm-dpad-arm);
+}
+
+.farm-dpad__direction[data-direction="left"] {
+  top: var(--farm-dpad-arm);
+  left: 0;
+}
+
+.farm-dpad__direction.active {
+  border-radius: 18px;
+  background: rgba(103, 187, 105, .38);
+  box-shadow: inset 0 2px 7px rgba(0, 0, 0, .22);
+  transform: scale(.96);
+}
+
+.farm-dpad__centre {
+  position: absolute;
+  top: var(--farm-dpad-arm);
+  left: var(--farm-dpad-arm);
+  z-index: 3;
+  width: var(--farm-dpad-arm);
+  height: var(--farm-dpad-arm);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 50%;
+  background: #142d1d;
+  box-shadow: inset 0 3px 9px rgba(0, 0, 0, .32);
+  pointer-events: none;
+}
+
+.farm-dpad:focus-visible {
+  outline: 3px solid #b4ed73;
+  outline-offset: 5px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .farm-controls {
+    display: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .farm-controls {
+    display: grid;
+  }
+}
+
+@media (pointer: coarse) and (max-height: 700px) and (orientation: portrait) {
+  .farm-controls {
+    --farm-dpad-size: clamp(186px, 52vw, 204px);
+    margin-top: 12px;
+  }
+}
+
+@media (pointer: coarse) and (max-height: 500px) and (orientation: landscape) {
+  .farm-controls {
+    --farm-dpad-size: clamp(192px, 49vh, 204px);
+    position: fixed;
+    right: max(10px, env(safe-area-inset-right));
+    bottom: max(10px, env(safe-area-inset-bottom));
+    z-index: 4;
+    margin: 0;
+    padding: 0;
+    opacity: .96;
+  }
+
+  .farm-dpad::before,
+  .farm-dpad::after {
+    border-radius: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .farm-dpad__direction {
+    transition: none;
+  }
+}

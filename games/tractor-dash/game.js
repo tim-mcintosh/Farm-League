@@ -11,6 +11,7 @@ const W = canvas.width;
 const H = canvas.height;
 const TILE = CONFIG.tileSize;
 const keys = {};
+let mobileDirection = null;
 
 let running = false;
 let last = 0;
@@ -222,10 +223,10 @@ function updateHud() {
 function resolveDir() {
   let x = 0;
   let y = 0;
-  if (keys.ArrowUp || keys.w) y--;
-  if (keys.ArrowDown || keys.s) y++;
-  if (keys.ArrowLeft || keys.a) x--;
-  if (keys.ArrowRight || keys.d) x++;
+  if (keys.ArrowUp || keys.w || mobileDirection === 'up') y--;
+  if (keys.ArrowDown || keys.s || mobileDirection === 'down') y++;
+  if (keys.ArrowLeft || keys.a || mobileDirection === 'left') x--;
+  if (keys.ArrowRight || keys.d || mobileDirection === 'right') x++;
   if (x || y) {
     const length = Math.hypot(x, y);
     tractor.dx = x / length;
@@ -697,13 +698,10 @@ function loop(timestamp) {
   if (running) raf = requestAnimationFrame(loop);
 }
 
-function setDir(direction, on) {
-  keys[{ up: 'ArrowUp', down: 'ArrowDown', left: 'ArrowLeft', right: 'ArrowRight' }[direction]] = on;
-}
-
 function clearInput() {
   Object.keys(keys).forEach(key => { keys[key] = false; });
-  document.querySelectorAll('[data-dir]').forEach(button => button.classList.remove('active'));
+  mobileDirection = null;
+  document.querySelector('[data-farm-dpad]')?.farmLeagueDPad?.reset();
 }
 
 addEventListener('keydown', event => {
@@ -724,23 +722,8 @@ document.addEventListener('visibilitychange', () => {
   if (document.hidden) clearInput();
 });
 
-document.querySelectorAll('[data-dir]').forEach(button => {
-  const direction = button.dataset.dir;
-  const release = event => {
-    event.preventDefault();
-    setDir(direction, false);
-    button.classList.remove('active');
-  };
-  button.addEventListener('pointerdown', event => {
-    event.preventDefault();
-    setDir(direction, true);
-    button.classList.add('active');
-    button.setPointerCapture(event.pointerId);
-  });
-  button.addEventListener('pointerup', release);
-  button.addEventListener('pointercancel', release);
-  button.addEventListener('lostpointercapture', release);
-  button.addEventListener('contextmenu', event => event.preventDefault());
+document.querySelector('[data-farm-dpad]').addEventListener('farmleague:directionchange', event => {
+  mobileDirection = event.detail.direction;
 });
 
 document.getElementById('startButton').addEventListener('click', start);

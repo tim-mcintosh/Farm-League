@@ -17,7 +17,7 @@
     bestScore: document.getElementById('bestScore')
   };
   const keys = {};
-  const pointers = new Map();
+  let mobileDirection = null;
   const mobileCameraQuery = window.matchMedia?.('(pointer: coarse) and (orientation: portrait)');
   const cropStages = ['seed', 'growing', 'ready', 'overripe', 'dead'];
   const fieldCentre = { x: CONFIG.arena.width / 2, y: CONFIG.arena.height / 2 };
@@ -593,13 +593,12 @@
   }
 
   function movementVector() {
-    const held = new Set(pointers.values());
     let x = 0;
     let y = 0;
-    if (keys.ArrowUp || keys.w || held.has('up')) y--;
-    if (keys.ArrowDown || keys.s || held.has('down')) y++;
-    if (keys.ArrowLeft || keys.a || held.has('left')) x--;
-    if (keys.ArrowRight || keys.d || held.has('right')) x++;
+    if (keys.ArrowUp || keys.w || mobileDirection === 'up') y--;
+    if (keys.ArrowDown || keys.s || mobileDirection === 'down') y++;
+    if (keys.ArrowLeft || keys.a || mobileDirection === 'left') x--;
+    if (keys.ArrowRight || keys.d || mobileDirection === 'right') x++;
     const length = Math.hypot(x, y);
     return length ? { x: x / length, y: y / length } : { x: 0, y: 0 };
   }
@@ -844,8 +843,8 @@
 
   function clearInput() {
     Object.keys(keys).forEach(key => { keys[key] = false; });
-    pointers.clear();
-    document.querySelectorAll('[data-direction]').forEach(button => button.classList.remove('active'));
+    mobileDirection = null;
+    document.querySelector('[data-farm-dpad]')?.farmLeagueDPad?.reset();
   }
 
   function resetRound() {
@@ -886,21 +885,8 @@
     if (document.hidden) clearInput();
   });
 
-  document.querySelectorAll('[data-direction]').forEach(button => {
-    const release = event => {
-      pointers.delete(event.pointerId);
-      button.classList.toggle('active', [...pointers.values()].includes(button.dataset.direction));
-    };
-    button.addEventListener('pointerdown', event => {
-      event.preventDefault();
-      pointers.set(event.pointerId, button.dataset.direction);
-      button.classList.add('active');
-      button.setPointerCapture(event.pointerId);
-    });
-    button.addEventListener('pointerup', release);
-    button.addEventListener('pointercancel', release);
-    button.addEventListener('lostpointercapture', release);
-    button.addEventListener('contextmenu', event => event.preventDefault());
+  document.querySelector('[data-farm-dpad]').addEventListener('farmleague:directionchange', event => {
+    mobileDirection = event.detail.direction;
   });
 
   document.getElementById('startButton').addEventListener('click', startRound);

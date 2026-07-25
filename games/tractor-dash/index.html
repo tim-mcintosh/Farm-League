@@ -4,8 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Tractor Dash</title>
+<link rel="stylesheet" href="../../assets/shared/mobile-dpad.css">
 <link rel="stylesheet" href="styles.css">
 <script src="config.js" defer></script>
+<script src="../../assets/shared/mobile-dpad.js" defer></script>
 <script src="game.js" defer></script>
 </head>
 <body>
@@ -22,7 +24,15 @@
 <div id="startOverlay" class="overlay"><div class="card"><div class="eyebrow">Farm League</div><h1>Tractor Dash</h1><p>Clear as many fields as you can in two minutes. Every new field has a fresh layout and more hazards.</p><div class="rules"><div class="rule">Mow every reachable patch of grass to unlock the next field.</div><div class="rule">Every grass tile scores, cleared fields earn a bonus, and speed can rise to 5×.</div><div class="rule">Trees and rocks stop you and reset your speed to 1×.</div><div class="rule">Later fields contain wandering animals. Hit a cow or sheep and the run ends.</div></div><button id="startButton" type="button">Start mowing</button></div></div>
 <div id="gameOverOverlay" class="overlay hidden"><div class="card"><div class="eyebrow">Run over</div><h1 id="gameOverTitle">Game over</h1><p id="finalText">You scored 0 points.</p><div class="rules"><div class="rule" id="finalBest">Best score: 0</div><div class="rule" id="finalTime">Time survived: 0:00</div><div class="rule" id="finalSpeed">Fields cleared: 0</div></div><button id="restartButton" type="button">Play again</button></div></div>
 </section>
-<section class="controls" aria-label="Movement controls"><i></i><button data-dir="up" type="button" aria-label="Move up">▲</button><i></i><button data-dir="left" type="button" aria-label="Move left">◀</button><button data-dir="down" type="button" aria-label="Move down">▼</button><button data-dir="right" type="button" aria-label="Move right">▶</button></section>
+<section class="farm-controls" aria-label="Movement controls">
+<div class="farm-dpad" data-farm-dpad role="group" aria-label="Directional pad">
+<button class="farm-dpad__direction" data-direction="up" type="button" tabindex="-1" aria-label="Move up">▲</button>
+<button class="farm-dpad__direction" data-direction="right" type="button" tabindex="-1" aria-label="Move right">▶</button>
+<button class="farm-dpad__direction" data-direction="down" type="button" tabindex="-1" aria-label="Move down">▼</button>
+<button class="farm-dpad__direction" data-direction="left" type="button" tabindex="-1" aria-label="Move left">◀</button>
+<span class="farm-dpad__centre" aria-hidden="true"></span>
+</div>
+</section>
 </main>
 </body>
 </html>
