@@ -81,8 +81,10 @@ p {
 }
 
 .brand-leaves {
-  font-size: 1.8rem;
-  filter: saturate(1.2);
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  object-fit: contain;
 }
 
 .site-nav {
@@ -127,16 +129,6 @@ p {
   cursor: default;
 }
 
-.nav-planned small {
-  position: absolute;
-  top: 0;
-  right: -17px;
-  color: var(--accent);
-  font-size: 0.48rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 .button {
   display: inline-flex;
   min-height: 50px;
@@ -172,6 +164,21 @@ p {
   padding: 0 17px;
   box-shadow: 0 4px 0 #477817;
   font-size: 0.72rem;
+}
+
+.button--signin {
+  border-color: rgba(155, 216, 63, 0.3);
+  background: rgba(3, 29, 19, 0.8);
+  box-shadow: none;
+  color: #dce5dc;
+  cursor: not-allowed;
+}
+
+.button--signin:hover,
+.button--signin:active {
+  filter: none;
+  box-shadow: none;
+  transform: none;
 }
 
 .hero {
@@ -650,7 +657,8 @@ h2 {
   }
 
   .brand-leaves {
-    font-size: 1.45rem;
+    width: 34px;
+    height: 34px;
   }
 
   .site-nav {
@@ -704,21 +712,13 @@ h2 {
 }
 
 @media (max-width: 520px) {
-  .site-header .button--compact span {
-    display: none;
-  }
-
   .site-header .button--compact {
-    min-width: 76px;
+    min-width: 68px;
     padding: 0 10px;
   }
 
   .site-nav {
     margin-left: auto;
-  }
-
-  .site-nav .is-active {
-    display: none;
   }
 
   .hero {
