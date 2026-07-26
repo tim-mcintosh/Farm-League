@@ -1,6 +1,7 @@
 const CONFIG = window.FEED_RUN_CONFIG;
 const canvas = document.getElementById('game');
 const context = canvas.getContext('2d');
+const FARM_RENDERING = window.FARM_RENDERING;
 
 const elements = {
   score: document.getElementById('score'),
@@ -27,6 +28,28 @@ const ANIMAL_DEFINITIONS = {
 
 const animalKeys = Object.keys(ANIMAL_DEFINITIONS);
 const foodEntries = Object.entries(CONFIG.food.types);
+const SPRITE_DEFINITIONS = Object.freeze({
+  horses: { src: 'assets/horse-top-down.png', width: 70, height: 34 },
+  cows: { src: '../../assets/shared/game-sprites/cow-top-down.png', width: 66, height: 36 },
+  sheep: { src: '../../assets/shared/game-sprites/sheep-top-down.png', width: 56, height: 34 },
+  chickens: { src: 'assets/chicken-top-down.png', width: 48, height: 24 },
+  carrot: { src: 'assets/food/carrot.png', width: 34, height: 34 },
+  apple: { src: 'assets/food/apple.png', width: 32, height: 32 },
+  cowFeed: { src: 'assets/food/cow-feed.png', width: 34, height: 34 },
+  grass: { src: 'assets/food/grass-bundle.png', width: 38, height: 25 },
+  clover: { src: 'assets/food/clover.png', width: 32, height: 32 },
+  corn: { src: 'assets/food/corn.png', width: 34, height: 34 },
+  grain: { src: 'assets/food/grain.png', width: 28, height: 34 },
+  hay: { src: 'assets/food/hay.png', width: 38, height: 26 }
+});
+const sprites = {};
+
+for (const [name, definition] of Object.entries(SPRITE_DEFINITIONS)) {
+  const image = new Image();
+  image.src = definition.src;
+  sprites[name] = image;
+}
+
 const keys = {};
 let mobileDirection = null;
 const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || false;
@@ -120,6 +143,21 @@ function pointInsideRect(x, y, rect, padding = 0) {
 
 function distance(a, b) {
   return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+function spriteReady(name) {
+  const image = sprites[name];
+  return Boolean(image?.complete && image.naturalWidth > 0);
+}
+
+function drawSprite(name, scale = 1) {
+  const image = sprites[name];
+  const definition = SPRITE_DEFINITIONS[name];
+  if (!spriteReady(name) || !definition) return false;
+  const width = definition.width * scale;
+  const height = definition.height * scale;
+  context.drawImage(image, -width / 2, -height / 2, width, height);
+  return true;
 }
 
 // This event is the stable hook for adding sounds later without coupling audio to gameplay.
@@ -482,34 +520,66 @@ function updateHud() {
 }
 
 function drawFarmBackground() {
-  context.fillStyle = '#72a94e';
-  context.fillRect(0, 0, canvas.width, canvas.height);
-
-  for (let y = 0; y < canvas.height; y += 32) {
-    for (let x = 0; x < canvas.width; x += 32) {
-      context.fillStyle = (x / 32 + y / 32) % 2
-        ? 'rgba(255,255,255,.018)'
-        : 'rgba(25,83,36,.035)';
-      context.fillRect(x, y, 32, 32);
+  const tileSize = 28;
+  for (let y = 0; y < canvas.height; y += tileSize) {
+    for (let x = 0; x < canvas.width; x += tileSize) {
+      FARM_RENDERING.drawCleanArcadeGrassTile(
+        context,
+        { x, y },
+        x / tileSize,
+        y / tileSize,
+        tileSize
+      );
     }
   }
+  drawDirtRoads();
+}
 
-  context.fillStyle = '#cfb978';
-  context.fillRect(0, 267, canvas.width, 66);
-  context.fillRect(368, 0, 64, canvas.height);
-  context.fillStyle = 'rgba(255,245,193,.18)';
-  context.fillRect(0, 276, canvas.width, 5);
-  context.fillRect(380, 0, 5, canvas.height);
+function drawDirtRoads() {
+  const paths = [
+    () => {
+      context.moveTo(-45, 302);
+      context.bezierCurveTo(175, 270, 292, 284, 405, 302);
+      context.bezierCurveTo(545, 326, 650, 278, 845, 294);
+    },
+    () => {
+      context.moveTo(398, -45);
+      context.bezierCurveTo(366, 126, 418, 215, 402, 305);
+      context.bezierCurveTo(380, 420, 420, 500, 390, 645);
+    }
+  ];
 
-  context.fillStyle = 'rgba(33, 91, 39, .34)';
-  for (let index = 0; index < 52; index += 1) {
-    const x = (index * 83 + 47) % canvas.width;
-    const y = (index * 137 + 29) % canvas.height;
-    if (x > 350 && x < 450 || y > 250 && y < 350) continue;
+  context.save();
+  context.lineCap = 'round';
+  context.lineJoin = 'round';
+  for (const path of paths) {
     context.beginPath();
-    context.arc(x, y, 2 + index % 2, 0, Math.PI * 2);
+    path();
+    context.strokeStyle = '#8d703d';
+    context.lineWidth = 78;
+    context.stroke();
+    context.beginPath();
+    path();
+    context.strokeStyle = '#c9aa66';
+    context.lineWidth = 66;
+    context.stroke();
+    context.beginPath();
+    path();
+    context.strokeStyle = 'rgba(247, 222, 157, .2)';
+    context.lineWidth = 48;
+    context.stroke();
+  }
+
+  context.fillStyle = 'rgba(102, 78, 39, .24)';
+  for (let index = 0; index < 32; index++) {
+    const horizontal = index % 2 === 0;
+    const x = horizontal ? (index * 79 + 31) % canvas.width : 385 + Math.sin(index * 1.7) * 24;
+    const y = horizontal ? 292 + Math.sin(index * 1.3) * 22 : (index * 67 + 19) % canvas.height;
+    context.beginPath();
+    context.ellipse(x, y, 2 + index % 3, 1.5, index * .4, 0, Math.PI * 2);
     context.fill();
   }
+  context.restore();
 }
 
 function drawPenGrounds() {
@@ -535,35 +605,7 @@ function drawPenGrounds() {
 }
 
 function drawFenceSegment(x1, y1, x2, y2) {
-  context.lineCap = 'round';
-  context.strokeStyle = '#694527';
-  context.lineWidth = 11;
-  context.beginPath();
-  context.moveTo(x1, y1);
-  context.lineTo(x2, y2);
-  context.stroke();
-  context.strokeStyle = '#c28a4e';
-  context.lineWidth = 6;
-  context.beginPath();
-  context.moveTo(x1, y1);
-  context.lineTo(x2, y2);
-  context.stroke();
-
-  const length = Math.hypot(x2 - x1, y2 - y1);
-  const posts = Math.max(1, Math.floor(length / 46));
-  for (let index = 0; index <= posts; index += 1) {
-    const amount = index / posts;
-    const x = x1 + (x2 - x1) * amount;
-    const y = y1 + (y2 - y1) * amount;
-    context.fillStyle = '#5b3820';
-    context.beginPath();
-    context.arc(x + 2, y + 3, 7, 0, Math.PI * 2);
-    context.fill();
-    context.fillStyle = '#d39a59';
-    context.beginPath();
-    context.arc(x, y, 6, 0, Math.PI * 2);
-    context.fill();
-  }
+  FARM_RENDERING.drawFarmFenceSegment(context, x1, y1, x2, y2);
 }
 
 function drawPenFences() {
@@ -748,10 +790,12 @@ function drawPenAnimals() {
     context.beginPath();
     context.ellipse(2, 7, key === 'chickens' ? 20 : 30, key === 'chickens' ? 10 : 13, 0, 0, Math.PI * 2);
     context.fill();
-    if (key === 'horses') drawHorse(actor);
-    if (key === 'cows') drawCow(actor);
-    if (key === 'sheep') drawSheep(actor);
-    if (key === 'chickens') drawChicken(actor);
+    if (!drawSprite(key)) {
+      if (key === 'horses') drawHorse(actor);
+      if (key === 'cows') drawCow(actor);
+      if (key === 'sheep') drawSheep(actor);
+      if (key === 'chickens') drawChicken(actor);
+    }
     context.restore();
   });
 }
@@ -765,10 +809,13 @@ function drawFoods() {
     context.shadowBlur = 7;
     context.shadowOffsetX = 1;
     context.shadowOffsetY = 3;
-    context.font = '30px system-ui';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.fillText(food.icon, food.x, food.y + 1);
+    context.translate(food.x, food.y);
+    if (!drawSprite(food.type)) {
+      context.font = '30px system-ui';
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      context.fillText(food.icon, 0, 1);
+    }
     context.restore();
   });
 }
@@ -835,10 +882,15 @@ function drawPlayer() {
     context.beginPath();
     context.arc(x, y - 38, 20, 0, Math.PI * 2);
     context.fill();
-    context.font = '24px system-ui';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.fillText(state.carriedFood.icon, x, y - 37);
+    context.save();
+    context.translate(x, y - 38);
+    if (!drawSprite(state.carriedFood.type, .72)) {
+      context.font = '24px system-ui';
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      context.fillText(state.carriedFood.icon, 0, 1);
+    }
+    context.restore();
   }
 }
 

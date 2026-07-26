@@ -10,6 +10,7 @@ const gameOverOverlay = document.getElementById('gameOverOverlay');
 const W = canvas.width;
 const H = canvas.height;
 const TILE = CONFIG.tileSize;
+const FARM_RENDERING = window.FARM_RENDERING;
 const keys = {};
 let mobileDirection = null;
 
@@ -17,8 +18,8 @@ const SPRITE_DEFINITIONS = Object.freeze({
   tractor: { src: 'assets/tractor-top-down.png', width: 48, height: 76 },
   tree: { src: 'assets/tree-top-down.png', width: 66, height: 66 },
   stone: { src: 'assets/stone-top-down.png', width: 48, height: 48 },
-  cow: { src: 'assets/cow-top-down.png', width: 66, height: 36 },
-  sheep: { src: 'assets/sheep-top-down.png', width: 56, height: 34 }
+  cow: { src: '../../assets/shared/game-sprites/cow-top-down.png', width: 66, height: 36 },
+  sheep: { src: '../../assets/shared/game-sprites/sheep-top-down.png', width: 56, height: 34 }
 });
 const sprites = {};
 
@@ -418,49 +419,8 @@ function drawSpriteShadow(radiusX, radiusY, offsetY = 5) {
   ctx.fill();
 }
 
-function tileHash(x, y, salt = 0) {
-  const value = Math.imul(x + salt * 17, 73856093) ^ Math.imul(y - salt * 31, 19349663);
-  return (value >>> 0) / 4294967295;
-}
-
 function drawGrassTile(screen, tileX, tileY, cut) {
-  const uncutColors = ['#6eaa36', '#72ad38', '#75af3a'];
-  const cutColors = ['#b2c761', '#b7cc66', '#adc25d'];
-  const colors = cut ? cutColors : uncutColors;
-  const colorIndex = Math.floor(tileHash(tileX, tileY) * colors.length);
-  ctx.fillStyle = colors[colorIndex];
-  ctx.fillRect(screen.x, screen.y, TILE + 1, TILE + 1);
-
-  if (cut) {
-    ctx.fillStyle = 'rgba(246, 234, 147, .14)';
-    ctx.fillRect(screen.x + 2, screen.y, 6, TILE + 1);
-    ctx.fillStyle = 'rgba(67, 109, 41, .1)';
-    ctx.fillRect(screen.x + 20, screen.y, 5, TILE + 1);
-    const clippingX = screen.x + 8 + tileHash(tileX, tileY, 3) * 12;
-    const clippingY = screen.y + 8 + tileHash(tileY, tileX, 5) * 12;
-    ctx.strokeStyle = 'rgba(83, 105, 46, .22)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(clippingX - 2, clippingY);
-    ctx.lineTo(clippingX + 3, clippingY - 1);
-    ctx.stroke();
-    return;
-  }
-
-  if (tileHash(tileX, tileY, 9) < 0.72) return;
-  const x = screen.x + 7 + tileHash(tileX, tileY, 1) * 14;
-  const baseY = screen.y + 16 + tileHash(tileY, tileX, 7) * 7;
-  const height = 6 + tileHash(tileX, tileY, 11) * 4;
-  ctx.strokeStyle = 'rgba(43, 121, 42, .45)';
-  ctx.lineWidth = 1.25;
-  ctx.beginPath();
-  ctx.moveTo(x, baseY);
-  ctx.quadraticCurveTo(x - 2, baseY - height * .5, x - 1, baseY - height);
-  ctx.moveTo(x, baseY);
-  ctx.quadraticCurveTo(x + 2, baseY - height * .48, x + 3, baseY - height * .78);
-  ctx.moveTo(x, baseY);
-  ctx.lineTo(x, baseY - height * .72);
-  ctx.stroke();
+  FARM_RENDERING.drawCleanArcadeGrassTile(ctx, screen, tileX, tileY, TILE, cut);
 }
 
 function drawGround() {
@@ -489,68 +449,7 @@ function drawGround() {
 }
 
 function drawFenceSegment(x1, y1, x2, y2) {
-  const length = Math.hypot(x2 - x1, y2 - y1);
-  if (!length) return;
-  const normalX = -(y2 - y1) / length;
-  const normalY = (x2 - x1) / length;
-  const angle = Math.atan2(y2 - y1, x2 - x1);
-
-  ctx.lineCap = 'round';
-  for (const offset of [-5, 5]) {
-    const startX = x1 + normalX * offset;
-    const startY = y1 + normalY * offset;
-    const endX = x2 + normalX * offset;
-    const endY = y2 + normalY * offset;
-
-    ctx.strokeStyle = 'rgba(42, 29, 16, .28)';
-    ctx.lineWidth = 10;
-    ctx.beginPath();
-    ctx.moveTo(startX + 3, startY + 4);
-    ctx.lineTo(endX + 3, endY + 4);
-    ctx.stroke();
-
-    ctx.strokeStyle = '#6b421f';
-    ctx.lineWidth = 9;
-    ctx.beginPath();
-    ctx.moveTo(startX, startY);
-    ctx.lineTo(endX, endY);
-    ctx.stroke();
-
-    ctx.strokeStyle = '#bd7d38';
-    ctx.lineWidth = 5;
-    ctx.beginPath();
-    ctx.moveTo(startX, startY - 1);
-    ctx.lineTo(endX, endY - 1);
-    ctx.stroke();
-
-    ctx.strokeStyle = 'rgba(244, 189, 102, .55)';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(startX, startY - 2);
-    ctx.lineTo(endX, endY - 2);
-    ctx.stroke();
-  }
-
-  const posts = Math.max(1, Math.floor(length / 46));
-  for (let index = 0; index <= posts; index++) {
-    const amount = index / posts;
-    const x = x1 + (x2 - x1) * amount;
-    const y = y1 + (y2 - y1) * amount;
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(angle);
-    ctx.fillStyle = 'rgba(38, 27, 16, .3)';
-    ctx.fillRect(-6, -8, 16, 20);
-    ctx.fillStyle = '#5c351a';
-    ctx.fillRect(-8, -10, 16, 20);
-    ctx.fillStyle = '#a9672d';
-    ctx.fillRect(-5, -8, 10, 16);
-    ctx.fillStyle = '#dfa45d';
-    ctx.fillRect(-4, -8, 8, 3);
-    ctx.fillStyle = 'rgba(76, 39, 16, .5)';
-    ctx.fillRect(-2, -5, 2, 10);
-    ctx.restore();
-  }
+  FARM_RENDERING.drawFarmFenceSegment(ctx, x1, y1, x2, y2);
 }
 
 function drawObstacle(obstacle) {
