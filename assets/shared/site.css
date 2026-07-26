@@ -715,21 +715,24 @@ h2 {
 
   .hero {
     min-height: min(620px, calc(100svh - 58px));
-    background-position: 45% center;
+    background-position: 82% center;
   }
 
   .hero__content {
     min-height: min(620px, calc(100svh - 58px));
-    padding-top: 42px;
+    padding-top: 30px;
   }
 
   .hero h1 {
-    max-width: 7ch;
-    font-size: clamp(3.2rem, 17vw, 5rem);
+    max-width: none;
+    font-size: clamp(2.45rem, 12.5vw, 3.4rem);
+    white-space: nowrap;
   }
 
   .hero__tagline {
-    font-size: 1.12rem;
+    margin-top: 12px;
+    font-size: 1rem;
+    line-height: 1.28;
   }
 
   .page-shell {
@@ -738,15 +741,41 @@ h2 {
 
   .game-grid {
     grid-template-columns: 1fr;
-    gap: 18px;
+    gap: 14px;
+  }
+
+  .game-card {
+    border-radius: 12px;
+  }
+
+  .game-card__image {
+    aspect-ratio: 16 / 5;
   }
 
   .game-card__body {
-    min-height: 232px;
+    min-height: 205px;
+    padding: 14px;
   }
 
   .game-card__name {
-    font-size: 1.55rem;
+    font-size: 1.3rem;
+  }
+
+  .game-card__description {
+    min-height: auto;
+    margin-top: 8px;
+    font-size: 0.84rem;
+  }
+
+  .game-card__meta {
+    margin: 10px 0 12px;
+    gap: 4px;
+    font-size: 0.68rem;
+  }
+
+  .game-card__button {
+    min-height: 42px;
+    font-size: 0.72rem;
   }
 
   .feature-panel__content {
