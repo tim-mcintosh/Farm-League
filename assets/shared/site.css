@@ -228,14 +228,6 @@ p {
   -webkit-text-stroke: 1px rgba(11, 37, 18, 0.3);
 }
 
-.hero h1 span {
-  display: inline-block;
-  color: var(--accent);
-  font-size: 0.47em;
-  vertical-align: 0.24em;
-  -webkit-text-stroke: 0;
-}
-
 .hero__tagline {
   margin: 20px 0 28px;
   font-size: clamp(1.18rem, 3vw, 2rem);
@@ -734,10 +726,6 @@ h2 {
   .hero h1 {
     max-width: 7ch;
     font-size: clamp(3.2rem, 17vw, 5rem);
-  }
-
-  .hero h1 span {
-    display: none;
   }
 
   .hero__tagline {
