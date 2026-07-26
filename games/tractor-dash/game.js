@@ -13,6 +13,21 @@ const TILE = CONFIG.tileSize;
 const keys = {};
 let mobileDirection = null;
 
+const SPRITE_DEFINITIONS = Object.freeze({
+  tractor: { src: 'assets/tractor-top-down.png', width: 48, height: 76 },
+  tree: { src: 'assets/tree-top-down.png', width: 66, height: 66 },
+  stone: { src: 'assets/stone-top-down.png', width: 48, height: 48 },
+  cow: { src: 'assets/cow-top-down.png', width: 66, height: 36 },
+  sheep: { src: 'assets/sheep-top-down.png', width: 56, height: 34 }
+});
+const sprites = {};
+
+for (const [name, definition] of Object.entries(SPRITE_DEFINITIONS)) {
+  const image = new Image();
+  image.src = definition.src;
+  sprites[name] = image;
+}
+
 let running = false;
 let last = 0;
 let score = 0;
@@ -377,6 +392,77 @@ function worldToScreen(x, y) {
   return { x: x - tractor.x + W / 2, y: y - tractor.y + H / 2 };
 }
 
+function spriteReady(name) {
+  const image = sprites[name];
+  return Boolean(image?.complete && image.naturalWidth > 0);
+}
+
+function drawSprite(name) {
+  const image = sprites[name];
+  const definition = SPRITE_DEFINITIONS[name];
+  if (!spriteReady(name)) return false;
+  ctx.drawImage(
+    image,
+    -definition.width / 2,
+    -definition.height / 2,
+    definition.width,
+    definition.height
+  );
+  return true;
+}
+
+function drawSpriteShadow(radiusX, radiusY, offsetY = 5) {
+  ctx.fillStyle = 'rgba(20, 31, 23, .25)';
+  ctx.beginPath();
+  ctx.ellipse(0, offsetY, radiusX, radiusY, 0, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function tileHash(x, y, salt = 0) {
+  const value = Math.imul(x + salt * 17, 73856093) ^ Math.imul(y - salt * 31, 19349663);
+  return (value >>> 0) / 4294967295;
+}
+
+function drawGrassTile(screen, tileX, tileY, cut) {
+  const uncutColors = ['#6eaa36', '#72ad38', '#75af3a'];
+  const cutColors = ['#b2c761', '#b7cc66', '#adc25d'];
+  const colors = cut ? cutColors : uncutColors;
+  const colorIndex = Math.floor(tileHash(tileX, tileY) * colors.length);
+  ctx.fillStyle = colors[colorIndex];
+  ctx.fillRect(screen.x, screen.y, TILE + 1, TILE + 1);
+
+  if (cut) {
+    ctx.fillStyle = 'rgba(246, 234, 147, .14)';
+    ctx.fillRect(screen.x + 2, screen.y, 6, TILE + 1);
+    ctx.fillStyle = 'rgba(67, 109, 41, .1)';
+    ctx.fillRect(screen.x + 20, screen.y, 5, TILE + 1);
+    const clippingX = screen.x + 8 + tileHash(tileX, tileY, 3) * 12;
+    const clippingY = screen.y + 8 + tileHash(tileY, tileX, 5) * 12;
+    ctx.strokeStyle = 'rgba(83, 105, 46, .22)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(clippingX - 2, clippingY);
+    ctx.lineTo(clippingX + 3, clippingY - 1);
+    ctx.stroke();
+    return;
+  }
+
+  if (tileHash(tileX, tileY, 9) < 0.72) return;
+  const x = screen.x + 7 + tileHash(tileX, tileY, 1) * 14;
+  const baseY = screen.y + 16 + tileHash(tileY, tileX, 7) * 7;
+  const height = 6 + tileHash(tileX, tileY, 11) * 4;
+  ctx.strokeStyle = 'rgba(43, 121, 42, .45)';
+  ctx.lineWidth = 1.25;
+  ctx.beginPath();
+  ctx.moveTo(x, baseY);
+  ctx.quadraticCurveTo(x - 2, baseY - height * .5, x - 1, baseY - height);
+  ctx.moveTo(x, baseY);
+  ctx.quadraticCurveTo(x + 2, baseY - height * .48, x + 3, baseY - height * .78);
+  ctx.moveTo(x, baseY);
+  ctx.lineTo(x, baseY - height * .72);
+  ctx.stroke();
+}
+
 function drawGround() {
   const startX = Math.floor((tractor.x - W / 2) / TILE) - 1;
   const endX = Math.ceil((tractor.x + W / 2) / TILE) + 1;
@@ -389,19 +475,7 @@ function drawGround() {
       const insideField = x >= field.minTileX && x <= field.maxTileX && y >= field.minTileY && y <= field.maxTileY;
       const blocked = insideField && tileBlocked(x, y);
       const cut = insideField && (blocked || mown.has(tileKey(x, y)));
-      ctx.fillStyle = cut ? ((x + y) % 2 ? '#b9cb75' : '#adc268') : ((x + y) % 2 ? '#5ca34d' : '#63ad51');
-      ctx.fillRect(screen.x, screen.y, TILE + 1, TILE + 1);
-      if (!cut) {
-        ctx.strokeStyle = 'rgba(31,94,36,.28)';
-        ctx.lineWidth = 1.4;
-        const sway = ((x * 13 + y * 7) % 5) - 2;
-        ctx.beginPath();
-        ctx.moveTo(screen.x + 7, screen.y + 20);
-        ctx.lineTo(screen.x + 8 + sway, screen.y + 7);
-        ctx.moveTo(screen.x + 17, screen.y + 20);
-        ctx.lineTo(screen.x + 16 - sway, screen.y + 8);
-        ctx.stroke();
-      }
+      drawGrassTile(screen, x, y, cut);
     }
   }
 
@@ -415,34 +489,67 @@ function drawGround() {
 }
 
 function drawFenceSegment(x1, y1, x2, y2) {
-  ctx.lineCap = 'round';
-  ctx.strokeStyle = '#694527';
-  ctx.lineWidth = 11;
-  ctx.beginPath();
-  ctx.moveTo(x1, y1);
-  ctx.lineTo(x2, y2);
-  ctx.stroke();
-  ctx.strokeStyle = '#c28a4e';
-  ctx.lineWidth = 6;
-  ctx.beginPath();
-  ctx.moveTo(x1, y1);
-  ctx.lineTo(x2, y2);
-  ctx.stroke();
-
   const length = Math.hypot(x2 - x1, y2 - y1);
+  if (!length) return;
+  const normalX = -(y2 - y1) / length;
+  const normalY = (x2 - x1) / length;
+  const angle = Math.atan2(y2 - y1, x2 - x1);
+
+  ctx.lineCap = 'round';
+  for (const offset of [-5, 5]) {
+    const startX = x1 + normalX * offset;
+    const startY = y1 + normalY * offset;
+    const endX = x2 + normalX * offset;
+    const endY = y2 + normalY * offset;
+
+    ctx.strokeStyle = 'rgba(42, 29, 16, .28)';
+    ctx.lineWidth = 10;
+    ctx.beginPath();
+    ctx.moveTo(startX + 3, startY + 4);
+    ctx.lineTo(endX + 3, endY + 4);
+    ctx.stroke();
+
+    ctx.strokeStyle = '#6b421f';
+    ctx.lineWidth = 9;
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.lineTo(endX, endY);
+    ctx.stroke();
+
+    ctx.strokeStyle = '#bd7d38';
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(startX, startY - 1);
+    ctx.lineTo(endX, endY - 1);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(244, 189, 102, .55)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(startX, startY - 2);
+    ctx.lineTo(endX, endY - 2);
+    ctx.stroke();
+  }
+
   const posts = Math.max(1, Math.floor(length / 46));
   for (let index = 0; index <= posts; index++) {
     const amount = index / posts;
     const x = x1 + (x2 - x1) * amount;
     const y = y1 + (y2 - y1) * amount;
-    ctx.fillStyle = '#5b3820';
-    ctx.beginPath();
-    ctx.arc(x + 2, y + 3, 7, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#d39a59';
-    ctx.beginPath();
-    ctx.arc(x, y, 6, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+    ctx.fillStyle = 'rgba(38, 27, 16, .3)';
+    ctx.fillRect(-6, -8, 16, 20);
+    ctx.fillStyle = '#5c351a';
+    ctx.fillRect(-8, -10, 16, 20);
+    ctx.fillStyle = '#a9672d';
+    ctx.fillRect(-5, -8, 10, 16);
+    ctx.fillStyle = '#dfa45d';
+    ctx.fillRect(-4, -8, 8, 3);
+    ctx.fillStyle = 'rgba(76, 39, 16, .5)';
+    ctx.fillRect(-2, -5, 2, 10);
+    ctx.restore();
   }
 }
 
@@ -451,6 +558,13 @@ function drawObstacle(obstacle) {
   if (screen.x < -50 || screen.x > W + 50 || screen.y < -50 || screen.y > H + 50) return;
   ctx.save();
   ctx.translate(screen.x, screen.y);
+  const spriteName = obstacle.type === 'rock' ? 'stone' : 'tree';
+  if (spriteReady(spriteName)) {
+    drawSpriteShadow(obstacle.type === 'rock' ? 20 : 27, obstacle.type === 'rock' ? 8 : 11, 10);
+    drawSprite(spriteName);
+    ctx.restore();
+    return;
+  }
   if (obstacle.type === 'rock') {
     ctx.fillStyle = '#66706b';
     ctx.beginPath();
@@ -483,6 +597,12 @@ function drawAnimal(animal) {
   ctx.save();
   ctx.translate(screen.x, screen.y);
   ctx.rotate(Math.atan2(animal.vy, animal.vx));
+  if (spriteReady(animal.type)) {
+    drawSpriteShadow(animal.type === 'cow' ? 25 : 21, animal.type === 'cow' ? 10 : 9, 6);
+    drawSprite(animal.type);
+    ctx.restore();
+    return;
+  }
   if (animal.type === 'cow') {
     ctx.fillStyle = 'rgba(28, 35, 29, .22)';
     ctx.beginPath();
@@ -603,6 +723,12 @@ function drawTractor() {
   ctx.translate(W / 2, H / 2);
   ctx.rotate(Math.atan2(tractor.dy, tractor.dx) + Math.PI / 2);
   ctx.globalAlpha = tractor.crashTimer > 0 && Math.floor(tractor.crashTimer * 12) % 2 === 0 ? 0.45 : 1;
+  if (spriteReady('tractor')) {
+    drawSpriteShadow(21, 29, 3);
+    drawSprite('tractor');
+    ctx.restore();
+    return;
+  }
   ctx.fillStyle = '#181b19';
   ctx.fillRect(-20, -23, 9, 20);
   ctx.fillRect(11, -23, 9, 20);
