@@ -749,7 +749,8 @@ h2 {
   }
 
   .game-card__image {
-    aspect-ratio: 16 / 5;
+    height: clamp(224px, 62vw, 288px);
+    aspect-ratio: auto;
   }
 
   .game-card__body {
