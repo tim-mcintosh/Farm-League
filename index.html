@@ -3,56 +3,175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Farm League is a collection of fast, addictive farming mini-games.">
-<title>Farm League</title>
+<meta name="description" content="Farm League is a collection of quick, addictive farming mini-games.">
+<meta name="theme-color" content="#031d13">
+<title>Farm League — Quick farming games</title>
 <link rel="stylesheet" href="assets/shared/site.css">
+<script src="assets/shared/home.js" defer></script>
 </head>
 <body>
-<main class="site-shell">
-<header class="hero">
-<div class="brand-mark" aria-hidden="true">FL</div>
-<p class="eyebrow">Pick a game. Chase a score.</p>
-<h1>Farm League</h1>
-<p class="lede">A collection of fast, addictive farming mini-games.</p>
+<header class="site-header">
+<a class="site-brand" href="#top" aria-label="Farm League home">
+<span class="brand-leaves" aria-hidden="true">🌱</span>
+<span>Farm<br>League</span>
+</a>
+<nav class="site-nav" aria-label="Primary navigation">
+<a class="is-active" href="#top">Home</a>
+<a href="#games">Games</a>
+<span class="nav-planned">Challenges <small>Soon</small></span>
+<span class="nav-planned">Leaderboards <small>Soon</small></span>
+</nav>
+<a class="button button--compact" href="#games"><span aria-hidden="true">▶</span> Play now</a>
 </header>
 
-<section class="game-library" aria-labelledby="games-heading">
+<main id="top">
+<section class="hero">
+<div class="hero__content">
+<p class="eyebrow">Pick a game. Chase a score.</p>
+<h1><span aria-hidden="true">❧</span> Farm League <span aria-hidden="true">❧</span></h1>
+<p class="hero__tagline"><strong>Quick farming games.</strong><br>Two minutes. One more go.</p>
+<a class="button button--hero" href="#games"><span aria-hidden="true">▶</span> Play a game</a>
+</div>
+</section>
+
+<div class="page-shell">
+<section class="game-library" id="games" aria-labelledby="games-heading">
 <div class="section-heading">
-<p class="eyebrow">The paddock</p>
+<span class="section-icon" aria-hidden="true">🎮</span>
+<div>
+<p class="eyebrow">Ready when you are</p>
 <h2 id="games-heading">Choose your game</h2>
+</div>
 </div>
 
 <div class="game-grid">
-<a class="game-card game-card--available" href="games/tractor-dash/index.html">
-<span class="game-icon" aria-hidden="true">🚜</span>
-<span class="game-name">Tractor Dash</span>
-<span class="game-description">Clear tougher fields, dodge animals, and build your speed.</span>
-<span class="status status--live">Play Now <span aria-hidden="true">→</span></span>
+<a class="game-card game-card--tractor" href="games/tractor-dash/index.html">
+<img class="game-card__image" src="assets/images/tractor-dash-card.jpg" alt="" width="1000" height="750">
+<span class="game-card__body">
+<strong class="game-card__name">Tractor Dash</strong>
+<span class="game-card__description">Mow every field before time runs out.</span>
+<span class="game-card__meta"><span>◷ 2 minutes</span><span data-best-score="farmLeague.tractorDash.bestScore">🏆 Best: 0</span></span>
+<span class="game-card__button">Play now</span>
+</span>
 </a>
 
-<a class="game-card game-card--available" href="games/feed-run/index.html">
-<span class="game-icon" aria-hidden="true">🧑‍🌾</span>
-<span class="game-name">Feed Run</span>
-<span class="game-description">Collect food, plan your route, and keep every animal fed.</span>
-<span class="status status--live">Play Now <span aria-hidden="true">→</span></span>
+<a class="game-card game-card--feed" href="games/feed-run/index.html">
+<img class="game-card__image" src="assets/images/feed-run-card.jpg" alt="" width="1000" height="750" loading="lazy">
+<span class="game-card__body">
+<strong class="game-card__name">Feed Run</strong>
+<span class="game-card__description">Deliver food and keep every animal fed.</span>
+<span class="game-card__meta"><span>◷ 2 minutes</span><span data-best-score="farmLeague.feedRun.bestScore">🏆 Best: 0</span></span>
+<span class="game-card__button">Play now</span>
+</span>
 </a>
 
-<a class="game-card game-card--available" href="games/order-rush/index.html">
-<span class="game-icon" aria-hidden="true">📦</span>
-<span class="game-name">Order Rush</span>
-<span class="game-description">Collect products, pack exact orders, and beat the delivery clock.</span>
-<span class="status status--live">Play Now <span aria-hidden="true">→</span></span>
+<a class="game-card game-card--orders" href="games/order-rush/index.html">
+<img class="game-card__image" src="assets/images/order-rush-card.jpg" alt="" width="1000" height="750" loading="lazy">
+<span class="game-card__body">
+<strong class="game-card__name">Order Rush</strong>
+<span class="game-card__description">Pack the right produce before the driver leaves.</span>
+<span class="game-card__meta"><span>◷ 2 minutes</span><span data-best-score="farmLeague.orderRush.bestScore" data-legacy-best-score="farmLeague.farmOrders.bestScore">🏆 Best: 0</span></span>
+<span class="game-card__button">Play now</span>
+</span>
 </a>
 
-<a class="game-card game-card--available" href="games/fence-frenzy/index.html">
-<span class="game-icon" aria-hidden="true">🐇</span>
-<span class="game-name">Fence Frenzy</span>
-<span class="game-description">Grow crops, mend fences, and chase hungry pests away.</span>
-<span class="status status--live">Play Now <span aria-hidden="true">→</span></span>
+<a class="game-card game-card--fence" href="games/fence-frenzy/index.html">
+<img class="game-card__image" src="assets/images/fence-frenzy-card.jpg" alt="" width="1000" height="750" loading="lazy">
+<span class="game-card__body">
+<strong class="game-card__name">Fence Frenzy</strong>
+<span class="game-card__description">Harvest crops and defend the farm from pests.</span>
+<span class="game-card__meta"><span>◷ 2 minutes</span><span data-best-score="farmLeague.fenceFrenzy.bestScore" data-legacy-best-score="farmLeague.farmDefence.bestScore">🏆 Best: 0</span></span>
+<span class="game-card__button">Play now</span>
+</span>
 </a>
-
 </div>
 </section>
+
+<section class="feature-grid" aria-label="Coming soon to Farm League">
+<article class="feature-panel">
+<div class="feature-panel__heading">
+<span aria-hidden="true">📅</span>
+<h2>Daily challenges</h2>
+</div>
+<div class="feature-panel__content">
+<span class="feature-symbol" aria-hidden="true">?</span>
+<div>
+<strong>A new reason to play every day.</strong>
+<p>Daily goals, fresh rewards and friendly competition are coming to the league.</p>
+<span class="coming-soon">Coming soon</span>
+</div>
+</div>
+</article>
+
+<article class="feature-panel">
+<div class="feature-panel__heading">
+<span aria-hidden="true">🏆</span>
+<h2>Leaderboards</h2>
+</div>
+<div class="planned-list" aria-label="Planned leaderboard features">
+<span><b>1</b> Weekly game rankings <em>Planned</em></span>
+<span><b>2</b> Personal best tracking <em>Local now</em></span>
+<span><b>3</b> League competitions <em>Planned</em></span>
+</div>
+<span class="coming-soon">Coming soon</span>
+</article>
+
+<article class="feature-panel">
+<div class="feature-panel__heading">
+<span aria-hidden="true">🌿</span>
+<h2>Build your farm</h2>
+</div>
+<p>Play games, earn rewards and turn an empty paddock into your own thriving farm.</p>
+<div class="farm-steps" aria-hidden="true">
+<span>🌱</span><b>→</b><span>🏡</span><b>→</b><span>🚜</span>
+</div>
+<span class="coming-soon">Coming soon</span>
+</article>
+
+<article class="feature-panel">
+<div class="feature-panel__heading">
+<span aria-hidden="true">🥇</span>
+<h2>Farm League tournaments</h2>
+</div>
+<p>Weekly competitions, global leaderboards and rewards are planned for the future.</p>
+<div class="tournament-icons" aria-hidden="true"><span>🏆</span><span>🏅</span><span>🎁</span></div>
+<span class="coming-soon">Coming soon</span>
+</article>
+</section>
+
+<section class="progress-panel" aria-labelledby="progress-heading">
+<div class="progress-panel__farmer" aria-hidden="true">🧑‍🌾</div>
+<div>
+<h2 id="progress-heading">Keep your progress</h2>
+<p>Accounts will eventually let you save scores across devices, grow your farm and join competitions. For now, each game safely keeps its best score on this device.</p>
+<span class="coming-soon">Accounts coming soon</span>
+</div>
+</section>
+</div>
 </main>
+
+<footer class="site-footer">
+<div class="site-footer__inner">
+<a class="site-brand site-brand--footer" href="#top" aria-label="Back to the top">
+<span class="brand-leaves" aria-hidden="true">🌱</span>
+<span>Farm<br>League</span>
+</a>
+<p>Quick farming games.<br>Two minutes. One more go.</p>
+<nav aria-label="Game links">
+<strong>Games</strong>
+<a href="games/tractor-dash/index.html">Tractor Dash</a>
+<a href="games/feed-run/index.html">Feed Run</a>
+<a href="games/order-rush/index.html">Order Rush</a>
+<a href="games/fence-frenzy/index.html">Fence Frenzy</a>
+</nav>
+<div>
+<strong>Coming later</strong>
+<span>Challenges</span>
+<span>Leaderboards</span>
+<span>Accounts &amp; achievements</span>
+</div>
+</div>
+<p class="copyright">© 2026 Farm League. All rights reserved.</p>
+</footer>
 </body>
 </html>
