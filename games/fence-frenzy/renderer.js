@@ -7,6 +7,53 @@ window.FenceFrenzyRenderer = (() => {
     overripe: '#df8738',
     dead: '#806b50'
   };
+  const spriteSources = {
+    fence1: 'assets/fences/level-1.png',
+    fence2: 'assets/fences/level-2.png',
+    fence3: 'assets/fences/level-3.png',
+    rabbit: 'assets/animals/rabbit.png',
+    crow: 'assets/animals/crow.png',
+    dog1: 'assets/animals/dog-level-1.png',
+    dog2: 'assets/animals/dog-level-2.png',
+    dog3: 'assets/animals/dog-level-3.png',
+    dog1RunExtended: 'assets/animals/dog-level-1-run-extended.png',
+    dog1RunTucked: 'assets/animals/dog-level-1-run-tucked.png',
+    dog2RunExtended: 'assets/animals/dog-level-2-run-extended.png',
+    dog2RunTucked: 'assets/animals/dog-level-2-run-tucked.png',
+    dog3RunExtended: 'assets/animals/dog-level-3-run-extended.png',
+    dog3RunTucked: 'assets/animals/dog-level-3-run-tucked.png',
+    cropSeed: 'assets/crops/seed.png',
+    cropGrowing: 'assets/crops/growing.png',
+    cropReady: 'assets/crops/ready.png',
+    cropOverripe: 'assets/crops/overripe.png',
+    cropDead: 'assets/crops/dead.png'
+  };
+  const sprites = Object.fromEntries(Object.entries(spriteSources).map(([key, src]) => {
+    const image = new Image();
+    image.src = src;
+    return [key, image];
+  }));
+
+  function spriteReady(key) {
+    const image = sprites[key];
+    return Boolean(image?.complete && image.naturalWidth > 0);
+  }
+
+  function drawLocalSprite(context, key, width, height) {
+    if (!spriteReady(key)) return false;
+    context.drawImage(sprites[key], -width / 2, -height / 2, width, height);
+    return true;
+  }
+
+  function drawContainedSprite(context, key, maxWidth, maxHeight) {
+    if (!spriteReady(key)) return false;
+    const image = sprites[key];
+    const scale = Math.min(maxWidth / image.naturalWidth, maxHeight / image.naturalHeight);
+    const width = image.naturalWidth * scale;
+    const height = image.naturalHeight * scale;
+    context.drawImage(image, -width / 2, -height / 2, width, height);
+    return true;
+  }
 
   // Canvas rendering is stateless: every frame is derived entirely from the supplied game state.
   function drawGrass(context, time) {
@@ -43,6 +90,21 @@ window.FenceFrenzyRenderer = (() => {
     context.save();
     context.translate(crop.x, crop.y);
     context.scale(pulse, pulse);
+
+    const cropSprites = {
+      seed: { key: 'cropSeed', size: 23 },
+      growing: { key: 'cropGrowing', size: 31 },
+      ready: { key: 'cropReady', size: 38 },
+      overripe: { key: 'cropOverripe', size: 38 },
+      dead: { key: 'cropDead', size: 34 }
+    };
+    const sprite = cropSprites[crop.stage];
+    if (sprite && spriteReady(sprite.key)) {
+      context.rotate(sway * .006);
+      drawLocalSprite(context, sprite.key, sprite.size, sprite.size);
+      context.restore();
+      return;
+    }
 
     context.fillStyle = 'rgba(53, 37, 24, .18)';
     context.beginPath();
@@ -86,6 +148,62 @@ window.FenceFrenzyRenderer = (() => {
     context.restore();
   }
 
+  function drawFenceSprite(context, fence, level, damaged, badlyDamaged) {
+    const key = `fence${Math.max(1, Math.min(3, level))}`;
+    if (!spriteReady(key)) return false;
+    const image = sprites[key];
+    const x1 = fence.x1;
+    const y1 = fence.y1;
+    const x2 = fence.x2;
+    const y2 = fence.y2;
+    const length = Math.hypot(x2 - x1, y2 - y1);
+    const height = level === 1 ? 18 : level === 2 ? 20 : 22;
+
+    context.save();
+    context.translate((x1 + x2) / 2, (y1 + y2) / 2);
+    context.rotate(Math.atan2(y2 - y1, x2 - x1));
+
+    if (fence.broken) {
+      const sourceWidth = image.naturalWidth;
+      const sourceHeight = image.naturalHeight;
+      const section = .41;
+      context.save();
+      context.translate(-2, 3);
+      context.rotate(.08);
+      context.drawImage(
+        image,
+        0, 0, sourceWidth * section, sourceHeight,
+        -length / 2, -height / 2, length * section, height
+      );
+      context.restore();
+      context.save();
+      context.translate(2, -3);
+      context.rotate(-.08);
+      context.drawImage(
+        image,
+        sourceWidth * (1 - section), 0, sourceWidth * section, sourceHeight,
+        length * (.5 - section), -height / 2, length * section, height
+      );
+      context.restore();
+    } else {
+      context.globalAlpha = badlyDamaged ? .78 : damaged ? .9 : 1;
+      context.drawImage(image, -length / 2, -height / 2, length, height);
+      context.globalAlpha = 1;
+      if (damaged) {
+        context.strokeStyle = badlyDamaged ? '#6e211d' : '#4b3023';
+        context.lineWidth = badlyDamaged ? 2.5 : 1.7;
+        context.beginPath();
+        context.moveTo(-4, -height * .42);
+        context.lineTo(2, -2);
+        context.lineTo(-2, height * .12);
+        context.lineTo(5, height * .42);
+        context.stroke();
+      }
+    }
+    context.restore();
+    return true;
+  }
+
   function drawFence(context, fence, level) {
     const ratio = fence.maxHealth ? fence.health / fence.maxHealth : 0;
     const damaged = ratio < .66;
@@ -98,6 +216,8 @@ window.FenceFrenzyRenderer = (() => {
     const railOffsets = level === 1 ? [0] : level === 2 ? [-4, 4] : [-6, 0, 6];
     const timberDark = level === 1 ? '#563522' : level === 2 ? '#473729' : '#33434a';
     const timberLight = level === 1 ? '#c28a4e' : level === 2 ? '#d7a45e' : '#8fb1b9';
+
+    if (drawFenceSprite(context, fence, level, damaged, badlyDamaged)) return;
 
     context.lineCap = 'round';
     if (!fence.broken) {
@@ -180,6 +300,19 @@ window.FenceFrenzyRenderer = (() => {
 
   function drawRabbit(context, rabbit, time) {
     const hop = Math.abs(Math.sin(rabbit.hop + time * 5)) * 5;
+    if (spriteReady('rabbit')) {
+      context.save();
+      context.translate(rabbit.x, rabbit.y - hop);
+      context.rotate(Math.atan2(rabbit.vy, rabbit.vx));
+      context.fillStyle = 'rgba(38, 41, 34, .2)';
+      context.beginPath();
+      context.ellipse(-2, 9 + hop, 14, 6, 0, 0, Math.PI * 2);
+      context.fill();
+      context.globalAlpha = rabbit.scared ? .82 : 1;
+      drawLocalSprite(context, 'rabbit', 44, 20);
+      context.restore();
+      return;
+    }
     const movingLeft = rabbit.vx < 0;
     const angle = Math.atan2(movingLeft ? -rabbit.vy : rabbit.vy, movingLeft ? -rabbit.vx : rabbit.vx);
     context.save();
@@ -214,6 +347,20 @@ window.FenceFrenzyRenderer = (() => {
 
   function drawCrow(context, crow) {
     const wingLift = Math.sin(crow.wingPhase) * 7;
+    if (spriteReady('crow')) {
+      context.save();
+      context.translate(crow.x, crow.y);
+      context.rotate(Math.atan2(crow.vy, crow.vx));
+      context.fillStyle = 'rgba(28, 34, 31, .2)';
+      context.beginPath();
+      context.ellipse(-4, 13, 18, 7, 0, 0, Math.PI * 2);
+      context.fill();
+      context.scale(1, .9 + Math.abs(Math.sin(crow.wingPhase)) * .1);
+      context.globalAlpha = crow.scared ? .78 : 1;
+      drawLocalSprite(context, 'crow', 42, 58);
+      context.restore();
+      return;
+    }
     context.save();
     context.translate(crow.x, crow.y);
     context.rotate(Math.atan2(crow.vy, crow.vx));
@@ -252,8 +399,31 @@ window.FenceFrenzyRenderer = (() => {
   }
 
   function drawDog(context, dog, time) {
-    const stride = Math.sin(time * 7 + dog.phase) * 2;
     const level = Math.max(1, Math.min(3, dog.level));
+    const dogKey = `dog${level}`;
+    if (spriteReady(dogKey)) {
+      const dimensions = level === 1 ? [42, 18] : level === 2 ? [48, 19] : [52, 22];
+      const moving = Math.hypot(dog.vx, dog.vy) > 1;
+      const runFrame = Math.floor(time * 4 + dog.phase * .1) % 2 === 0 ? 'RunExtended' : 'RunTucked';
+      const spriteKey = moving ? `dog${level}${runFrame}` : dogKey;
+      const runDimensions = level === 1 ? [50, 23] : level === 2 ? [56, 23] : [60, 26];
+      const bounce = moving && runFrame === 'RunTucked' ? 1.2 : 0;
+      context.save();
+      context.translate(dog.x, dog.y + bounce);
+      context.rotate(moving ? Math.atan2(dog.vy, dog.vx) : 0);
+      context.fillStyle = 'rgba(38, 42, 30, .22)';
+      context.beginPath();
+      context.ellipse(-1, 8, dimensions[0] * .38, 6, 0, 0, Math.PI * 2);
+      context.fill();
+      if (moving && spriteReady(spriteKey)) {
+        drawContainedSprite(context, spriteKey, runDimensions[0], runDimensions[1]);
+      } else {
+        drawLocalSprite(context, dogKey, dimensions[0], dimensions[1]);
+      }
+      context.restore();
+      return;
+    }
+    const stride = Math.sin(time * 7 + dog.phase) * 2;
     const coat = level === 1 ? '#8e5c37' : level === 2 ? '#252b2c' : '#d79c3d';
     const muzzle = level === 1 ? '#f1d2a1' : level === 2 ? '#f4f1e8' : '#f5cc78';
     const markings = level === 1 ? '#4a3024' : level === 2 ? '#f4f1e8' : '#7b4a25';

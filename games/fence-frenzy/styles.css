@@ -157,7 +157,6 @@ h1 { margin: 7px 0 10px; font-size: clamp(2.4rem, 10vw, 4.5rem); line-height: .9
 }
 .screen-card a { display: block; margin: 13px auto 0; color: var(--muted); font-size: .82rem; text-decoration: none; }
 
-.key-help { display: none; color: var(--muted); font-size: .75rem; text-align: center; }
 button:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 
 @media (max-width: 719px) {
@@ -188,7 +187,6 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outlin
 
 @media (min-width: 720px) and (hover: hover) and (pointer: fine) {
   body { padding: 12px; }
-  .key-help { display: block; }
   .screen-card { padding: 28px; }
 }
 
