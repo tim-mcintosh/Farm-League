@@ -2,6 +2,7 @@ const CONFIG = window.FEED_RUN_CONFIG;
 const canvas = document.getElementById('game');
 const context = canvas.getContext('2d');
 const FARM_RENDERING = window.FARM_RENDERING;
+const FARMER_SPRITE = window.FARM_LEAGUE_FARMER;
 
 const elements = {
   score: document.getElementById('score'),
@@ -833,48 +834,50 @@ function drawPlayer() {
   context.ellipse(-2, 6, 22, 14, 0, 0, Math.PI * 2);
   context.fill();
 
-  context.fillStyle = '#3a2c24';
-  context.beginPath();
-  context.ellipse(-12 + stride, -8, 8, 5, -.25, 0, Math.PI * 2);
-  context.ellipse(-12 - stride, 8, 8, 5, .25, 0, Math.PI * 2);
-  context.fill();
+  if (!FARMER_SPRITE?.drawLocal(context, step, 50)) {
+    context.fillStyle = '#3a2c24';
+    context.beginPath();
+    context.ellipse(-12 + stride, -8, 8, 5, -.25, 0, Math.PI * 2);
+    context.ellipse(-12 - stride, 8, 8, 5, .25, 0, Math.PI * 2);
+    context.fill();
 
-  context.fillStyle = '#356a78';
-  context.beginPath();
-  context.ellipse(-1, 0, 18, 14, 0, 0, Math.PI * 2);
-  context.fill();
-  context.fillStyle = '#f0b978';
-  context.beginPath();
-  context.arc(10, 0, 12, 0, Math.PI * 2);
-  context.fill();
-  context.beginPath();
-  context.arc(-1, -15, 5, 0, Math.PI * 2);
-  context.arc(-1, 15, 5, 0, Math.PI * 2);
-  context.fill();
-  context.beginPath();
-  context.arc(10, 0, 12, Math.PI / 2, Math.PI * 1.5);
-  context.fillStyle = '#6e4327';
-  context.fill();
+    context.fillStyle = '#356a78';
+    context.beginPath();
+    context.ellipse(-1, 0, 18, 14, 0, 0, Math.PI * 2);
+    context.fill();
+    context.fillStyle = '#f0b978';
+    context.beginPath();
+    context.arc(10, 0, 12, 0, Math.PI * 2);
+    context.fill();
+    context.beginPath();
+    context.arc(-1, -15, 5, 0, Math.PI * 2);
+    context.arc(-1, 15, 5, 0, Math.PI * 2);
+    context.fill();
+    context.beginPath();
+    context.arc(10, 0, 12, Math.PI / 2, Math.PI * 1.5);
+    context.fillStyle = '#6e4327';
+    context.fill();
 
-  context.fillStyle = '#efc64e';
-  context.beginPath();
-  context.ellipse(8, 0, 14, 21, 0, 0, Math.PI * 2);
-  context.fill();
-  context.fillStyle = '#dcae35';
-  context.beginPath();
-  context.ellipse(7, 0, 10, 13, 0, 0, Math.PI * 2);
-  context.fill();
-  context.strokeStyle = '#9a7021';
-  context.lineWidth = 3;
-  context.beginPath();
-  context.moveTo(7, -14);
-  context.lineTo(7, 14);
-  context.stroke();
+    context.fillStyle = '#efc64e';
+    context.beginPath();
+    context.ellipse(8, 0, 14, 21, 0, 0, Math.PI * 2);
+    context.fill();
+    context.fillStyle = '#dcae35';
+    context.beginPath();
+    context.ellipse(7, 0, 10, 13, 0, 0, Math.PI * 2);
+    context.fill();
+    context.strokeStyle = '#9a7021';
+    context.lineWidth = 3;
+    context.beginPath();
+    context.moveTo(7, -14);
+    context.lineTo(7, 14);
+    context.stroke();
 
-  context.fillStyle = '#efb473';
-  context.beginPath();
-  context.arc(22, 0, 4, 0, Math.PI * 2);
-  context.fill();
+    context.fillStyle = '#efb473';
+    context.beginPath();
+    context.arc(22, 0, 4, 0, Math.PI * 2);
+    context.fill();
+  }
   context.restore();
 
   if (state.carriedFood) {

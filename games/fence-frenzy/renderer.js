@@ -312,29 +312,31 @@ window.FenceFrenzyRenderer = (() => {
     context.beginPath();
     context.ellipse(-2, 6, 22, 14, 0, 0, Math.PI * 2);
     context.fill();
-    context.fillStyle = '#3a2c24';
-    context.beginPath();
-    context.ellipse(-12 + stride, -8, 8, 5, -.25, 0, Math.PI * 2);
-    context.ellipse(-12 - stride, 8, 8, 5, .25, 0, Math.PI * 2);
-    context.fill();
-    context.fillStyle = '#356a78';
-    context.beginPath();
-    context.ellipse(-1, 0, 18, 14, 0, 0, Math.PI * 2);
-    context.fill();
-    context.fillStyle = '#f0b978';
-    context.beginPath();
-    context.arc(10, 0, 12, 0, Math.PI * 2);
-    context.arc(-1, -15, 5, 0, Math.PI * 2);
-    context.arc(-1, 15, 5, 0, Math.PI * 2);
-    context.fill();
-    context.fillStyle = '#efc64e';
-    context.beginPath();
-    context.ellipse(8, 0, 14, 21, 0, 0, Math.PI * 2);
-    context.fill();
-    context.fillStyle = '#dcae35';
-    context.beginPath();
-    context.ellipse(7, 0, 10, 13, 0, 0, Math.PI * 2);
-    context.fill();
+    if (!window.FARM_LEAGUE_FARMER?.drawLocal(context, player.step, 50)) {
+      context.fillStyle = '#3a2c24';
+      context.beginPath();
+      context.ellipse(-12 + stride, -8, 8, 5, -.25, 0, Math.PI * 2);
+      context.ellipse(-12 - stride, 8, 8, 5, .25, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = '#356a78';
+      context.beginPath();
+      context.ellipse(-1, 0, 18, 14, 0, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = '#f0b978';
+      context.beginPath();
+      context.arc(10, 0, 12, 0, Math.PI * 2);
+      context.arc(-1, -15, 5, 0, Math.PI * 2);
+      context.arc(-1, 15, 5, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = '#efc64e';
+      context.beginPath();
+      context.ellipse(8, 0, 14, 21, 0, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = '#dcae35';
+      context.beginPath();
+      context.ellipse(7, 0, 10, 13, 0, 0, Math.PI * 2);
+      context.fill();
+    }
     context.restore();
 
     if (pendingDog) {
