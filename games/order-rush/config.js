@@ -1,7 +1,8 @@
 window.ORDER_RUSH_CONFIG = Object.freeze({
   roundSeconds:120, player:{speed:255,radius:17}, feedbackSeconds:1.4, warningSeconds:5,
-  vehicleTransitionSeconds:.8, foodVisible:7, foodRadius:18, foodExpirySeconds:10,
-  orderFoodChance:.75, boxCount:3, bestScoreKey:'farmLeague.orderRush.bestScore',
+  vehicleTransitionSeconds:.8, foodVisible:7, foodRadius:18,
+  conveyor:{speed:61,itemSpacing:68},
+  orderFoodChance:.75, boxCount:2, bestScoreKey:'farmLeague.orderRush.bestScore',
   legacyBestScoreKey:'farmLeague.farmOrders.bestScore',
   products:{
     eggs:{name:'Eggs',icon:'🥚',color:'#f0d9a4'},
