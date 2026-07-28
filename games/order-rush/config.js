@@ -1,5 +1,7 @@
 window.ORDER_RUSH_CONFIG = Object.freeze({
-  roundSeconds:120, player:{speed:255,radius:17}, feedbackSeconds:1.4, warningSeconds:5,
+  gameVersion:'1.1.0',roundSeconds:120,maximumLegitimateScore:8000,
+  roundSummaryKey:'farmLeague.orderRush.lastRound.v1',
+  player:{speed:255,radius:17}, feedbackSeconds:1.4, warningSeconds:5,
   vehicleTransitionSeconds:.8, foodVisible:7, foodRadius:18,
   conveyor:{speed:61,itemSpacing:68},
   orderFoodChance:.75, boxCount:2, bestScoreKey:'farmLeague.orderRush.bestScore.v2',

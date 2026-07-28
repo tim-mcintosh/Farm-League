@@ -3,6 +3,7 @@
 
   for (const element of bestScoreElements) {
     let score = 0;
+    const maximumScore = Number(element.dataset.maximumScore);
 
     try {
       const scoreKeys = [
@@ -12,8 +13,11 @@
 
       for (const key of scoreKeys) {
         const storedScore = Number(localStorage.getItem(key));
-        if (Number.isFinite(storedScore) && storedScore >= 0) {
-          score = Math.max(score, Math.floor(storedScore));
+        if (Number.isSafeInteger(storedScore)
+          && storedScore >= 0
+          && Number.isSafeInteger(maximumScore)
+          && storedScore <= maximumScore) {
+          score = Math.max(score, storedScore);
         }
       }
     } catch {

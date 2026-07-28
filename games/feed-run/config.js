@@ -1,6 +1,9 @@
 // Central balancing configuration. Change gameplay values here, not in the game loop.
 window.FEED_RUN_CONFIG = Object.freeze({
+  gameVersion: '1.1.0',
   roundSeconds: 120,
+  maximumLegitimateScore: 12000,
+  roundSummaryKey: 'farmLeague.feedRun.lastRound.v1',
   arena: { width: 800, height: 600, edgePadding: 18 },
   player: { radius: 17, speed: 245, pickupPadding: 8 },
   pens: { fenceWidth: 6, gateSize: 76, animalInset: 28 },

@@ -27,6 +27,7 @@
   let state;
   let animationFrame = 0;
   let lastFrame = 0;
+  let scoreSession = null;
   let nextRabbitId = 1;
   let nextCrowId = 1;
   let nextCropId = 1;
@@ -36,7 +37,7 @@
     try {
       const storedScore = key => {
         const value = Number(localStorage.getItem(key));
-        return Number.isFinite(value) && value >= 0 ? Math.floor(value) : 0;
+        return Number.isSafeInteger(value) && value >= 0 && value <= CONFIG.maximumLegitimateScore ? value : 0;
       };
       return storedScore(CONFIG.bestScoreKey);
     } catch {
@@ -45,7 +46,8 @@
   }
 
   function saveBest(score) {
-    const candidate = Math.max(0, Math.floor(score));
+    if (!Number.isSafeInteger(score) || score < 0 || score > CONFIG.maximumLegitimateScore) return;
+    const candidate = score;
     if (candidate <= state.best) return;
     state.best = candidate;
     try {
@@ -58,6 +60,10 @@
   function formatTime(seconds) {
     const safe = Math.max(0, Math.ceil(seconds));
     return `${Math.floor(safe / 60)}:${String(safe % 60).padStart(2, '0')}`;
+  }
+
+  function awardScore(type, points, details) {
+    return scoreSession?.award(type, points, details) || false;
   }
 
   function pointInRect(x, y, rect, padding = 0) {
@@ -295,8 +301,14 @@
 
   function sendThreatAway(threat) {
     if (threat.scared) return;
-    if (threat.type === 'rabbit') state.rabbitsScared++;
-    if (threat.type === 'crow') state.crowsScared++;
+    if (threat.type === 'rabbit') {
+      state.rabbitsScared++;
+      awardScore('rabbit-scared', CONFIG.scoring.rabbitScareBonus);
+    }
+    if (threat.type === 'crow') {
+      state.crowsScared++;
+      awardScore('crow-scared', CONFIG.scoring.crowScareBonus);
+    }
     threat.scared = true;
     threat.state = 'leaving';
     threat.exitTarget = nearestExitTarget(threat);
@@ -560,6 +572,8 @@
     state.harvests++;
     state.coins += CONFIG.crops.harvestCoins;
     state.coinsCollected += CONFIG.crops.harvestCoins;
+    awardScore('crop-harvested', CONFIG.scoring.harvestBonus, { harvests: state.harvests });
+    awardScore('coin-collected', CONFIG.crops.harvestCoins, { harvests: state.harvests });
     state.coinPops.push({ x: crop.x, y: crop.y - 12, amount: CONFIG.crops.harvestCoins, life: 1 });
     burst(crop.x, crop.y, '#f3d35e');
     emitSound('harvest');
@@ -576,8 +590,10 @@
     const threshold = CONFIG.crops.expansionHarvests[state.field.level];
     if (state.harvests < threshold || healthyCropRatio() < CONFIG.crops.expansionHealthyRatio) return;
     const nextField = fieldForLevel(state.field.level + 1);
+    const addedTiles = cropCoordinates(nextField).length - state.crops.length;
     state.field = nextField;
     state.crops = createCrops(nextField, state.crops);
+    awardScore('field-tile', addedTiles * CONFIG.scoring.fieldTileBonus, { level: nextField.level + 1 });
     state.expansionCooldown = CONFIG.crops.expansionCooldown;
     state.expansionPulse = 1;
     notify(`Field expanded to Level ${nextField.level + 1}!`);
@@ -652,6 +668,7 @@
       fence.health = fence.maxHealth;
       fence.broken = false;
       state.fencesRepaired++;
+      awardScore('fence-repaired', CONFIG.scoring.repairBonus);
       notify('Fence repaired!');
       state.repair = null;
       emitSound('repairComplete');
@@ -779,16 +796,16 @@
   function updateHud() {
     elements.time.textContent = formatTime(state.timeLeft);
     elements.coins.textContent = state.coins.toLocaleString();
-    elements.score.textContent = scoreBreakdown().total.toLocaleString();
+    elements.score.textContent = (scoreSession?.getScore() || 0).toLocaleString();
   }
 
   function scoreBreakdown() {
-    const harvestBonus = state.harvests * CONFIG.scoring.harvestBonus;
-    const defenceBonus = state.rabbitsScared * CONFIG.scoring.rabbitScareBonus
-      + state.crowsScared * CONFIG.scoring.crowScareBonus
-      + state.fencesRepaired * CONFIG.scoring.repairBonus;
-    const fieldBonus = state.crops.length * CONFIG.scoring.fieldTileBonus;
-    const coinBonus = state.coinsCollected;
+    const harvestBonus = scoreSession?.pointsFor('crop-harvested') || 0;
+    const defenceBonus = (scoreSession?.pointsFor('rabbit-scared') || 0)
+      + (scoreSession?.pointsFor('crow-scared') || 0)
+      + (scoreSession?.pointsFor('fence-repaired') || 0);
+    const fieldBonus = scoreSession?.pointsFor('field-tile') || 0;
+    const coinBonus = scoreSession?.pointsFor('coin-collected') || 0;
     return {
       harvestBonus,
       defenceBonus,
@@ -803,12 +820,24 @@
     cancelAnimationFrame(animationFrame);
     clearInput();
     const score = scoreBreakdown();
-    saveBest(score.total);
+    const summary = scoreSession?.finalize({
+      outcome: 'completed',
+      elapsedSeconds: Math.min(state.elapsed, CONFIG.roundSeconds),
+      facts: {
+        harvests: state.harvests,
+        rabbitsScared: state.rabbitsScared,
+        crowsScared: state.crowsScared,
+        fencesRepaired: state.fencesRepaired,
+        fieldLevel: state.field.level + 1
+      }
+    });
+    const finalScore = summary?.finalScore ?? 0;
+    if (summary?.valid) saveBest(finalScore);
     elements.harvestBonus.textContent = score.harvestBonus.toLocaleString();
     elements.defenceBonus.textContent = score.defenceBonus.toLocaleString();
     elements.fieldBonus.textContent = score.fieldBonus.toLocaleString();
     elements.coinBonus.textContent = score.coinBonus.toLocaleString();
-    elements.finalScore.textContent = score.total.toLocaleString();
+    elements.finalScore.textContent = finalScore.toLocaleString();
     elements.bestScore.textContent = state.best.toLocaleString();
     elements.resultsOverlay.classList.remove('hidden');
     emitSound('roundEnd');
@@ -877,6 +906,7 @@
     nextCrowId = 1;
     nextCropId = 1;
     state = createState();
+    scoreSession = null;
     updateStationLabels();
     clearInput();
     elements.announcement.textContent = '';
@@ -888,6 +918,15 @@
 
   function startRound() {
     resetRound();
+    scoreSession = window.FarmLeagueScore.createRound({
+      gameId: 'fence-frenzy',
+      gameVersion: CONFIG.gameVersion,
+      durationSeconds: CONFIG.roundSeconds,
+      maximumLegitimateScore: CONFIG.maximumLegitimateScore,
+      summaryStorageKey: CONFIG.roundSummaryKey,
+      fullDurationOutcomes: ['completed']
+    });
+    awardScore('field-tile', state.crops.length * CONFIG.scoring.fieldTileBonus, { level: 1 });
     state.running = true;
     elements.startOverlay.classList.add('hidden');
     elements.resultsOverlay.classList.add('hidden');

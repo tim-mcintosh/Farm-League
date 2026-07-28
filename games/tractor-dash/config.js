@@ -1,5 +1,8 @@
 window.TRACTOR_DASH_CONFIG = Object.freeze({
+  gameVersion: '1.1.0',
   roundSeconds: 120,
+  maximumLegitimateScore: 13000,
+  roundSummaryKey: 'farmLeague.tractorDash.lastRound.v1',
   tileSize: 28,
   transitionSeconds: 1.2,
   fieldClearBonus: 50,

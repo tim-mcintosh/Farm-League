@@ -31,7 +31,7 @@ for (const [name, definition] of Object.entries(SPRITE_DEFINITIONS)) {
 
 let running = false;
 let last = 0;
-let score = 0;
+let scoreSession = null;
 let best = loadBestScore();
 let timeLeft = CONFIG.roundSeconds;
 let elapsed = 0;
@@ -63,14 +63,22 @@ const tractor = {
 function loadBestScore() {
   try {
     const stored = Number(localStorage.getItem(CONFIG.bestScoreKey));
-    return Number.isFinite(stored) && stored >= 0 ? Math.floor(stored) : 0;
+    return Number.isSafeInteger(stored) && stored >= 0 && stored <= CONFIG.maximumLegitimateScore ? stored : 0;
   } catch {
     return 0;
   }
 }
 
-function saveBestScore() {
-  const candidate = Math.max(0, Math.floor(score));
+function currentScore() {
+  return scoreSession?.getScore() || 0;
+}
+
+function awardScore(type, points, details) {
+  return scoreSession?.award(type, points, details) || false;
+}
+
+function saveBestScore(candidate) {
+  if (!Number.isSafeInteger(candidate) || candidate < 0 || candidate > CONFIG.maximumLegitimateScore) return;
   if (candidate <= best) return;
   best = candidate;
   try {
@@ -182,7 +190,7 @@ function buildField(fieldLevel) {
 
 function reset() {
   clearInput();
-  score = 0;
+  scoreSession = null;
   speedPoints = 0;
   timeLeft = CONFIG.roundSeconds;
   elapsed = 0;
@@ -198,6 +206,14 @@ function reset() {
 
 function start() {
   reset();
+  scoreSession = window.FarmLeagueScore.createRound({
+    gameId: 'tractor-dash',
+    gameVersion: CONFIG.gameVersion,
+    durationSeconds: CONFIG.roundSeconds,
+    maximumLegitimateScore: CONFIG.maximumLegitimateScore,
+    summaryStorageKey: CONFIG.roundSummaryKey,
+    fullDurationOutcomes: ['timer']
+  });
   running = true;
   startOverlay.classList.add('hidden');
   gameOverOverlay.classList.add('hidden');
@@ -210,12 +226,18 @@ function end(type) {
   running = false;
   cancelAnimationFrame(raf);
   clearInput();
-  saveBestScore();
+  const summary = scoreSession?.finalize({
+    outcome: type,
+    elapsedSeconds: Math.min(elapsed, CONFIG.roundSeconds),
+    facts: { fieldsCleared, level, mownTiles: mown.size }
+  });
+  const finalScore = summary?.finalScore ?? 0;
+  if (summary?.valid) saveBestScore(finalScore);
   document.getElementById('gameOverTitle').textContent =
     type === 'timer' ? 'Time!' :
     type === 'cow' ? 'You hit a cow' :
     type === 'sheep' ? 'You hit a sheep' : 'Run ended';
-  document.getElementById('finalText').textContent = `You scored ${Math.floor(score).toLocaleString()} points.`;
+  document.getElementById('finalText').textContent = `You scored ${finalScore.toLocaleString()} points.`;
   document.getElementById('finalBest').textContent = `Best score: ${Math.floor(best).toLocaleString()}`;
   const survived = Math.min(elapsed, CONFIG.roundSeconds);
   document.getElementById('finalTime').textContent = `Time survived: ${formatTime(survived)}`;
@@ -229,7 +251,7 @@ function formatTime(seconds) {
 }
 
 function updateHud() {
-  scoreEl.textContent = Math.floor(score).toLocaleString();
+  scoreEl.textContent = currentScore().toLocaleString();
   timeEl.textContent = formatTime(timeLeft);
   speedEl.textContent = `${tractor.crashTimer > 0 ? '0.00' : tractor.mult.toFixed(2)}x`;
   const progress = field.totalTiles ? Math.min(100, Math.round(mown.size / field.totalTiles * 100)) : 0;
@@ -291,7 +313,7 @@ function move(dt) {
 function completeField() {
   fieldsCleared = level;
   const bonus = CONFIG.fieldClearBonus * level;
-  score += bonus;
+  awardScore('field-clear', bonus, { level });
   animals = [];
   transition = { timeLeft: CONFIG.transitionSeconds, nextLevel: level + 1, bonus };
 }
@@ -307,7 +329,7 @@ function mow() {
       const centerY = (y + 0.5) * TILE;
       if (!mown.has(key) && !tileBlocked(x, y) && Math.hypot(centerX - tractor.x, centerY - tractor.y) < tractor.r + TILE * 0.7) {
         mown.add(key);
-        score++;
+        awardScore('grass-mown', 1, { level });
         speedPoints++;
         if (Math.random() < 0.18) {
           particles.push({ x: centerX, y: centerY, life: 0.35, vx: (Math.random() - 0.5) * 35, vy: -15 - Math.random() * 25 });

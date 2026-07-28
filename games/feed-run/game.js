@@ -60,6 +60,7 @@ let state;
 let animationFrame = 0;
 let lastFrame = 0;
 let nextFoodId = 1;
+let scoreSession = null;
 
 function createAnimalState() {
   return Object.fromEntries(animalKeys.map(key => [key, {
@@ -89,7 +90,6 @@ function createInitialState() {
     running: false,
     timeLeft: CONFIG.roundSeconds,
     elapsed: 0,
-    score: 0,
     combo: 0,
     best: loadBestScore(),
     player: { x: CONFIG.arena.width / 2, y: CONFIG.arena.height / 2, facingX: 0, facingY: 1, step: 0 },
@@ -107,14 +107,22 @@ function createInitialState() {
 function loadBestScore() {
   try {
     const stored = Number(localStorage.getItem(CONFIG.bestScoreKey));
-    return Number.isFinite(stored) && stored >= 0 ? Math.floor(stored) : 0;
+    return Number.isSafeInteger(stored) && stored >= 0 && stored <= CONFIG.maximumLegitimateScore ? stored : 0;
   } catch (error) {
     return 0;
   }
 }
 
-function saveBestScore() {
-  const candidate = Math.max(0, Math.floor(state.score));
+function currentScore() {
+  return scoreSession?.getScore() || 0;
+}
+
+function awardScore(type, points, details) {
+  return scoreSession?.award(type, points, details) || false;
+}
+
+function saveBestScore(candidate) {
+  if (!Number.isSafeInteger(candidate) || candidate < 0 || candidate > CONFIG.maximumLegitimateScore) return;
   if (candidate <= state.best) return;
   state.best = candidate;
   try {
@@ -180,6 +188,7 @@ function resetRound() {
   cancelAnimationFrame(animationFrame);
   const existingBest = state ? state.best : loadBestScore();
   state = createInitialState();
+  scoreSession = null;
   state.best = existingBest;
   nextFoodId = 1;
   clearInput();
@@ -190,6 +199,14 @@ function resetRound() {
 
 function startRound() {
   resetRound();
+  scoreSession = window.FarmLeagueScore.createRound({
+    gameId: 'feed-run',
+    gameVersion: CONFIG.gameVersion,
+    durationSeconds: CONFIG.roundSeconds,
+    maximumLegitimateScore: CONFIG.maximumLegitimateScore,
+    summaryStorageKey: CONFIG.roundSummaryKey,
+    fullDurationOutcomes: ['victory']
+  });
   state.running = true;
   elements.startOverlay.classList.add('hidden');
   elements.endOverlay.classList.add('hidden');
@@ -204,7 +221,7 @@ function finishRound(outcome, failedAnimalKey = null) {
   clearInput();
 
   if (outcome === 'victory') {
-    state.score += CONFIG.scoring.completionBonus;
+    awardScore('round-completed', CONFIG.scoring.completionBonus);
     elements.endEyebrow.textContent = 'Breakfast bell!';
     elements.endTitle.textContent = 'Farm fed!';
     elements.endMessage.textContent = `You kept every animal fed for two minutes and earned a ${CONFIG.scoring.completionBonus}-point completion bonus.`;
@@ -217,9 +234,15 @@ function finishRound(outcome, failedAnimalKey = null) {
     emitSoundCue('gameOver');
   }
 
-  saveBestScore();
+  const summary = scoreSession?.finalize({
+    outcome,
+    elapsedSeconds: state.elapsed,
+    facts: { deliveries: state.combo, failedAnimal: failedAnimalKey || 'none' }
+  });
+  const finalScore = summary?.finalScore ?? 0;
+  if (summary?.valid) saveBestScore(finalScore);
   updateHud();
-  elements.finalScore.textContent = state.score.toLocaleString();
+  elements.finalScore.textContent = finalScore.toLocaleString();
   elements.finalBest.textContent = state.best.toLocaleString();
   elements.finalCombo.textContent = `${state.combo}×`;
   elements.finalTime.textContent = formatTime(state.elapsed);
@@ -453,7 +476,12 @@ function deliverFood(animalKey) {
   const urgencyBonus = wasCritical ? CONFIG.scoring.urgencyBonus : 0;
   const comboBonus = Math.min(CONFIG.scoring.maximumComboBonus, Math.max(0, state.combo - 1) * CONFIG.scoring.comboStep);
   const points = food.score + urgencyBonus + comboBonus;
-  state.score += points;
+  awardScore('food-delivered', points, {
+    food: food.type,
+    animal: animalKey,
+    urgent: wasCritical,
+    combo: state.combo
+  });
   state.carriedFood = null;
   state.lastWrongPen = null;
   showFeedback(`${food.icon} ${ANIMAL_DEFINITIONS[animalKey].name} fed! +${points}`);
@@ -503,7 +531,7 @@ function hungerStatus(hunger) {
 }
 
 function updateHud() {
-  elements.score.textContent = state.score.toLocaleString();
+  elements.score.textContent = currentScore().toLocaleString();
   elements.time.textContent = formatTime(state.timeLeft);
   elements.carriedItem.textContent = state.carriedFood ? `${state.carriedFood.icon} ${state.carriedFood.name}` : 'Nothing';
 

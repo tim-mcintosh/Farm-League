@@ -1,5 +1,8 @@
 window.FENCE_FRENZY_CONFIG = Object.freeze({
+  gameVersion: '1.1.0',
   roundSeconds: 120,
+  maximumLegitimateScore: 20000,
+  roundSummaryKey: 'farmLeague.fenceFrenzy.lastRound.v1',
   arena: { width: 800, height: 600 },
   player: { speed: 245, radius: 17 },
   repair: { seconds: 2, range: 31 },

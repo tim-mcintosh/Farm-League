@@ -57,6 +57,9 @@ Then open `http://localhost:8000/`. Opening `index.html` directly also works in 
 - Use relative paths so the project can be deployed at a domain root or subdirectory.
 - Prefer native browser APIs and small, maintainable modules over unnecessary dependencies.
 - Run JavaScript syntax checks and verify navigation and asset paths after changes.
+- Route score awards through `assets/shared/score-session.js`; do not assign game totals directly.
+
+The current client-side score integrity model, per-game audit, validation ceilings, and future backend requirements are documented in [`docs/client-score-security.md`](docs/client-score-security.md).
 
 ## Future platform direction
 
