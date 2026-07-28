@@ -9,7 +9,7 @@ window.FENCE_FRENZY_CONFIG = Object.freeze({
     initialRows: 3,
     maxExpansionLevel: 3,
     stageSeconds: { seed: 3.5, growing: 5.5, ready: 7, overripe: 5, dead: 3 },
-    harvestCoins: 20,
+    harvestCoins: 5,
     harvestRange: 27,
     expansionHarvests: [4, 11, 21],
     expansionHealthyRatio: 0.62,
@@ -52,7 +52,12 @@ window.FENCE_FRENZY_CONFIG = Object.freeze({
     scareRanges: [36, 44, 54],
     placementSeconds: 0.8
   },
-  scoring: { harvestBonus: 50, fieldTileBonus: 10 },
-  bestScoreKey: 'farmLeague.fenceFrenzy.bestScore',
-  legacyBestScoreKey: 'farmLeague.farmDefence.bestScore'
+  scoring: {
+    harvestBonus: 10,
+    rabbitScareBonus: 2,
+    crowScareBonus: 3,
+    repairBonus: 3,
+    fieldTileBonus: 1
+  },
+  bestScoreKey: 'farmLeague.fenceFrenzy.bestScore.v2'
 });

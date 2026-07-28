@@ -12,6 +12,7 @@
     startOverlay: document.getElementById('startOverlay'),
     resultsOverlay: document.getElementById('resultsOverlay'),
     harvestBonus: document.getElementById('harvestBonus'),
+    defenceBonus: document.getElementById('defenceBonus'),
     fieldBonus: document.getElementById('fieldBonus'),
     coinBonus: document.getElementById('coinBonus'),
     finalScore: document.getElementById('finalScore'),
@@ -37,7 +38,7 @@
         const value = Number(localStorage.getItem(key));
         return Number.isFinite(value) && value >= 0 ? Math.floor(value) : 0;
       };
-      return Math.max(storedScore(CONFIG.bestScoreKey), storedScore(CONFIG.legacyBestScoreKey));
+      return storedScore(CONFIG.bestScoreKey);
     } catch {
       return 0;
     }
@@ -185,8 +186,12 @@
       elapsed: 0,
       timeLeft: CONFIG.roundSeconds,
       coins: 0,
+      coinsCollected: 0,
       best: loadBest(),
       harvests: 0,
+      rabbitsScared: 0,
+      crowsScared: 0,
+      fencesRepaired: 0,
       lastExpansionHarvests: 0,
       expansionCooldown: 0,
       expansionPulse: 0,
@@ -242,6 +247,7 @@
     const point = outsideSpawnPoint();
     const rabbit = {
       id: nextRabbitId++,
+      type: 'rabbit',
       x: point.x,
       y: point.y,
       vx: 0,
@@ -288,6 +294,9 @@
   }
 
   function sendThreatAway(threat) {
+    if (threat.scared) return;
+    if (threat.type === 'rabbit') state.rabbitsScared++;
+    if (threat.type === 'crow') state.crowsScared++;
     threat.scared = true;
     threat.state = 'leaving';
     threat.exitTarget = nearestExitTarget(threat);
@@ -384,6 +393,7 @@
     const point = outsideSpawnPoint();
     state.crows.push({
       id: nextCrowId++,
+      type: 'crow',
       x: point.x,
       y: point.y,
       vx: 0,
@@ -549,6 +559,7 @@
     crop.spawnScale = .45;
     state.harvests++;
     state.coins += CONFIG.crops.harvestCoins;
+    state.coinsCollected += CONFIG.crops.harvestCoins;
     state.coinPops.push({ x: crop.x, y: crop.y - 12, amount: CONFIG.crops.harvestCoins, life: 1 });
     burst(crop.x, crop.y, '#f3d35e');
     emitSound('harvest');
@@ -640,6 +651,7 @@
     if (state.repair.progress >= 1) {
       fence.health = fence.maxHealth;
       fence.broken = false;
+      state.fencesRepaired++;
       notify('Fence repaired!');
       state.repair = null;
       emitSound('repairComplete');
@@ -772,9 +784,18 @@
 
   function scoreBreakdown() {
     const harvestBonus = state.harvests * CONFIG.scoring.harvestBonus;
+    const defenceBonus = state.rabbitsScared * CONFIG.scoring.rabbitScareBonus
+      + state.crowsScared * CONFIG.scoring.crowScareBonus
+      + state.fencesRepaired * CONFIG.scoring.repairBonus;
     const fieldBonus = state.crops.length * CONFIG.scoring.fieldTileBonus;
-    const coinBonus = state.coins;
-    return { harvestBonus, fieldBonus, coinBonus, total: harvestBonus + fieldBonus + coinBonus };
+    const coinBonus = state.coinsCollected;
+    return {
+      harvestBonus,
+      defenceBonus,
+      fieldBonus,
+      coinBonus,
+      total: harvestBonus + defenceBonus + fieldBonus + coinBonus
+    };
   }
 
   function finishRound() {
@@ -784,6 +805,7 @@
     const score = scoreBreakdown();
     saveBest(score.total);
     elements.harvestBonus.textContent = score.harvestBonus.toLocaleString();
+    elements.defenceBonus.textContent = score.defenceBonus.toLocaleString();
     elements.fieldBonus.textContent = score.fieldBonus.toLocaleString();
     elements.coinBonus.textContent = score.coinBonus.toLocaleString();
     elements.finalScore.textContent = score.total.toLocaleString();

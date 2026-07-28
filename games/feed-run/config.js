@@ -31,21 +31,21 @@ window.FEED_RUN_CONFIG = Object.freeze({
     normalHayChance: 0.14,
     forceHayAfterSpawns: 6,
     types: {
-      carrot: { name: 'Carrot', icon: '🥕', animals: ['horses'], restore: 38, score: 100 },
-      apple: { name: 'Apple', icon: '🍎', animals: ['horses'], restore: 38, score: 100 },
-      cowFeed: { name: 'Cow feed', icon: '🥣', animals: ['cows'], restore: 38, score: 100 },
-      grass: { name: 'Grass bundle', icon: '🌿', animals: ['cows', 'sheep'], restore: 38, score: 100 },
-      clover: { name: 'Clover', icon: '☘️', animals: ['sheep'], restore: 38, score: 100 },
-      corn: { name: 'Corn', icon: '🌽', animals: ['chickens'], restore: 38, score: 100 },
-      grain: { name: 'Grain', icon: '🌾', animals: ['chickens'], restore: 38, score: 100 },
-      hay: { name: 'Hay', icon: '🟨', animals: ['horses', 'cows', 'sheep', 'chickens'], restore: 19, score: 50, universal: true }
+      carrot: { name: 'Carrot', icon: '🥕', animals: ['horses'], restore: 38, score: 15 },
+      apple: { name: 'Apple', icon: '🍎', animals: ['horses'], restore: 38, score: 15 },
+      cowFeed: { name: 'Cow feed', icon: '🥣', animals: ['cows'], restore: 38, score: 15 },
+      grass: { name: 'Grass bundle', icon: '🌿', animals: ['cows', 'sheep'], restore: 38, score: 15 },
+      clover: { name: 'Clover', icon: '☘️', animals: ['sheep'], restore: 38, score: 15 },
+      corn: { name: 'Corn', icon: '🌽', animals: ['chickens'], restore: 38, score: 15 },
+      grain: { name: 'Grain', icon: '🌾', animals: ['chickens'], restore: 38, score: 15 },
+      hay: { name: 'Hay', icon: '🟨', animals: ['horses', 'cows', 'sheep', 'chickens'], restore: 19, score: 8, universal: true }
     }
   },
   scoring: {
-    urgencyBonus: 75,
-    comboStep: 20,
-    maximumComboBonus: 120,
-    completionBonus: 500
+    urgencyBonus: 8,
+    comboStep: 1,
+    maximumComboBonus: 6,
+    completionBonus: 50
   },
-  bestScoreKey: 'farmLeague.feedRun.bestScore'
+  bestScoreKey: 'farmLeague.feedRun.bestScore.v2'
 });
