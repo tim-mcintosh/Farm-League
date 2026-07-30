@@ -3,6 +3,7 @@
 Farm League is a mobile-first website for fast, addictive farming mini-games. Each game is designed as a short, replayable score challenge that can run independently while sharing a consistent Farm League home and navigation experience.
 
 Tractor Dash, Feed Run, Order Rush, and Fence Frenzy are the currently playable games.
+My Farm is the first platform feature: a local, grid-based farm viewer and builder.
 
 ## Folder structure
 
@@ -15,6 +16,7 @@ farm-league/
 │   ├── order-rush/             # Two-minute movement-only packing game
 │   ├── fence-frenzy/           # Two-minute crop protection and upgrade game
 │   └── _template/              # Starting point for a future game
+├── my-farm/                    # Local 12 × 8 farm viewer and builder
 ├── assets/
 │   ├── shared/                 # Shared site styles and future platform assets
 │   ├── audio/                  # Shared audio assets

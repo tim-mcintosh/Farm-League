@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="View and build your own Farm League farm.">
+<meta name="theme-color" content="#031d13">
+<title>My Farm — Farm League</title>
+<link rel="stylesheet" href="../assets/shared/site.css">
+<link rel="stylesheet" href="styles.css">
+<script src="data.js" defer></script>
+<script src="placement.js" defer></script>
+<script src="renderer.js" defer></script>
+<script src="ui.js" defer></script>
+</head>
+<body>
+<header class="site-header">
+<a class="site-brand" href="../index.html" aria-label="Farm League home">
+<img class="brand-leaves" src="../assets/images/farm-league-leaf.png" alt="" width="256" height="256">
+<span>Farm<br>League</span>
+</a>
+<nav class="site-nav" aria-label="Primary navigation">
+<a href="../index.html">Home</a>
+<span class="nav-planned">Challenges</span>
+<span class="nav-planned">Leaderboards</span>
+<a class="is-active" href="index.html" aria-current="page">My Farm</a>
+<span class="nav-planned">Profile</span>
+</nav>
+<span class="button button--compact button--signin" aria-disabled="true">Sign in</span>
+</header>
+
+<main class="farm-page">
+<header class="farm-heading">
+<div>
+<p class="eyebrow">Your corner of Farm League</p>
+<h1>My Farm</h1>
+<p>Arrange your starter farm now. Future Farm League updates can build on the same saved layout.</p>
+</div>
+<div class="farm-wallet" aria-label="Farm balance">
+<span aria-hidden="true">🪙</span>
+<div><small>Farm coins</small><strong id="farmCoins">0</strong></div>
+</div>
+</header>
+
+<section class="builder-shell" aria-labelledby="builderHeading">
+<div class="farm-workspace">
+<div class="builder-title">
+<div>
+<p class="eyebrow">12 × 8 paddock</p>
+<h2 id="builderHeading">Farm builder</h2>
+</div>
+<span id="farmMode" class="mode-badge">Viewing</span>
+</div>
+
+<div class="builder-toolbar" role="toolbar" aria-label="Farm building tools">
+<button id="buildButton" class="tool-button tool-button--primary" type="button" aria-pressed="false">
+<span aria-hidden="true">🔨</span> Build
+</button>
+<button id="moveButton" class="tool-button" type="button" disabled>
+<span aria-hidden="true">✥</span> Move
+</button>
+<button id="storeButton" class="tool-button" type="button" disabled>
+<span aria-hidden="true">📦</span> Store
+</button>
+<button id="placeButton" class="tool-button tool-button--confirm" type="button" disabled>
+<span aria-hidden="true">✓</span> Place
+</button>
+<button id="cancelButton" class="tool-button tool-button--quiet" type="button" disabled>
+<span aria-hidden="true">×</span> Cancel
+</button>
+</div>
+
+<p id="builderStatus" class="builder-status" role="status" aria-live="polite"></p>
+
+<div class="canvas-frame">
+<canvas id="farmCanvas" width="1200" height="800" tabindex="0"
+  aria-label="Your farm on a 12 column by 8 row placement grid. Select objects using the placed objects list, or use Build mode and the arrow keys to position an item.">
+Your browser does not support the Farm League farm canvas.
+</canvas>
+</div>
+<div class="canvas-help">
+<span><i class="key-swatch key-swatch--valid"></i> Valid position</span>
+<span><i class="key-swatch key-swatch--invalid"></i> Blocked position</span>
+<span>Keyboard: arrows to preview, Enter to place, Escape to cancel</span>
+</div>
+</div>
+
+<aside class="builder-sidebar" aria-label="Farm building options">
+<section id="inventoryPanel" class="builder-panel" hidden>
+<div class="panel-heading">
+<div><p class="eyebrow">Available now</p><h2>Storage</h2></div>
+<span aria-hidden="true">📦</span>
+</div>
+<p>Choose an item, then tap a position on the farm.</p>
+<div id="inventoryList" class="inventory-list"></div>
+</section>
+
+<section class="builder-panel">
+<div class="panel-heading">
+<div><p class="eyebrow">Current choice</p><h2>Selected object</h2></div>
+<span aria-hidden="true">👆</span>
+</div>
+<div id="selectionDetails" class="selection-details"></div>
+</section>
+
+<section class="builder-panel">
+<div class="panel-heading">
+<div><p class="eyebrow">Farm contents</p><h2>Placed objects</h2></div>
+<span aria-hidden="true">🗺️</span>
+</div>
+<div id="placedList" class="placed-list"></div>
+</section>
+
+<p id="saveStatus" class="save-status" role="status"></p>
+</aside>
+</section>
+</main>
+
+<footer class="farm-footer">
+<a href="../index.html">← Back to Farm League</a>
+<p>Farm layouts are stored only in this browser. Accounts and cross-device saving are not included yet.</p>
+</footer>
+</body>
+</html>
