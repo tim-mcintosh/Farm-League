@@ -262,6 +262,65 @@
     context.stroke();
   }
 
+  function drawStone(context, x, y, width, height) {
+    context.fillStyle = 'rgba(35, 58, 32, .22)';
+    context.beginPath();
+    context.ellipse(x + width * .5, y + height * .78, width * .36, height * .12, 0, 0, Math.PI * 2);
+    context.fill();
+
+    const gradient = context.createLinearGradient(x + width * .25, y + height * .24, x + width * .72, y + height * .76);
+    gradient.addColorStop(0, '#aeb6ad');
+    gradient.addColorStop(1, '#65706b');
+    context.fillStyle = gradient;
+    context.beginPath();
+    context.moveTo(x + width * .18, y + height * .68);
+    context.lineTo(x + width * .28, y + height * .35);
+    context.lineTo(x + width * .48, y + height * .18);
+    context.lineTo(x + width * .72, y + height * .28);
+    context.lineTo(x + width * .84, y + height * .62);
+    context.lineTo(x + width * .69, y + height * .78);
+    context.lineTo(x + width * .32, y + height * .79);
+    context.closePath();
+    context.fill();
+    context.strokeStyle = '#4f5a56';
+    context.lineWidth = 5;
+    context.stroke();
+    context.strokeStyle = 'rgba(255, 255, 255, .34)';
+    context.lineWidth = 4;
+    context.beginPath();
+    context.moveTo(x + width * .36, y + height * .37);
+    context.lineTo(x + width * .5, y + height * .27);
+    context.lineTo(x + width * .65, y + height * .35);
+    context.stroke();
+  }
+
+  function drawMailbox(context, x, y, width, height) {
+    context.fillStyle = 'rgba(35, 58, 32, .22)';
+    context.beginPath();
+    context.ellipse(x + width * .5, y + height * .86, width * .28, height * .09, 0, 0, Math.PI * 2);
+    context.fill();
+    context.fillStyle = '#754a29';
+    roundedRect(context, x + width * .45, y + height * .46, width * .12, height * .4, 4);
+    context.fill();
+    context.fillStyle = '#3b7652';
+    roundedRect(context, x + width * .2, y + height * .2, width * .62, height * .38, 12);
+    context.fill();
+    context.strokeStyle = '#234a35';
+    context.lineWidth = 5;
+    context.stroke();
+    context.fillStyle = '#e7e6cf';
+    context.fillRect(x + width * .22, y + height * .34, width * .18, height * .08);
+    context.fillStyle = '#d94e3e';
+    context.fillRect(x + width * .72, y + height * .14, width * .07, height * .34);
+    context.beginPath();
+    context.moveTo(x + width * .72, y + height * .14);
+    context.lineTo(x + width * .55, y + height * .14);
+    context.lineTo(x + width * .55, y + height * .27);
+    context.lineTo(x + width * .72, y + height * .27);
+    context.closePath();
+    context.fill();
+  }
+
   function drawObject(context, object, selected) {
     const definition = catalog[object.type];
     if (!definition) return;
@@ -288,8 +347,12 @@
       drawWindmill(context, x, y, width, height);
     } else if (object.type === 'tree') {
       drawTree(context, x, y, width, height);
-    } else {
+    } else if (object.type === 'fence') {
       drawFence(context, x, y, width, height);
+    } else if (object.type === 'stone') {
+      drawStone(context, x, y, width, height);
+    } else if (object.type === 'mailbox') {
+      drawMailbox(context, x, y, width, height);
     }
 
     if (selected) {

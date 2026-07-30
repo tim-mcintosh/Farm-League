@@ -1,13 +1,14 @@
 (() => {
   'use strict';
 
-  const STORAGE_KEY = 'farmLeague.myFarm.v1';
-  const SCHEMA_VERSION = 1;
+  const STORAGE_KEY = 'farmLeague.myFarm.v2';
+  const LEGACY_STORAGE_KEY = 'farmLeague.myFarm.v1';
+  const SCHEMA_VERSION = 2;
   const GRID = Object.freeze({ columns: 12, rows: 8 });
 
   const CATALOG = Object.freeze({
     farmhouse: Object.freeze({
-      type: 'farmhouse', name: 'Farmhouse', icon: '🏡', width: 3, height: 2,
+      type: 'farmhouse', name: 'Small farmhouse', icon: '🏡', width: 3, height: 2,
       description: 'The heart of your farm.'
     }),
     barn: Object.freeze({
@@ -37,6 +38,14 @@
     fence: Object.freeze({
       type: 'fence', name: 'Fence section', icon: '🪵', width: 1, height: 1,
       description: 'A decorative section of timber fence.'
+    }),
+    stone: Object.freeze({
+      type: 'stone', name: 'Farm stone', icon: '🪨', width: 1, height: 1,
+      description: 'A natural stone for decorating the paddock.'
+    }),
+    mailbox: Object.freeze({
+      type: 'mailbox', name: 'Farm mailbox', icon: '📫', width: 1, height: 1,
+      description: 'A cheerful mailbox for the farm entrance.'
     })
   });
 
@@ -46,13 +55,15 @@
       coins: 250,
       inventory: {
         farmhouse: 0,
-        barn: 1,
-        garden: 1,
-        pond: 1,
-        coop: 1,
-        windmill: 1,
-        tree: 5,
-        fence: 8
+        barn: 0,
+        garden: 0,
+        pond: 0,
+        coop: 0,
+        windmill: 0,
+        tree: 0,
+        fence: 10,
+        stone: 1,
+        mailbox: 1
       },
       placed: [
         { id: 'starter-farmhouse', type: 'farmhouse', x: 1, y: 1 },
@@ -89,26 +100,51 @@
     });
   }
 
-  function migrateStarterLayout(farm) {
-    const retiredBarn = farm.placed.find(object => object.id === 'starter-barn');
-    if (!retiredBarn) return farm;
-    farm.placed = farm.placed.filter(object => object.id !== retiredBarn.id);
-    farm.inventory.barn = Math.min(999, (farm.inventory.barn || 0) + 1);
-    return farm;
+  function starterInventoryFor(placed) {
+    const placedCount = type => placed.filter(object => object.type === type).length;
+    return {
+      farmhouse: Math.max(0, 1 - placedCount('farmhouse')),
+      barn: 0,
+      garden: Math.max(0, 1 - placedCount('garden')),
+      pond: 0,
+      coop: 0,
+      windmill: 0,
+      tree: Math.max(0, 1 - placedCount('tree')),
+      fence: Math.max(0, 10 - placedCount('fence')),
+      stone: Math.max(0, 1 - placedCount('stone')),
+      mailbox: Math.max(0, 1 - placedCount('mailbox'))
+    };
+  }
+
+  function migrateLegacyFarm(parsed) {
+    const placed = normalisePlaced(parsed.placed)
+      .filter(object => object.id !== 'starter-barn');
+    return {
+      version: SCHEMA_VERSION,
+      coins: Number.isSafeInteger(parsed.coins) && parsed.coins >= 0 && parsed.coins <= 999999
+        ? parsed.coins
+        : 0,
+      inventory: starterInventoryFor(placed),
+      placed
+    };
   }
 
   function load() {
     try {
-      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      if (!parsed || parsed.version !== SCHEMA_VERSION) return starterFarm();
-      return migrateStarterLayout({
-        version: SCHEMA_VERSION,
-        coins: Number.isSafeInteger(parsed.coins) && parsed.coins >= 0 && parsed.coins <= 999999
-          ? parsed.coins
-          : 0,
-        inventory: normaliseInventory(parsed.inventory),
-        placed: normalisePlaced(parsed.placed)
-      });
+      const current = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (current?.version === SCHEMA_VERSION) {
+        return {
+          version: SCHEMA_VERSION,
+          coins: Number.isSafeInteger(current.coins) && current.coins >= 0 && current.coins <= 999999
+            ? current.coins
+            : 0,
+          inventory: normaliseInventory(current.inventory),
+          placed: normalisePlaced(current.placed)
+        };
+      }
+      const legacy = JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY));
+      if (legacy?.version === 1) return migrateLegacyFarm(legacy);
+      return starterFarm();
     } catch {
       return starterFarm();
     }
