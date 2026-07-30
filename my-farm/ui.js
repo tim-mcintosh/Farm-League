@@ -41,6 +41,8 @@
     selectedType: null,
     preview: null
   };
+  const DOUBLE_ACTIVATION_MS = 550;
+  let lastCanvasAction = null;
 
   function selectedObject() {
     return view.farm.placed.find(object => object.id === view.selectedObjectId) || null;
@@ -160,7 +162,7 @@
     view.mode = 'move';
     view.selectedType = object.type;
     view.preview = { x: object.x, y: object.y, valid: true, reason: 'Current position.' };
-    announce(`Moving ${Data.catalog[object.type].name}. Choose a new position, then press Place.`);
+    announce(`Moving ${Data.catalog[object.type].name}. Double-tap or double-click a new position, or preview it once and press Place.`);
     render();
     canvas.focus({ preventScroll: true });
   }
@@ -228,9 +230,45 @@
     view.selectedType = object?.type || null;
     view.preview = null;
     announce(object
-      ? `${Data.catalog[object.type].name} selected. Choose Move or Store.`
+      ? `${Data.catalog[object.type].name} selected. Double-tap or double-click it to move, or choose Move or Store.`
       : 'No object selected.');
     render();
+  }
+
+  function matchesLastCanvasAction(key, now) {
+    const matches = lastCanvasAction
+      && lastCanvasAction.key === key
+      && lastCanvasAction.mode === view.mode
+      && now - lastCanvasAction.time <= DOUBLE_ACTIVATION_MS;
+    lastCanvasAction = { key, mode: view.mode, time: now };
+    return matches;
+  }
+
+  function handleCanvasActivation(event) {
+    event.preventDefault();
+    const position = Placement.gridPosition(canvas, event.clientX, event.clientY);
+    if (!position) return;
+    const now = performance.now();
+
+    if (view.mode === 'view') {
+      const object = Placement.objectAt(view.farm.placed, position.x, position.y);
+      const matchesPrevious = matchesLastCanvasAction(`object:${object?.id || 'empty'}`, now);
+      const isDoubleActivation = object && matchesPrevious;
+      selectObject(object?.id);
+      if (isDoubleActivation) {
+        lastCanvasAction = null;
+        beginMove();
+      }
+      return;
+    }
+
+    const destinationKey = `destination:${position.x}:${position.y}`;
+    const isDoubleActivation = matchesLastCanvasAction(destinationKey, now);
+    setPreview(position);
+    if (isDoubleActivation && view.preview?.valid) {
+      lastCanvasAction = null;
+      confirmPlacement();
+    }
   }
 
   elements.build.addEventListener('click', () => {
@@ -257,15 +295,8 @@
     setPreview(Placement.gridPosition(canvas, event.clientX, event.clientY));
   });
 
-  canvas.addEventListener('click', event => {
-    const position = Placement.gridPosition(canvas, event.clientX, event.clientY);
-    if (!position) return;
-    if (view.mode === 'view') {
-      selectObject(Placement.objectAt(view.farm.placed, position.x, position.y)?.id);
-    } else {
-      setPreview(position);
-    }
-  });
+  canvas.addEventListener('click', handleCanvasActivation);
+  canvas.addEventListener('dblclick', event => event.preventDefault());
 
   canvas.addEventListener('keydown', event => {
     if (event.key === 'Escape' && view.mode !== 'view') {
@@ -295,7 +326,7 @@
   });
 
   window.addEventListener('resize', () => renderer.render(view));
-  announce('Farm loaded. Select an object or enter Build mode.');
+  announce('Farm loaded. Double-tap or double-click an object to move it, or enter Build mode.');
   elements.saveStatus.textContent = initialSaveSucceeded ? 'Saved on this device' : 'Storage is unavailable';
   render();
 })();

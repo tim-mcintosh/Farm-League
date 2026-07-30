@@ -46,7 +46,7 @@
       coins: 250,
       inventory: {
         farmhouse: 0,
-        barn: 0,
+        barn: 1,
         garden: 1,
         pond: 1,
         coop: 1,
@@ -56,7 +56,6 @@
       },
       placed: [
         { id: 'starter-farmhouse', type: 'farmhouse', x: 1, y: 1 },
-        { id: 'starter-barn', type: 'barn', x: 8, y: 1 },
         { id: 'starter-garden', type: 'garden', x: 2, y: 5 },
         { id: 'starter-tree', type: 'tree', x: 7, y: 5 }
       ]
@@ -90,18 +89,26 @@
     });
   }
 
+  function migrateStarterLayout(farm) {
+    const retiredBarn = farm.placed.find(object => object.id === 'starter-barn');
+    if (!retiredBarn) return farm;
+    farm.placed = farm.placed.filter(object => object.id !== retiredBarn.id);
+    farm.inventory.barn = Math.min(999, (farm.inventory.barn || 0) + 1);
+    return farm;
+  }
+
   function load() {
     try {
       const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
       if (!parsed || parsed.version !== SCHEMA_VERSION) return starterFarm();
-      return {
+      return migrateStarterLayout({
         version: SCHEMA_VERSION,
         coins: Number.isSafeInteger(parsed.coins) && parsed.coins >= 0 && parsed.coins <= 999999
           ? parsed.coins
           : 0,
         inventory: normaliseInventory(parsed.inventory),
         placed: normalisePlaced(parsed.placed)
-      };
+      });
     } catch {
       return starterFarm();
     }

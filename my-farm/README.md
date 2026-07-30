@@ -10,6 +10,8 @@ My Farm is a platform page and grid-based farm viewer/builder. It is intentional
 - `ui.js` owns selection, build/move/store/cancel flows, accessible HTML controls and save coordination.
 - `styles.css` owns the responsive page and builder presentation.
 
+Canvas objects use a two-step double activation: double-click or double-tap an object to begin moving it, then double-click or double-tap a valid destination to save the move. The visible Move and Place controls remain available as accessible alternatives.
+
 ## Save schema
 
 ```js
