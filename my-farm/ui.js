@@ -89,7 +89,7 @@
           <span><strong>${definition.name}</strong><small>${itemSize(definition)} grid cells</small></span>
           <button type="button" data-shop-type="${definition.type}" ${affordable ? '' : 'disabled'}
             aria-label="Buy ${definition.name} for ${definition.price} farm coins">
-            <span aria-hidden="true">🪙</span> ${definition.price}
+            <span class="shop-coin-icon" aria-hidden="true">🪙</span> ${definition.price}
           </button>
         </article>`;
     }).join('');

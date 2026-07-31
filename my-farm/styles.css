@@ -40,8 +40,21 @@
   box-shadow: var(--shadow);
 }
 
-.farm-wallet > span {
+.farm-coin-icon,
+.shop-coin-icon {
+  display: inline-block;
+  flex: 0 0 auto;
+  line-height: 1;
+  filter: sepia(1) saturate(3.4) hue-rotate(354deg) brightness(1.08) contrast(1.05);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, .34);
+}
+
+.farm-coin-icon {
   font-size: 2rem;
+}
+
+.shop-coin-icon {
+  font-size: 1rem;
 }
 
 .farm-wallet div {
@@ -441,7 +454,7 @@
     padding: 10px 12px;
   }
 
-  .farm-wallet > span {
+  .farm-coin-icon {
     font-size: 1.5rem;
   }
 
