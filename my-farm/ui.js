@@ -12,13 +12,12 @@
     saveStatus: document.getElementById('saveStatus'),
     inventory: document.getElementById('inventoryList'),
     inventoryPanel: document.getElementById('inventoryPanel'),
-    selection: document.getElementById('selectionDetails'),
+    shop: document.getElementById('shopList'),
+    shopPanel: document.getElementById('shopPanel'),
     placed: document.getElementById('placedList'),
-    build: document.getElementById('buildButton'),
-    move: document.getElementById('moveButton'),
-    store: document.getElementById('storeButton'),
-    place: document.getElementById('placeButton'),
-    cancel: document.getElementById('cancelButton')
+    storage: document.getElementById('storageButton'),
+    shopButton: document.getElementById('shopButton'),
+    remove: document.getElementById('removeButton')
   };
 
   const loadedFarm = Data.load();
@@ -39,7 +38,8 @@
     mode: 'view',
     selectedObjectId: null,
     selectedType: null,
-    preview: null
+    preview: null,
+    activePanel: null
   };
   const DOUBLE_ACTIVATION_MS = 550;
   let lastCanvasAction = null;
@@ -63,7 +63,10 @@
   }
 
   function renderInventory() {
-    elements.inventory.innerHTML = Object.values(Data.catalog).map(definition => {
+    const ownedItems = Object.values(Data.catalog).filter(definition =>
+      (view.farm.inventory[definition.type] || 0) > 0
+    );
+    elements.inventory.innerHTML = ownedItems.map(definition => {
       const count = view.farm.inventory[definition.type] || 0;
       const active = view.mode === 'build' && view.selectedType === definition.type;
       return `
@@ -74,21 +77,22 @@
           <span><strong>${definition.name}</strong><small>${itemSize(definition)} grid cells</small></span>
           <b aria-label="${count} in storage">${count}</b>
         </button>`;
-    }).join('');
+    }).join('') || '<p class="empty-list">Storage is empty. Visit the Shop to buy an item.</p>';
   }
 
-  function renderSelection() {
-    const object = selectedObject();
-    if (!object) {
-      elements.selection.innerHTML = '<p>Select an object on the farm to move it or return it to storage.</p>';
-      return;
-    }
-    const definition = Data.catalog[object.type];
-    elements.selection.innerHTML = `
-      <div class="selection-card">
-        <span aria-hidden="true">${definition.icon}</span>
-        <div><strong>${definition.name}</strong><small>${itemSize(definition)} grid cells · column ${object.x + 1}, row ${object.y + 1}</small></div>
-      </div>`;
+  function renderShop() {
+    elements.shop.innerHTML = Object.values(Data.catalog).map(definition => {
+      const affordable = view.farm.coins >= definition.price;
+      return `
+        <article class="shop-item">
+          <span class="shop-item__icon" aria-hidden="true">${definition.icon}</span>
+          <span><strong>${definition.name}</strong><small>${itemSize(definition)} grid cells</small></span>
+          <button type="button" data-shop-type="${definition.type}" ${affordable ? '' : 'disabled'}
+            aria-label="Buy ${definition.name} for ${definition.price} farm coins">
+            <span aria-hidden="true">🪙</span> ${definition.price}
+          </button>
+        </article>`;
+    }).join('');
   }
 
   function renderPlacedList() {
@@ -108,29 +112,29 @@
     const object = selectedObject();
     const active = view.mode !== 'view';
     elements.coins.textContent = view.farm.coins.toLocaleString();
-    elements.mode.textContent = view.mode === 'view' ? 'Viewing' : view.mode === 'move' ? 'Moving' : 'Building';
-    elements.build.setAttribute('aria-pressed', String(view.mode === 'build'));
-    elements.move.disabled = !object || active;
-    elements.store.disabled = !object || active;
-    elements.cancel.disabled = !active;
-    elements.place.disabled = !active || !view.preview?.valid || !view.selectedType;
-    elements.inventoryPanel.hidden = view.mode !== 'build';
+    elements.mode.textContent = view.mode === 'view' ? 'Viewing' : view.mode === 'move' ? 'Moving' : 'Placing';
+    elements.storage.setAttribute('aria-pressed', String(view.activePanel === 'storage'));
+    elements.shopButton.setAttribute('aria-pressed', String(view.activePanel === 'shop'));
+    elements.remove.disabled = !object || active;
+    elements.inventoryPanel.hidden = view.activePanel !== 'storage';
+    elements.shopPanel.hidden = view.activePanel !== 'shop';
   }
 
   function render() {
     renderer.render(view);
     renderInventory();
-    renderSelection();
+    renderShop();
     renderPlacedList();
     renderControls();
   }
 
   function cancel() {
-    const hadAction = view.mode !== 'view';
+    const hadAction = view.mode !== 'view' || view.activePanel !== null;
     view.mode = 'view';
     view.selectedType = selectedObject()?.type || null;
     view.preview = null;
-    if (hadAction) announce('Build action cancelled. Your farm was not changed.');
+    view.activePanel = null;
+    if (hadAction) announce('Action stopped. Your farm was not changed.');
     render();
   }
 
@@ -139,9 +143,22 @@
     view.selectedObjectId = null;
     view.selectedType = null;
     view.preview = null;
-    announce('Choose an item from storage, then select a grid position.');
+    view.activePanel = 'storage';
+    announce('Choose an item from Storage, then double-tap or double-click a valid position.');
     render();
     elements.inventoryPanel.scrollIntoView({
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      block: 'nearest'
+    });
+  }
+
+  function openShop() {
+    view.mode = 'view';
+    view.preview = null;
+    view.activePanel = 'shop';
+    announce('Choose an item to buy. Purchases are added to Storage.');
+    render();
+    elements.shopPanel.scrollIntoView({
       behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
       block: 'nearest'
     });
@@ -151,7 +168,7 @@
     if (view.mode !== 'build' || !Data.catalog[type] || view.farm.inventory[type] < 1) return;
     view.selectedType = type;
     view.preview = null;
-    announce(`${Data.catalog[type].name} selected. Tap or click the farm to preview its position.`);
+    announce(`${Data.catalog[type].name} selected. Double-tap or double-click a valid position.`);
     render();
     canvas.focus({ preventScroll: true });
   }
@@ -162,7 +179,8 @@
     view.mode = 'move';
     view.selectedType = object.type;
     view.preview = { x: object.x, y: object.y, valid: true, reason: 'Current position.' };
-    announce(`Moving ${Data.catalog[object.type].name}. Double-tap or double-click a new position, or preview it once and press Place.`);
+    view.activePanel = null;
+    announce(`Moving ${Data.catalog[object.type].name}. Double-tap or double-click its new position.`);
     render();
     canvas.focus({ preventScroll: true });
   }
@@ -175,7 +193,23 @@
     view.selectedObjectId = null;
     view.selectedType = null;
     view.preview = null;
-    saveFarm(`${Data.catalog[object.type].name} returned to storage.`);
+    saveFarm(`${Data.catalog[object.type].name} removed from the farm and returned to Storage.`);
+    render();
+  }
+
+  function buyItem(type) {
+    const definition = Data.catalog[type];
+    if (!definition || view.farm.coins < definition.price) {
+      announce('You do not have enough farm coins for that item.');
+      return;
+    }
+    if ((view.farm.inventory[type] || 0) >= 999) {
+      announce(`${definition.name} storage is full.`);
+      return;
+    }
+    view.farm.coins -= definition.price;
+    view.farm.inventory[type] = (view.farm.inventory[type] || 0) + 1;
+    saveFarm(`${definition.name} purchased and added to Storage.`);
     render();
   }
 
@@ -219,6 +253,7 @@
     view.mode = 'view';
     view.preview = null;
     view.selectedType = selectedObject()?.type || null;
+    view.activePanel = null;
     saveFarm(`${definition.name} placed on your farm.`);
     render();
   }
@@ -230,7 +265,7 @@
     view.selectedType = object?.type || null;
     view.preview = null;
     announce(object
-      ? `${Data.catalog[object.type].name} selected. Double-tap or double-click it to move, or choose Move or Store.`
+      ? `${Data.catalog[object.type].name} selected. Double-tap or double-click it to move the object, or choose Remove to send it back to Storage.`
       : 'No object selected.');
     render();
   }
@@ -271,18 +306,24 @@
     }
   }
 
-  elements.build.addEventListener('click', () => {
-    if (view.mode === 'build') cancel();
+  elements.storage.addEventListener('click', () => {
+    if (view.activePanel === 'storage' || view.mode !== 'view') cancel();
     else beginBuild();
   });
-  elements.move.addEventListener('click', beginMove);
-  elements.store.addEventListener('click', storeSelected);
-  elements.place.addEventListener('click', confirmPlacement);
-  elements.cancel.addEventListener('click', cancel);
+  elements.shopButton.addEventListener('click', () => {
+    if (view.activePanel === 'shop') cancel();
+    else openShop();
+  });
+  elements.remove.addEventListener('click', storeSelected);
 
   elements.inventory.addEventListener('click', event => {
     const button = event.target.closest('[data-inventory-type]');
     if (button) chooseInventory(button.dataset.inventoryType);
+  });
+
+  elements.shop.addEventListener('click', event => {
+    const button = event.target.closest('[data-shop-type]');
+    if (button) buyItem(button.dataset.shopType);
   });
 
   elements.placed.addEventListener('click', event => {

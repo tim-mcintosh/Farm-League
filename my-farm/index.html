@@ -53,20 +53,14 @@
 </div>
 
 <div class="builder-toolbar" role="toolbar" aria-label="Farm building tools">
-<button id="buildButton" class="tool-button tool-button--primary" type="button" aria-pressed="false">
-<span aria-hidden="true">🔨</span> Build
+<button id="storageButton" class="tool-button tool-button--primary" type="button" aria-pressed="false">
+<span aria-hidden="true">📦</span> Storage
 </button>
-<button id="moveButton" class="tool-button" type="button" disabled>
-<span aria-hidden="true">✥</span> Move
+<button id="shopButton" class="tool-button" type="button" aria-pressed="false">
+<span aria-hidden="true">🛒</span> Shop
 </button>
-<button id="storeButton" class="tool-button" type="button" disabled>
-<span aria-hidden="true">📦</span> Store
-</button>
-<button id="placeButton" class="tool-button tool-button--confirm" type="button" disabled>
-<span aria-hidden="true">✓</span> Place
-</button>
-<button id="cancelButton" class="tool-button tool-button--quiet" type="button" disabled>
-<span aria-hidden="true">×</span> Cancel
+<button id="removeButton" class="tool-button" type="button" disabled>
+<span aria-hidden="true">↩</span> Remove
 </button>
 </div>
 
@@ -74,7 +68,7 @@
 
 <div class="canvas-frame">
 <canvas id="farmCanvas" width="1200" height="800" tabindex="0"
-  aria-label="Your farm on a 12 column by 8 row placement grid. Double-click or double-tap an object to move it, then double-click or double-tap its destination. You can also use the HTML controls or keyboard.">
+  aria-label="Your farm on a 12 column by 8 row placement grid. Double-click or double-tap an object to move it, then double-click or double-tap its destination. Keyboard controls are also available.">
 Your browser does not support the Farm League farm canvas.
 </canvas>
 </div>
@@ -82,26 +76,28 @@ Your browser does not support the Farm League farm canvas.
 <span><i class="key-swatch key-swatch--valid"></i> Valid position</span>
 <span><i class="key-swatch key-swatch--invalid"></i> Blocked position</span>
 <span>Double-tap or double-click to move and place</span>
-<span>Keyboard: arrows to preview, Enter to place, Escape to cancel</span>
+<span>Tap Storage or press Escape to stop an action</span>
+<span>Keyboard: arrows to preview, Enter to place</span>
 </div>
 </div>
 
 <aside class="builder-sidebar" aria-label="Farm building options">
-<section id="inventoryPanel" class="builder-panel" hidden>
+<section id="inventoryPanel" class="builder-panel builder-panel--action" hidden>
 <div class="panel-heading">
 <div><p class="eyebrow">Available now</p><h2>Storage</h2></div>
 <span aria-hidden="true">📦</span>
 </div>
-<p>Choose an item, then tap a position on the farm.</p>
+<p>Choose an item, then double-tap or double-click its position on the farm.</p>
 <div id="inventoryList" class="inventory-list"></div>
 </section>
 
-<section class="builder-panel">
+<section id="shopPanel" class="builder-panel builder-panel--action" hidden>
 <div class="panel-heading">
-<div><p class="eyebrow">Current choice</p><h2>Selected object</h2></div>
-<span aria-hidden="true">👆</span>
+<div><p class="eyebrow">Spend farm coins</p><h2>Shop</h2></div>
+<span aria-hidden="true">🛒</span>
 </div>
-<div id="selectionDetails" class="selection-details"></div>
+<p>Buy decorations and buildings. Purchases are added to Storage.</p>
+<div id="shopList" class="shop-list"></div>
 </section>
 
 <section class="builder-panel">

@@ -115,12 +115,13 @@
 
 .builder-toolbar {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
 .tool-button,
 .inventory-item,
+.shop-item button,
 .placed-list button {
   border: 1px solid rgba(255, 255, 255, .15);
   color: var(--text);
@@ -148,36 +149,30 @@
   color: var(--accent-bright);
 }
 
-.tool-button--primary[aria-pressed="true"] {
+.tool-button[aria-pressed="true"] {
+  border-color: var(--accent);
   background: var(--accent);
   color: var(--accent-dark);
 }
 
-.tool-button--confirm {
-  border-color: rgba(155, 216, 63, .5);
-  background: #79b92c;
-  color: #11240a;
-}
-
-.tool-button--quiet {
-  color: #d7ded5;
-}
-
 .tool-button:hover:not(:disabled),
 .inventory-item:hover:not(:disabled),
+.shop-item button:hover:not(:disabled),
 .placed-list button:hover {
   border-color: var(--accent);
   filter: brightness(1.08);
 }
 
 .tool-button:disabled,
-.inventory-item:disabled {
+.inventory-item:disabled,
+.shop-item button:disabled {
   opacity: .4;
   cursor: not-allowed;
 }
 
 .tool-button:focus-visible,
 .inventory-item:focus-visible,
+.shop-item button:focus-visible,
 .placed-list button:focus-visible,
 #farmCanvas:focus-visible,
 .farm-footer a:focus-visible {
@@ -254,7 +249,7 @@
 }
 
 .builder-panel > p,
-.selection-details > p {
+.empty-list {
   margin: 12px 0 0;
   color: var(--muted);
   font-size: .78rem;
@@ -271,6 +266,7 @@
 }
 
 .inventory-list,
+.shop-list,
 .placed-list {
   display: grid;
   max-height: 330px;
@@ -308,20 +304,20 @@
 
 .inventory-item span:nth-child(2),
 .placed-list button > span:last-child,
-.selection-card div {
+.shop-item > span:nth-child(2) {
   display: grid;
   min-width: 0;
   gap: 2px;
 }
 
 .inventory-item strong,
-.selection-card strong {
+.shop-item strong {
   font-size: .8rem;
 }
 
 .inventory-item small,
 .placed-list small,
-.selection-card small {
+.shop-item small {
   color: var(--muted);
   font-size: .65rem;
   line-height: 1.3;
@@ -343,21 +339,42 @@
   font-size: .75rem;
 }
 
-.selection-card {
+.shop-item {
   display: grid;
-  margin-top: 12px;
-  padding: 11px;
-  grid-template-columns: 42px 1fr;
+  min-height: 58px;
+  padding: 8px 10px;
+  grid-template-columns: 38px 1fr auto;
   align-items: center;
-  gap: 10px;
-  border: 1px solid rgba(155, 216, 63, .2);
+  gap: 9px;
+  border: 1px solid rgba(255, 255, 255, .12);
   border-radius: 10px;
-  background: rgba(155, 216, 63, .07);
+  background: rgba(255, 255, 255, .055);
 }
 
-.selection-card > span {
-  font-size: 1.8rem;
+.shop-item__icon {
+  font-size: 1.55rem;
   text-align: center;
+}
+
+.shop-item button {
+  display: inline-flex;
+  min-width: 64px;
+  min-height: 38px;
+  padding: 6px 9px;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border-radius: 8px;
+  background: rgba(246, 203, 60, .14);
+  color: #f7d34e;
+  font-size: .7rem;
+  font-weight: 1000;
+}
+
+.empty-list {
+  padding: 12px;
+  border: 1px dashed rgba(155, 216, 63, .25);
+  border-radius: 10px;
 }
 
 .save-status {
@@ -398,12 +415,13 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .builder-panel:first-child,
+  .builder-panel--action,
   .save-status {
     grid-column: 1 / -1;
   }
 
-  .inventory-list {
+  .inventory-list,
+  .shop-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     max-height: none;
   }
@@ -429,10 +447,6 @@
 
   .farm-wallet strong {
     font-size: 1.15rem;
-  }
-
-  .builder-toolbar {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .tool-button {
@@ -481,14 +495,6 @@
     border-radius: 14px;
   }
 
-  .builder-toolbar {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .builder-toolbar .tool-button--quiet {
-    grid-column: 1 / -1;
-  }
-
   .builder-status {
     font-size: .72rem;
   }
@@ -506,12 +512,13 @@
     grid-template-columns: 1fr;
   }
 
-  .builder-panel:first-child,
+  .builder-panel--action,
   .save-status {
     grid-column: auto;
   }
 
-  .inventory-list {
+  .inventory-list,
+  .shop-list {
     grid-template-columns: 1fr;
   }
 
@@ -525,6 +532,7 @@
 @media (prefers-reduced-motion: reduce) {
   .tool-button,
   .inventory-item,
+  .shop-item button,
   .placed-list button {
     scroll-behavior: auto;
   }

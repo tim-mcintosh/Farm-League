@@ -8,43 +8,43 @@
 
   const CATALOG = Object.freeze({
     farmhouse: Object.freeze({
-      type: 'farmhouse', name: 'Small farmhouse', icon: '🏡', width: 3, height: 2,
+      type: 'farmhouse', name: 'Small farmhouse', icon: '🏡', width: 3, height: 2, price: 250,
       description: 'The heart of your farm.'
     }),
     barn: Object.freeze({
-      type: 'barn', name: 'Red barn', icon: '🏚️', width: 3, height: 2,
+      type: 'barn', name: 'Red barn', icon: '🏚️', width: 3, height: 2, price: 220,
       description: 'A roomy barn for future animals.'
     }),
     garden: Object.freeze({
-      type: 'garden', name: 'Garden bed', icon: '🥕', width: 2, height: 2,
+      type: 'garden', name: 'Garden bed', icon: '🥕', width: 2, height: 2, price: 60,
       description: 'A tidy patch of colourful vegetables.'
     }),
     pond: Object.freeze({
-      type: 'pond', name: 'Farm pond', icon: '💧', width: 2, height: 2,
+      type: 'pond', name: 'Farm pond', icon: '💧', width: 2, height: 2, price: 140,
       description: 'A quiet watering spot.'
     }),
     coop: Object.freeze({
-      type: 'coop', name: 'Chicken coop', icon: '🐔', width: 2, height: 1,
+      type: 'coop', name: 'Chicken coop', icon: '🐔', width: 2, height: 1, price: 110,
       description: 'A compact home for future chickens.'
     }),
     windmill: Object.freeze({
-      type: 'windmill', name: 'Windmill', icon: '🌬️', width: 1, height: 2,
+      type: 'windmill', name: 'Windmill', icon: '🌬️', width: 1, height: 2, price: 180,
       description: 'A tall landmark for the paddock.'
     }),
     tree: Object.freeze({
-      type: 'tree', name: 'Shade tree', icon: '🌳', width: 1, height: 1,
+      type: 'tree', name: 'Shade tree', icon: '🌳', width: 1, height: 1, price: 35,
       description: 'Adds greenery to an empty corner.'
     }),
     fence: Object.freeze({
-      type: 'fence', name: 'Fence section', icon: '🪵', width: 1, height: 1,
+      type: 'fence', name: 'Fence section', icon: '🪵', width: 1, height: 1, price: 10,
       description: 'A decorative section of timber fence.'
     }),
     stone: Object.freeze({
-      type: 'stone', name: 'Farm stone', icon: '🪨', width: 1, height: 1,
+      type: 'stone', name: 'Farm stone', icon: '🪨', width: 1, height: 1, price: 15,
       description: 'A natural stone for decorating the paddock.'
     }),
     mailbox: Object.freeze({
-      type: 'mailbox', name: 'Farm mailbox', icon: '📫', width: 1, height: 1,
+      type: 'mailbox', name: 'Farm mailbox', icon: '📫', width: 1, height: 1, price: 25,
       description: 'A cheerful mailbox for the farm entrance.'
     })
   });
