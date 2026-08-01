@@ -6,7 +6,7 @@ My Farm is a platform page and grid-based farm viewer/builder. It is intentional
 
 - `data.js` owns the versioned `farmLeague.myFarm.v2` local-storage schema, starter inventory, object catalogue, shop prices and safe persistence.
 - `placement.js` owns the 12 × 8 grid, bounds checks, overlap checks, object hit testing and placement sanitisation.
-- `renderer.js` owns the canvas scene and temporary code-drawn object artwork.
+- `renderer.js` owns the canvas scene, approved top-down sprites and code-drawn fallbacks for objects awaiting final artwork.
 - `ui.js` owns selection, Storage placement, move/remove flows, Shop purchases, keyboard controls and save coordination.
 - `styles.css` owns the responsive page and builder presentation.
 
@@ -24,6 +24,8 @@ Canvas objects use a two-step double activation: double-click or double-tap an o
 ```
 
 Coordinates are zero-based grid positions. Object dimensions come from the catalogue rather than being duplicated in save data.
+
+Approved artwork currently covers the 2 × 2 small farmhouse, garden bed, tree, stone and mailbox. Their transparent PNG sprites live in `assets/`; remaining catalogue objects continue to use temporary canvas artwork.
 
 The free starter allowance is one small farmhouse, one garden bed, one tree, ten fence sections, one stone and one mailbox. The farmhouse, garden and tree begin on the farm; the remaining items begin in storage. Version 1 saves migrate to this allowance while preserving valid placed objects.
 

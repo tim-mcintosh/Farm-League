@@ -8,7 +8,7 @@
 
   const CATALOG = Object.freeze({
     farmhouse: Object.freeze({
-      type: 'farmhouse', name: 'Small farmhouse', icon: '🏡', width: 3, height: 2, price: 250,
+      type: 'farmhouse', name: 'Small farmhouse', icon: '🏡', width: 2, height: 2, price: 250,
       description: 'The heart of your farm.'
     }),
     barn: Object.freeze({

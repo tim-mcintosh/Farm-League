@@ -6,6 +6,13 @@
   const HEIGHT = 800;
   const CELL_WIDTH = WIDTH / grid.columns;
   const CELL_HEIGHT = HEIGHT / grid.rows;
+  const SPRITE_PATHS = Object.freeze({
+    farmhouse: 'assets/small-farmhouse-top-down.png',
+    garden: 'assets/garden-patch-top-down.png',
+    tree: 'assets/tree-top-down.png',
+    stone: 'assets/stone-top-down.png',
+    mailbox: 'assets/mailbox-top-down.png'
+  });
 
   function roundedRect(context, x, y, width, height, radius) {
     context.beginPath();
@@ -321,7 +328,22 @@
     context.fill();
   }
 
-  function drawObject(context, object, selected) {
+  function drawSprite(context, image, x, y, width, height) {
+    if (!image?.complete || image.naturalWidth < 1) return false;
+    const scale = Math.min(width / image.naturalWidth, height / image.naturalHeight);
+    const drawWidth = image.naturalWidth * scale;
+    const drawHeight = image.naturalHeight * scale;
+    context.drawImage(
+      image,
+      x + (width - drawWidth) / 2,
+      y + (height - drawHeight) / 2,
+      drawWidth,
+      drawHeight
+    );
+    return true;
+  }
+
+  function drawObject(context, object, selected, sprites) {
     const definition = catalog[object.type];
     if (!definition) return;
     const x = object.x * CELL_WIDTH + 5;
@@ -329,7 +351,9 @@
     const width = definition.width * CELL_WIDTH - 10;
     const height = definition.height * CELL_HEIGHT - 10;
 
-    if (object.type === 'farmhouse') {
+    if (drawSprite(context, sprites[object.type], x, y, width, height)) {
+      // Approved artwork replaces the temporary canvas drawing when loaded.
+    } else if (object.type === 'farmhouse') {
       drawBuilding(context, x, y, width, height, {
         wall: '#f0d49b', trim: '#6e4a2d', roof: '#315d3a', roofEdge: '#203e29', door: '#8a4e2e'
       }, 'house');
@@ -393,8 +417,16 @@
     canvas.width = WIDTH;
     canvas.height = HEIGHT;
     const context = canvas.getContext('2d');
+    const sprites = Object.fromEntries(Object.entries(SPRITE_PATHS).map(([type, path]) => {
+      const image = new Image();
+      image.src = path;
+      return [type, image];
+    }));
+    let lastFrame = null;
 
-    function render({ farm, mode, selectedObjectId, selectedType, preview }) {
+    function render(frame) {
+      lastFrame = frame;
+      const { farm, mode, selectedObjectId, selectedType, preview } = frame;
       context.clearRect(0, 0, WIDTH, HEIGHT);
       drawFarmGround(context);
       if (mode !== 'view') drawGrid(context);
@@ -402,13 +434,19 @@
       farm.placed
         .filter(object => object.id !== hiddenId)
         .sort((first, second) => (first.y + catalog[first.type].height) - (second.y + catalog[second.type].height))
-        .forEach(object => drawObject(context, object, mode === 'view' && object.id === selectedObjectId));
+        .forEach(object => drawObject(context, object, mode === 'view' && object.id === selectedObjectId, sprites));
       if (mode === 'move') {
         const selected = farm.placed.find(object => object.id === selectedObjectId);
-        if (selected && !preview) drawObject(context, selected, true);
+        if (selected && !preview) drawObject(context, selected, true, sprites);
       }
       if (mode !== 'view') drawPreview(context, preview, selectedType);
     }
+
+    Object.values(sprites).forEach(image => {
+      image.addEventListener('load', () => {
+        if (lastFrame) render(lastFrame);
+      });
+    });
 
     return Object.freeze({ render, width: WIDTH, height: HEIGHT });
   }
