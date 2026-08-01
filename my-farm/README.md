@@ -25,7 +25,7 @@ Canvas objects use a two-step double activation: double-click or double-tap an o
 
 Coordinates are zero-based grid positions. Object dimensions come from the catalogue rather than being duplicated in save data.
 
-Approved artwork covers every current catalogue object: farmhouse, barn, garden bed, pond, chicken coop, windmill, tree, fence, stone, mailbox and six placeable animals. Their transparent PNG sprites live in `assets/`; temporary canvas drawings remain as loading and asset-error fallbacks. Per-object display scales in the renderer keep small decorations and animals visually proportional without changing their collision footprints.
+Approved artwork covers every current catalogue object: buildings, landscaping, decorations, six farm animals, a farm dog, tractor and delivery truck. Their transparent PNG sprites live in `assets/`; temporary canvas drawings remain as loading and asset-error fallbacks. Per-object display scales in the renderer keep small decorations, animals and vehicles visually proportional without changing their collision footprints.
 
 The free starter allowance is one small farmhouse, one garden bed, one tree, ten fence sections, one stone and one mailbox. The farmhouse, garden and tree begin on the farm; the remaining items begin in storage. Version 1 saves migrate to this allowance while preserving valid placed objects.
 

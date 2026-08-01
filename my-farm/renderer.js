@@ -22,7 +22,11 @@
     rabbit: 'assets/rabbit-top-down.png',
     crow: 'assets/crow-top-down.png',
     sheep: 'assets/sheep-top-down.png',
-    chicken: 'assets/chicken-top-down.png'
+    chicken: 'assets/chicken-top-down.png',
+    dog: 'assets/farm-dog-top-down.png',
+    tractor: 'assets/tractor-top-down.png',
+    deliveryTruck: 'assets/delivery-truck-top-down.png',
+    hayBale: 'assets/hay-bale-top-down.png'
   });
   const SPRITE_SCALES = Object.freeze({
     farmhouse: .92,
@@ -40,7 +44,11 @@
     rabbit: .68,
     crow: .55,
     sheep: .74,
-    chicken: .62
+    chicken: .62,
+    dog: .7,
+    tractor: .84,
+    deliveryTruck: .88,
+    hayBale: .58
   });
 
   function roundedRect(context, x, y, width, height, radius) {

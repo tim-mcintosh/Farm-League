@@ -70,6 +70,22 @@
     chicken: Object.freeze({
       type: 'chicken', name: 'Chicken', icon: '🐔', width: 1, height: 1, price: 30,
       description: 'A lively farmyard chicken.'
+    }),
+    dog: Object.freeze({
+      type: 'dog', name: 'Farm dog', icon: '🐕', width: 1, height: 1, price: 30,
+      description: 'A loyal companion for the farm.'
+    }),
+    tractor: Object.freeze({
+      type: 'tractor', name: 'Farm tractor', icon: '🚜', width: 1, height: 2, price: 160,
+      description: 'A reliable tractor ready for field work.'
+    }),
+    deliveryTruck: Object.freeze({
+      type: 'deliveryTruck', name: 'Delivery truck', icon: '🚚', width: 2, height: 1, price: 180,
+      description: 'A delivery truck for busy farm orders.'
+    }),
+    hayBale: Object.freeze({
+      type: 'hayBale', name: 'Hay bale', icon: '🌾', width: 1, height: 1, price: 15,
+      description: 'A tidy bale of farm hay.'
     })
   });
 
@@ -93,7 +109,11 @@
         rabbit: 0,
         crow: 0,
         sheep: 0,
-        chicken: 0
+        chicken: 0,
+        dog: 0,
+        tractor: 0,
+        deliveryTruck: 0,
+        hayBale: 0
       },
       placed: [
         { id: 'starter-farmhouse', type: 'farmhouse', x: 1, y: 1 },
@@ -148,7 +168,11 @@
       rabbit: 0,
       crow: 0,
       sheep: 0,
-      chicken: 0
+      chicken: 0,
+      dog: 0,
+      tractor: 0,
+      deliveryTruck: 0,
+      hayBale: 0
     };
   }
 
