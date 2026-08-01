@@ -13,6 +13,13 @@
     stone: 'assets/stone-top-down.png',
     mailbox: 'assets/mailbox-top-down.png'
   });
+  const SPRITE_SCALES = Object.freeze({
+    farmhouse: .92,
+    garden: .9,
+    tree: .82,
+    stone: .56,
+    mailbox: .72
+  });
 
   function roundedRect(context, x, y, width, height, radius) {
     context.beginPath();
@@ -328,9 +335,9 @@
     context.fill();
   }
 
-  function drawSprite(context, image, x, y, width, height) {
+  function drawSprite(context, image, x, y, width, height, visualScale = 1) {
     if (!image?.complete || image.naturalWidth < 1) return false;
-    const scale = Math.min(width / image.naturalWidth, height / image.naturalHeight);
+    const scale = Math.min(width / image.naturalWidth, height / image.naturalHeight) * visualScale;
     const drawWidth = image.naturalWidth * scale;
     const drawHeight = image.naturalHeight * scale;
     context.drawImage(
@@ -351,7 +358,7 @@
     const width = definition.width * CELL_WIDTH - 10;
     const height = definition.height * CELL_HEIGHT - 10;
 
-    if (drawSprite(context, sprites[object.type], x, y, width, height)) {
+    if (drawSprite(context, sprites[object.type], x, y, width, height, SPRITE_SCALES[object.type])) {
       // Approved artwork replaces the temporary canvas drawing when loaded.
     } else if (object.type === 'farmhouse') {
       drawBuilding(context, x, y, width, height, {

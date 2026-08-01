@@ -25,7 +25,7 @@ Canvas objects use a two-step double activation: double-click or double-tap an o
 
 Coordinates are zero-based grid positions. Object dimensions come from the catalogue rather than being duplicated in save data.
 
-Approved artwork currently covers the 2 × 2 small farmhouse, garden bed, tree, stone and mailbox. Their transparent PNG sprites live in `assets/`; remaining catalogue objects continue to use temporary canvas artwork.
+Approved artwork currently covers the 2 × 2 small farmhouse and the 1 × 1 garden bed, tree, stone and mailbox. Their transparent PNG sprites live in `assets/`; remaining catalogue objects continue to use temporary canvas artwork. Per-object display scales in the renderer keep small decorations visually proportional without changing their collision footprints.
 
 The free starter allowance is one small farmhouse, one garden bed, one tree, ten fence sections, one stone and one mailbox. The farmhouse, garden and tree begin on the farm; the remaining items begin in storage. Version 1 saves migrate to this allowance while preserving valid placed objects.
 

@@ -16,7 +16,7 @@
       description: 'A roomy barn for future animals.'
     }),
     garden: Object.freeze({
-      type: 'garden', name: 'Garden bed', icon: '🥕', width: 2, height: 2, price: 60,
+      type: 'garden', name: 'Garden bed', icon: '🥕', width: 1, height: 1, price: 60,
       description: 'A tidy patch of colourful vegetables.'
     }),
     pond: Object.freeze({
