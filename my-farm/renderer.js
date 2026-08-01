@@ -8,15 +8,25 @@
   const CELL_HEIGHT = HEIGHT / grid.rows;
   const SPRITE_PATHS = Object.freeze({
     farmhouse: 'assets/small-farmhouse-top-down.png',
+    barn: 'assets/barn-top-down.png',
     garden: 'assets/garden-patch-top-down.png',
+    pond: 'assets/pond-top-down.png',
+    coop: 'assets/chicken-coop-top-down.png',
+    windmill: 'assets/windmill-top-down.png',
     tree: 'assets/tree-top-down.png',
+    fence: 'assets/fence-top-down.png',
     stone: 'assets/stone-top-down.png',
     mailbox: 'assets/mailbox-top-down.png'
   });
   const SPRITE_SCALES = Object.freeze({
     farmhouse: .92,
+    barn: .92,
     garden: .9,
+    pond: .88,
+    coop: .9,
+    windmill: .86,
     tree: .82,
+    fence: .92,
     stone: .56,
     mailbox: .72
   });
