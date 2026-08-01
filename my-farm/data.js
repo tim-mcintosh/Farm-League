@@ -46,6 +46,30 @@
     mailbox: Object.freeze({
       type: 'mailbox', name: 'Farm mailbox', icon: '📫', width: 1, height: 1, price: 25,
       description: 'A cheerful mailbox for the farm entrance.'
+    }),
+    cow: Object.freeze({
+      type: 'cow', name: 'Cow', icon: '🐄', width: 1, height: 1, price: 30,
+      description: 'A friendly cow for your farm.'
+    }),
+    horse: Object.freeze({
+      type: 'horse', name: 'Horse', icon: '🐎', width: 1, height: 1, price: 30,
+      description: 'A dependable farm horse.'
+    }),
+    rabbit: Object.freeze({
+      type: 'rabbit', name: 'Rabbit', icon: '🐇', width: 1, height: 1, price: 30,
+      description: 'A curious rabbit for the paddock.'
+    }),
+    crow: Object.freeze({
+      type: 'crow', name: 'Crow', icon: '🐦‍⬛', width: 1, height: 1, price: 30,
+      description: 'A watchful farm crow.'
+    }),
+    sheep: Object.freeze({
+      type: 'sheep', name: 'Sheep', icon: '🐑', width: 1, height: 1, price: 30,
+      description: 'A woolly sheep for your farm.'
+    }),
+    chicken: Object.freeze({
+      type: 'chicken', name: 'Chicken', icon: '🐔', width: 1, height: 1, price: 30,
+      description: 'A lively farmyard chicken.'
     })
   });
 
@@ -63,7 +87,13 @@
         tree: 0,
         fence: 10,
         stone: 1,
-        mailbox: 1
+        mailbox: 1,
+        cow: 0,
+        horse: 0,
+        rabbit: 0,
+        crow: 0,
+        sheep: 0,
+        chicken: 0
       },
       placed: [
         { id: 'starter-farmhouse', type: 'farmhouse', x: 1, y: 1 },
@@ -112,7 +142,13 @@
       tree: Math.max(0, 1 - placedCount('tree')),
       fence: Math.max(0, 10 - placedCount('fence')),
       stone: Math.max(0, 1 - placedCount('stone')),
-      mailbox: Math.max(0, 1 - placedCount('mailbox'))
+      mailbox: Math.max(0, 1 - placedCount('mailbox')),
+      cow: 0,
+      horse: 0,
+      rabbit: 0,
+      crow: 0,
+      sheep: 0,
+      chicken: 0
     };
   }
 

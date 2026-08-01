@@ -16,7 +16,13 @@
     tree: 'assets/tree-top-down.png',
     fence: 'assets/fence-top-down.png',
     stone: 'assets/stone-top-down.png',
-    mailbox: 'assets/mailbox-top-down.png'
+    mailbox: 'assets/mailbox-top-down.png',
+    cow: 'assets/cow-top-down.png',
+    horse: 'assets/horse-top-down.png',
+    rabbit: 'assets/rabbit-top-down.png',
+    crow: 'assets/crow-top-down.png',
+    sheep: 'assets/sheep-top-down.png',
+    chicken: 'assets/chicken-top-down.png'
   });
   const SPRITE_SCALES = Object.freeze({
     farmhouse: .92,
@@ -28,7 +34,13 @@
     tree: .82,
     fence: .92,
     stone: .56,
-    mailbox: .72
+    mailbox: .72,
+    cow: .82,
+    horse: .8,
+    rabbit: .68,
+    crow: .55,
+    sheep: .74,
+    chicken: .62
   });
 
   function roundedRect(context, x, y, width, height, radius) {
