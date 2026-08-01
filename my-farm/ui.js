@@ -138,13 +138,12 @@
     render();
   }
 
-  function beginBuild() {
-    view.mode = 'build';
-    view.selectedObjectId = null;
-    view.selectedType = null;
+  function openStorage() {
+    view.mode = 'view';
+    view.selectedType = selectedObject()?.type || null;
     view.preview = null;
     view.activePanel = 'storage';
-    announce('Choose an item from Storage, then double-tap or double-click a valid position.');
+    announce('Storage opened. Select an existing farm object, or choose a stored item to place.');
     render();
     elements.inventoryPanel.scrollIntoView({
       behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
@@ -165,7 +164,9 @@
   }
 
   function chooseInventory(type) {
-    if (view.mode !== 'build' || !Data.catalog[type] || view.farm.inventory[type] < 1) return;
+    if (view.activePanel !== 'storage' || !Data.catalog[type] || view.farm.inventory[type] < 1) return;
+    view.mode = 'build';
+    view.selectedObjectId = null;
     view.selectedType = type;
     view.preview = null;
     announce(`${Data.catalog[type].name} selected. Double-tap or double-click a valid position.`);
@@ -179,7 +180,7 @@
     view.mode = 'move';
     view.selectedType = object.type;
     view.preview = { x: object.x, y: object.y, valid: true, reason: 'Current position.' };
-    view.activePanel = null;
+    if (view.activePanel !== 'storage') view.activePanel = null;
     announce(`Moving ${Data.catalog[object.type].name}. Double-tap or double-click its new position.`);
     render();
     canvas.focus({ preventScroll: true });
@@ -253,7 +254,6 @@
     view.mode = 'view';
     view.preview = null;
     view.selectedType = selectedObject()?.type || null;
-    view.activePanel = null;
     saveFarm(`${definition.name} placed on your farm.`);
     render();
   }
@@ -308,7 +308,7 @@
 
   elements.storage.addEventListener('click', () => {
     if (view.activePanel === 'storage' || view.mode !== 'view') cancel();
-    else beginBuild();
+    else openStorage();
   });
   elements.shopButton.addEventListener('click', () => {
     if (view.activePanel === 'shop') cancel();

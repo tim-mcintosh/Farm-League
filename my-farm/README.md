@@ -27,7 +27,7 @@ Coordinates are zero-based grid positions. Object dimensions come from the catal
 
 The free starter allowance is one small farmhouse, one garden bed, one tree, ten fence sections, one stone and one mailbox. The farmhouse, garden and tree begin on the farm; the remaining items begin in storage. Version 1 saves migrate to this allowance while preserving valid placed objects.
 
-The toolbar exposes Storage, Shop and Remove. Storage opens owned items for placement, Shop deducts catalogue prices from farm coins and adds purchases to Storage, and Remove returns the selected placed object to Storage. The Shop does not include payments, premium currency, backend validation or a way to earn additional coins yet.
+The toolbar exposes Storage, Shop and Remove. Storage opens owned items without locking the canvas; placement mode begins only after an inventory item is selected. Shop deducts catalogue prices from farm coins and adds purchases to Storage, and Remove returns the selected placed object to Storage. The Shop does not include payments, premium currency, backend validation or a way to earn additional coins yet.
 
 ## Future boundaries
 
