@@ -4,7 +4,7 @@ My Farm is a platform page and grid-based farm viewer/builder. It is intentional
 
 ## Modules
 
-- `data.js` owns the versioned `farmLeague.myFarm.v2` local-storage schema, starter inventory, object catalogue, shop prices and safe persistence.
+- `data.js` owns the versioned `farmLeague.myFarm.v2` layout/inventory schema, object catalogue, shop prices and safe persistence. The shared Farm Coin wallet owns the authoritative browser-local balance.
 - `placement.js` owns the 12 × 8 grid, bounds checks, overlap checks, object hit testing and placement sanitisation.
 - `renderer.js` owns the canvas scene, approved top-down sprites and code-drawn fallbacks for objects awaiting final artwork.
 - `ui.js` owns selection, Storage placement, move/remove flows, Shop purchases, keyboard controls and save coordination.
@@ -29,7 +29,7 @@ Approved artwork covers every current catalogue object: buildings, landscaping, 
 
 The free starter allowance is one small farmhouse, one garden bed, one tree, ten fence sections, one stone and one mailbox. The farmhouse, garden and tree begin on the farm; the remaining items begin in storage. Version 1 saves migrate to this allowance while preserving valid placed objects.
 
-The toolbar exposes Storage, Shop and Remove. Storage opens owned items without locking the canvas; placement mode begins only after an inventory item is selected. Shop deducts catalogue prices from farm coins and adds purchases, including static animal objects, to Storage. Each animal costs 30 farm coins. Remove returns the selected placed object to Storage. Animals do not move or have simulation mechanics in this viewer version. The Shop does not include payments, premium currency, backend validation or a way to earn additional coins yet.
+The toolbar exposes Storage, Shop and Remove. Storage opens owned items without locking the canvas; placement mode begins only after an inventory item is selected. Shop deducts catalogue prices from the shared Farm Coin wallet and adds purchases, including static animal objects, to Storage. Each animal costs 30 farm coins. Remove returns the selected placed object to Storage. Animals do not move or have simulation mechanics in this viewer version. The Shop does not include payments, premium currency or backend validation.
 
 ## Future boundaries
 

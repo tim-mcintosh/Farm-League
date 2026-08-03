@@ -232,6 +232,7 @@ function end(type) {
     facts: { fieldsCleared, level, mownTiles: mown.size }
   });
   const finalScore = summary?.finalScore ?? 0;
+  const coinReward = window.FarmLeagueCoins.rewardRound(summary, { previousBest: best });
   if (summary?.valid) saveBestScore(finalScore);
   document.getElementById('gameOverTitle').textContent =
     type === 'timer' ? 'Time!' :
@@ -242,6 +243,7 @@ function end(type) {
   const survived = Math.min(elapsed, CONFIG.roundSeconds);
   document.getElementById('finalTime').textContent = `Time survived: ${formatTime(survived)}`;
   document.getElementById('finalSpeed').textContent = `Fields cleared: ${fieldsCleared}`;
+  document.getElementById('finalFarmCoins').textContent = `+${coinReward.coins}`;
   gameOverOverlay.classList.remove('hidden');
 }
 

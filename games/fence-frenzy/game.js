@@ -16,7 +16,8 @@
     fieldBonus: document.getElementById('fieldBonus'),
     coinBonus: document.getElementById('coinBonus'),
     finalScore: document.getElementById('finalScore'),
-    bestScore: document.getElementById('bestScore')
+    bestScore: document.getElementById('bestScore'),
+    finalFarmCoins: document.getElementById('finalFarmCoins')
   };
   const keys = {};
   let mobileDirection = null;
@@ -832,6 +833,7 @@
       }
     });
     const finalScore = summary?.finalScore ?? 0;
+    const coinReward = window.FarmLeagueCoins.rewardRound(summary, { previousBest: state.best });
     if (summary?.valid) saveBest(finalScore);
     elements.harvestBonus.textContent = score.harvestBonus.toLocaleString();
     elements.defenceBonus.textContent = score.defenceBonus.toLocaleString();
@@ -839,6 +841,7 @@
     elements.coinBonus.textContent = score.coinBonus.toLocaleString();
     elements.finalScore.textContent = finalScore.toLocaleString();
     elements.bestScore.textContent = state.best.toLocaleString();
+    elements.finalFarmCoins.textContent = `+${coinReward.coins}`;
     elements.resultsOverlay.classList.remove('hidden');
     emitSound('roundEnd');
   }

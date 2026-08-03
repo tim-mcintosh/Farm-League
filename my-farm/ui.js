@@ -208,7 +208,11 @@
       announce(`${definition.name} storage is full.`);
       return;
     }
-    view.farm.coins -= definition.price;
+    if (!Data.spendCoins(definition.price)) {
+      announce('Farm coins could not be updated. Please try again.');
+      return;
+    }
+    view.farm.coins = window.FarmLeagueCoins.getBalance();
     view.farm.inventory[type] = (view.farm.inventory[type] || 0) + 1;
     saveFarm(`${definition.name} purchased and added to Storage.`);
     render();

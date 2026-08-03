@@ -5,6 +5,7 @@
   const LEGACY_STORAGE_KEY = 'farmLeague.myFarm.v1';
   const SCHEMA_VERSION = 2;
   const GRID = Object.freeze({ columns: 12, rows: 8 });
+  const coinWallet = window.FarmLeagueCoins;
 
   const CATALOG = Object.freeze({
     farmhouse: Object.freeze({
@@ -92,7 +93,7 @@
   function starterFarm() {
     return {
       version: SCHEMA_VERSION,
-      coins: 250,
+      coins: coinWallet.getBalance(),
       inventory: {
         farmhouse: 0,
         barn: 0,
@@ -181,9 +182,7 @@
       .filter(object => object.id !== 'starter-barn');
     return {
       version: SCHEMA_VERSION,
-      coins: Number.isSafeInteger(parsed.coins) && parsed.coins >= 0 && parsed.coins <= 999999
-        ? parsed.coins
-        : 0,
+      coins: coinWallet.getBalance(),
       inventory: starterInventoryFor(placed),
       placed
     };
@@ -195,9 +194,7 @@
       if (current?.version === SCHEMA_VERSION) {
         return {
           version: SCHEMA_VERSION,
-          coins: Number.isSafeInteger(current.coins) && current.coins >= 0 && current.coins <= 999999
-            ? current.coins
-            : 0,
+          coins: coinWallet.getBalance(),
           inventory: normaliseInventory(current.inventory),
           placed: normalisePlaced(current.placed)
         };
@@ -213,7 +210,7 @@
   function save(farm) {
     const snapshot = {
       version: SCHEMA_VERSION,
-      coins: farm.coins,
+      coins: coinWallet.getBalance(),
       inventory: normaliseInventory(farm.inventory),
       placed: normalisePlaced(farm.placed)
     };
@@ -232,6 +229,10 @@
     return `${type}-${suffix}`;
   }
 
+  function spendCoins(amount) {
+    return coinWallet.spend(amount);
+  }
+
   window.MyFarmData = Object.freeze({
     storageKey: STORAGE_KEY,
     schemaVersion: SCHEMA_VERSION,
@@ -240,6 +241,7 @@
     starterFarm,
     load,
     save,
+    spendCoins,
     createObjectId
   });
 })();

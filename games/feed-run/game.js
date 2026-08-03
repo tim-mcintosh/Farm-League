@@ -17,7 +17,8 @@ const elements = {
   finalScore: document.getElementById('finalScore'),
   finalBest: document.getElementById('finalBest'),
   finalCombo: document.getElementById('finalCombo'),
-  finalTime: document.getElementById('finalTime')
+  finalTime: document.getElementById('finalTime'),
+  finalFarmCoins: document.getElementById('finalFarmCoins')
 };
 
 const ANIMAL_DEFINITIONS = {
@@ -240,12 +241,14 @@ function finishRound(outcome, failedAnimalKey = null) {
     facts: { deliveries: state.combo, failedAnimal: failedAnimalKey || 'none' }
   });
   const finalScore = summary?.finalScore ?? 0;
+  const coinReward = window.FarmLeagueCoins.rewardRound(summary, { previousBest: state.best });
   if (summary?.valid) saveBestScore(finalScore);
   updateHud();
   elements.finalScore.textContent = finalScore.toLocaleString();
   elements.finalBest.textContent = state.best.toLocaleString();
   elements.finalCombo.textContent = `${state.combo}×`;
   elements.finalTime.textContent = formatTime(state.elapsed);
+  elements.finalFarmCoins.textContent = `+${coinReward.coins}`;
   elements.endOverlay.classList.remove('hidden');
 }
 
