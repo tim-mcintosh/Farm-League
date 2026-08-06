@@ -9,9 +9,16 @@
 <script src="../assets/shared/supabase-config.js" defer></script><script src="../assets/shared/auth.js" defer></script><script src="../assets/shared/cloud-scores.js" defer></script><script src="profile.js" defer></script>
 </head>
 <body><header class="account-header"><a href="../index.html">🌿 Farm League</a><a href="../index.html">← Back home</a></header>
-<main class="account-main"><section class="account-card"><p class="eyebrow">Your account</p><h1>Farmer profile</h1><p id="profileEmail">Loading account…</p>
+<main class="account-main"><section class="account-card"><p class="eyebrow">Your account</p><h1>Farmer profile</h1>
+<form id="profileForm" class="account-form profile-form">
+<label>Email address<input id="profileEmail" type="email" readonly aria-describedby="emailHelp"><small id="emailHelp">Your account email is securely managed by Supabase Auth.</small></label>
+<label>Username<input id="profileUsername" type="text" autocomplete="username" required minlength="3" maxlength="24" pattern="[A-Za-z0-9][A-Za-z0-9._-]{2,23}"><small>Public and unique. Use 3–24 letters, numbers, dots, underscores or hyphens.</small></label>
+<label>Name <span class="field-note">Optional</span><input id="profileFullName" type="text" autocomplete="name" minlength="2" maxlength="80"></label>
+<button id="saveProfileButton" type="submit">Save profile</button>
+</form>
+<p id="profileStatus" class="account-status" role="status" aria-live="polite"></p>
 <h2>Cloud best scores</h2><div id="cloudScores" class="score-list" aria-live="polite"><p>Loading scores…</p></div>
 <p>Only rounds started and completed while signed in are saved here. Guest scores remain on their original device.</p>
-<button id="signOutButton" class="account-action" type="button">Sign out</button><p id="profileStatus" class="account-status" role="status"></p>
+<button id="signOutButton" class="account-action" type="button">Sign out</button>
 </section></main></body>
 </html>

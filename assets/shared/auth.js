@@ -26,12 +26,15 @@
     });
   }
 
-  async function signUp(email, password) {
+  async function signUp(email, password, username = '') {
     if (!client) throw new Error('Account service is unavailable.');
     return client.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: new URL('account/index.html?confirmed=1', siteRoot).href }
+      options: {
+        emailRedirectTo: new URL('account/index.html?confirmed=1', siteRoot).href,
+        data: { username: String(username).trim() || null }
+      }
     });
   }
 

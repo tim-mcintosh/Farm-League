@@ -51,6 +51,9 @@ body {
 .account-form button { background: linear-gradient(#aee64f, #7fbd2d); color: #102113; }
 .account-form { display: grid; gap: 14px; }
 .account-form label { display: grid; gap: 7px; color: #e6efdf; font-weight: 800; }
+.account-form label[hidden] { display: none; }
+.field-note,
+.account-form small { color: #aabcae; font-size: .78rem; font-weight: 500; }
 .account-form input {
   min-height: 50px;
   padding: 0 14px;
@@ -61,6 +64,8 @@ body {
   font: inherit;
 }
 .account-form input:focus { outline: 3px solid rgba(164, 222, 82, .35); border-color: #a4de52; }
+.account-form input[readonly] { color: #b9c9be; background: #0a1a13; cursor: not-allowed; }
+.profile-form { margin: 24px 0; padding-bottom: 24px; border-bottom: 1px solid rgba(159, 220, 75, .2); }
 .account-help { margin-top: 18px; text-align: center; }
 .account-help a { color: #b4e863; }
 .account-status { min-height: 24px; margin: 16px 0 0; color: #dfffb0; }

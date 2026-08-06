@@ -2,6 +2,8 @@
 
 Farm League uses Supabase Auth for email/password accounts and Supabase Postgres for private score history. Guest play remains fully local.
 
+Account email addresses remain in Supabase Auth and are not duplicated in public profile data. Profiles contain a unique, case-insensitive username and an optional full name. A blank signup username is generated from the email prefix with a collision-safe suffix when needed. Prize contact and delivery details are intentionally deferred to a private prize-claim workflow.
+
 ## Guest and signed-in rules
 
 - A round is cloud-eligible only when the same authenticated user is present at both its start and completion.
@@ -20,7 +22,7 @@ The secret/service-role key must never be added to these files or any other brow
 
 ## Database deployment
 
-Apply `supabase/migrations/202608060001_accounts_and_scores.sql` to the configured project. It creates profiles, score history, best scores, explicit grants, RLS policies and the higher-score-only database function.
+Apply all migrations in `supabase/migrations/` in order. They create profiles, the game/version catalogue, score history, best scores, explicit grants, RLS policies and the higher-score-only database function.
 
 With an authenticated Supabase CLI:
 
@@ -34,6 +36,6 @@ The hosted function receives its standard Supabase URL, public key and service-r
 
 ## Security boundary
 
-The score endpoint verifies the authenticated user, supported game/version, score ceiling, elapsed time, timestamps, score-event total and duplicate session ID. It stores attempts through the service role because browser roles have no insert/update grant on score tables.
+The score endpoint verifies the authenticated user, supported game/version, score ceiling, elapsed time, timestamps, standardized outcome, score-event total and duplicate session ID. It stores score actions separately from game-specific round facts through the service role because browser roles have no insert/update grant on score tables.
 
 This remains basic client-result validation, not cheat-proof gameplay. A later competitive leaderboard should issue server-generated round tokens and validate a compact ordered event stream as described in `docs/client-score-security.md`.

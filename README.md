@@ -4,7 +4,7 @@ Farm League is a mobile-first website for fast, addictive farming mini-games. Ea
 
 Tractor Dash, Feed Run, Order Rush, and Fence Frenzy are the currently playable games.
 My Farm is the first platform feature: a local, grid-based farm viewer and builder.
-Optional Supabase email/password accounts save new scores for rounds played while signed in. Guest play and local best scores continue to work without an account or network connection.
+Optional Supabase email/password accounts provide unique farmer usernames and save new scores for rounds played while signed in. Guest play and local best scores continue to work without an account or network connection.
 
 ## Folder structure
 

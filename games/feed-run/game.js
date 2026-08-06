@@ -240,7 +240,7 @@ function finishRound(outcome, failedAnimalKey = null) {
   }
 
   const summary = scoreSession?.finalize({
-    outcome,
+    outcome: outcome === 'victory' ? 'completed' : 'starvation',
     elapsedSeconds: state.elapsed,
     facts: { deliveries: state.combo, failedAnimal: failedAnimalKey || 'none' }
   });

@@ -29,3 +29,5 @@ All current links are relative so the site can be served from a domain root, a s
 ## Optional account services
 
 Supabase is an optional platform dependency layered over the static site. Authentication and cloud-score modules fail open to local-only gameplay. A game captures the authenticated user at round start and submits its existing validated score summary only when the same user remains signed in at completion. Database migrations and Edge Functions live under `supabase/`; browser code contains only the public project URL and publishable key.
+
+Supabase Auth owns account email addresses and passwords. `profiles` owns the public username and optional full name. The `games` and `game_versions` catalogue gives score rows relational references while retaining stable URL-friendly game slugs. Sensitive prize contact and address details should be collected later in a dedicated prize-claim model rather than added to public profiles.

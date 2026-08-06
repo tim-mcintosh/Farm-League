@@ -230,10 +230,11 @@ function end(type) {
   running = false;
   cancelAnimationFrame(raf);
   clearInput();
+  const outcome = type === 'timer' ? 'completed' : 'collision';
   const summary = scoreSession?.finalize({
-    outcome: type,
+    outcome,
     elapsedSeconds: Math.min(elapsed, CONFIG.roundSeconds),
-    facts: { fieldsCleared, level, mownTiles: mown.size }
+    facts: { fieldsCleared, level, mownTiles: mown.size, collidedWith: type === 'timer' ? null : type }
   });
   const finalScore = summary?.finalScore ?? 0;
   const coinReward = window.FarmLeagueCoins.rewardRound(summary, { previousBest: best });
