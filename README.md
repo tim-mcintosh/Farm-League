@@ -4,6 +4,7 @@ Farm League is a mobile-first website for fast, addictive farming mini-games. Ea
 
 Tractor Dash, Feed Run, Order Rush, and Fence Frenzy are the currently playable games.
 My Farm is the first platform feature: a local, grid-based farm viewer and builder.
+Optional Supabase email/password accounts save new scores for rounds played while signed in. Guest play and local best scores continue to work without an account or network connection.
 
 ## Folder structure
 
@@ -17,6 +18,8 @@ farm-league/
 │   ├── fence-frenzy/           # Two-minute crop protection and upgrade game
 │   └── _template/              # Starting point for a future game
 ├── my-farm/                    # Local 12 × 8 farm viewer and builder
+├── account/ and profile/        # Authentication, recovery, and private scores
+├── supabase/                   # Database migrations and Edge Functions
 ├── assets/
 │   ├── shared/                 # Shared site styles and future platform assets
 │   ├── audio/                  # Shared audio assets
@@ -67,4 +70,4 @@ The current client-side score integrity model, per-game audit, validation ceilin
 
 Farm League is expected to support user accounts, online leaderboards, daily challenges, achievements, statistics, sound settings, and potentially multiplayer. These concerns should live at the platform layer rather than inside individual game loops. Games should eventually communicate results through a small, versioned interface and remain playable when a user is signed out or a network service is unavailable.
 
-No backend, authentication, leaderboard, challenge, achievement, analytics, settings, or multiplayer implementation is included yet.
+The first backend integration provides optional authentication and private cloud best scores. Public leaderboards, cloud farm data, challenges, achievements, analytics, settings, and multiplayer are not included yet.

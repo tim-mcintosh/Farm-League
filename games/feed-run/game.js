@@ -62,6 +62,7 @@ let animationFrame = 0;
 let lastFrame = 0;
 let nextFoodId = 1;
 let scoreSession = null;
+let cloudRound = null;
 
 function createAnimalState() {
   return Object.fromEntries(animalKeys.map(key => [key, {
@@ -198,7 +199,9 @@ function resetRound() {
   draw();
 }
 
-function startRound() {
+async function startRound() {
+  document.getElementById('startButton').disabled = true;
+  cloudRound = await window.FarmLeagueCloudScores.beginRound();
   resetRound();
   scoreSession = window.FarmLeagueScore.createRound({
     gameId: 'feed-run',
@@ -213,6 +216,7 @@ function startRound() {
   elements.endOverlay.classList.add('hidden');
   lastFrame = performance.now();
   animationFrame = requestAnimationFrame(gameLoop);
+  document.getElementById('startButton').disabled = false;
 }
 
 function finishRound(outcome, failedAnimalKey = null) {
@@ -249,6 +253,7 @@ function finishRound(outcome, failedAnimalKey = null) {
   elements.finalCombo.textContent = `${state.combo}×`;
   elements.finalTime.textContent = formatTime(state.elapsed);
   elements.finalFarmCoins.textContent = `+${coinReward.coins}`;
+  window.FarmLeagueCloudScores.renderSubmission(summary, cloudRound, document.getElementById('cloudScoreStatus'));
   elements.endOverlay.classList.remove('hidden');
 }
 

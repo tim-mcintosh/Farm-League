@@ -25,3 +25,7 @@ The specific APIs and data models should be designed when requirements and hosti
 ## Deployment assumptions
 
 All current links are relative so the site can be served from a domain root, a subdirectory, or a simple local static server. If a build system or application router is introduced later, preserve direct URLs to each game's `index.html` or add equivalent route handling.
+
+## Optional account services
+
+Supabase is an optional platform dependency layered over the static site. Authentication and cloud-score modules fail open to local-only gameplay. A game captures the authenticated user at round start and submits its existing validated score summary only when the same user remains signed in at completion. Database migrations and Edge Functions live under `supabase/`; browser code contains only the public project URL and publishable key.

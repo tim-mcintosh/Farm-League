@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Sign in to or create your Farm League account.">
+<meta name="theme-color" content="#031d13">
+<title>Sign in — Farm League</title>
+<link rel="stylesheet" href="../assets/shared/site.css">
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.0/dist/umd/supabase.min.js" defer></script>
+<script src="../assets/shared/supabase-config.js" defer></script>
+<script src="../assets/shared/auth.js" defer></script>
+<script src="account.js" defer></script>
+</head>
+<body>
+<header class="account-header"><a href="../index.html">🌿 Farm League</a><a href="../index.html">← Back home</a></header>
+<main class="account-main">
+<section class="account-card" aria-labelledby="accountTitle">
+<p class="eyebrow">Farm League account</p>
+<h1 id="accountTitle">Welcome back</h1>
+<p>Save new game scores to your account and see your progress across devices.</p>
+<div class="account-tabs" role="tablist" aria-label="Account action">
+<button type="button" role="tab" data-account-mode="signin">Sign in</button>
+<button type="button" role="tab" data-account-mode="signup">Create account</button>
+</div>
+<form id="accountForm" class="account-form">
+<label>Email address<input name="email" type="email" autocomplete="email" required maxlength="254"></label>
+<label>Password<input name="password" type="password" autocomplete="current-password" required minlength="8" maxlength="72"></label>
+<button id="accountSubmit" type="submit">Sign in</button>
+</form>
+<p id="accountStatus" class="account-status" role="status" aria-live="polite"></p>
+<p class="account-help"><a href="forgot-password.html">Forgot your password?</a></p>
+</section>
+</main>
+</body>
+</html>

@@ -32,6 +32,7 @@ for (const [name, definition] of Object.entries(SPRITE_DEFINITIONS)) {
 let running = false;
 let last = 0;
 let scoreSession = null;
+let cloudRound = null;
 let best = loadBestScore();
 let timeLeft = CONFIG.roundSeconds;
 let elapsed = 0;
@@ -204,7 +205,9 @@ function reset() {
   updateHud();
 }
 
-function start() {
+async function start() {
+  document.getElementById('startButton').disabled = true;
+  cloudRound = await window.FarmLeagueCloudScores.beginRound();
   reset();
   scoreSession = window.FarmLeagueScore.createRound({
     gameId: 'tractor-dash',
@@ -220,6 +223,7 @@ function start() {
   last = performance.now();
   cancelAnimationFrame(raf);
   raf = requestAnimationFrame(loop);
+  document.getElementById('startButton').disabled = false;
 }
 
 function end(type) {
@@ -244,6 +248,7 @@ function end(type) {
   document.getElementById('finalTime').textContent = `Time survived: ${formatTime(survived)}`;
   document.getElementById('finalSpeed').textContent = `Fields cleared: ${fieldsCleared}`;
   document.getElementById('finalFarmCoins').textContent = `+${coinReward.coins}`;
+  window.FarmLeagueCloudScores.renderSubmission(summary, cloudRound, document.getElementById('cloudScoreStatus'));
   gameOverOverlay.classList.remove('hidden');
 }
 

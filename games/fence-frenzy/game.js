@@ -29,6 +29,7 @@
   let animationFrame = 0;
   let lastFrame = 0;
   let scoreSession = null;
+  let cloudRound = null;
   let nextRabbitId = 1;
   let nextCrowId = 1;
   let nextCropId = 1;
@@ -842,6 +843,7 @@
     elements.finalScore.textContent = finalScore.toLocaleString();
     elements.bestScore.textContent = state.best.toLocaleString();
     elements.finalFarmCoins.textContent = `+${coinReward.coins}`;
+    window.FarmLeagueCloudScores.renderSubmission(summary, cloudRound, document.getElementById('cloudScoreStatus'));
     elements.resultsOverlay.classList.remove('hidden');
     emitSound('roundEnd');
   }
@@ -919,7 +921,9 @@
     draw();
   }
 
-  function startRound() {
+  async function startRound() {
+    document.getElementById('startButton').disabled = true;
+    cloudRound = await window.FarmLeagueCloudScores.beginRound();
     resetRound();
     scoreSession = window.FarmLeagueScore.createRound({
       gameId: 'fence-frenzy',
@@ -935,6 +939,7 @@
     elements.resultsOverlay.classList.add('hidden');
     lastFrame = performance.now();
     animationFrame = requestAnimationFrame(gameLoop);
+    document.getElementById('startButton').disabled = false;
   }
 
   function normaliseKey(event) {

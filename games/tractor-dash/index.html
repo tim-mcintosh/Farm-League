@@ -7,6 +7,10 @@
 <link rel="stylesheet" href="../../assets/shared/mobile-dpad.css">
 <link rel="stylesheet" href="styles.css">
 <script src="../../assets/shared/farm-rendering.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.0/dist/umd/supabase.min.js" defer></script>
+<script src="../../assets/shared/supabase-config.js" defer></script>
+<script src="../../assets/shared/auth.js" defer></script>
+<script src="../../assets/shared/cloud-scores.js" defer></script>
 <script src="../../assets/shared/score-session.js" defer></script>
 <script src="../../assets/shared/farm-coins.js" defer></script>
 <script src="config.js" defer></script>
@@ -55,7 +59,7 @@
 <a class="intro-back" href="../../index.html">← Back to Farm League</a>
 </div>
 </div>
-<div id="gameOverOverlay" class="overlay hidden"><div class="card"><div class="eyebrow">Run over</div><h1 id="gameOverTitle">Game over</h1><p id="finalText">You scored 0 points.</p><div class="rules"><div class="rule" id="finalBest">Best score: 0</div><div class="rule" id="finalTime">Time survived: 0:00</div><div class="rule" id="finalSpeed">Fields cleared: 0</div><div class="rule">Farm coins earned: <strong id="finalFarmCoins">+0</strong></div></div><button id="restartButton" type="button">Play again</button><a class="results-back" href="../../index.html">Back to Farm League</a></div></div>
+<div id="gameOverOverlay" class="overlay hidden"><div class="card"><div class="eyebrow">Run over</div><h1 id="gameOverTitle">Game over</h1><p id="finalText">You scored 0 points.</p><div class="rules"><div class="rule" id="finalBest">Best score: 0</div><div class="rule" id="finalTime">Time survived: 0:00</div><div class="rule" id="finalSpeed">Fields cleared: 0</div><div class="rule">Farm coins earned: <strong id="finalFarmCoins">+0</strong></div><div class="rule">Account score: <strong id="cloudScoreStatus">Guest — local only</strong></div></div><button id="restartButton" type="button">Play again</button><a class="results-back" href="../../index.html">Back to Farm League</a></div></div>
 </section>
 <section class="farm-controls" aria-label="Movement controls">
 <div class="farm-dpad" data-farm-dpad role="group" aria-label="Directional pad">

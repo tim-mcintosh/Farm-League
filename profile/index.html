@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="View your Farm League account and cloud game scores.">
+<meta name="theme-color" content="#031d13"><title>Profile — Farm League</title>
+<link rel="stylesheet" href="../assets/shared/site.css"><link rel="stylesheet" href="../account/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.0/dist/umd/supabase.min.js" defer></script>
+<script src="../assets/shared/supabase-config.js" defer></script><script src="../assets/shared/auth.js" defer></script><script src="../assets/shared/cloud-scores.js" defer></script><script src="profile.js" defer></script>
+</head>
+<body><header class="account-header"><a href="../index.html">🌿 Farm League</a><a href="../index.html">← Back home</a></header>
+<main class="account-main"><section class="account-card"><p class="eyebrow">Your account</p><h1>Farmer profile</h1><p id="profileEmail">Loading account…</p>
+<h2>Cloud best scores</h2><div id="cloudScores" class="score-list" aria-live="polite"><p>Loading scores…</p></div>
+<p>Only rounds started and completed while signed in are saved here. Guest scores remain on their original device.</p>
+<button id="signOutButton" class="account-action" type="button">Sign out</button><p id="profileStatus" class="account-status" role="status"></p>
+</section></main></body>
+</html>

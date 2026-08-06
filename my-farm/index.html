@@ -8,6 +8,10 @@
 <title>My Farm — Farm League</title>
 <link rel="stylesheet" href="../assets/shared/site.css">
 <link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.0/dist/umd/supabase.min.js" defer></script>
+<script src="../assets/shared/supabase-config.js" defer></script>
+<script src="../assets/shared/auth.js" defer></script>
+<script src="../assets/shared/auth-ui.js" defer></script>
 <script src="../assets/shared/farm-coins.js" defer></script>
 <script src="data.js" defer></script>
 <script src="placement.js" defer></script>
@@ -25,9 +29,9 @@
 <span class="nav-planned">Challenges</span>
 <span class="nav-planned">Leaderboards</span>
 <a class="is-active" href="index.html" aria-current="page">My Farm</a>
-<span class="nav-planned">Profile</span>
+<a href="../profile/index.html">Profile</a>
 </nav>
-<span class="button button--compact button--signin" aria-disabled="true">Sign in</span>
+<a class="button button--compact button--signin" data-auth-link data-sign-in-href="../account/index.html" data-profile-href="../profile/index.html" href="../account/index.html">Sign in</a>
 </header>
 
 <main class="farm-page">

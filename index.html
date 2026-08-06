@@ -7,6 +7,10 @@
 <meta name="theme-color" content="#031d13">
 <title>Farm League — Quick farming games</title>
 <link rel="stylesheet" href="assets/shared/site.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.0/dist/umd/supabase.min.js" defer></script>
+<script src="assets/shared/supabase-config.js" defer></script>
+<script src="assets/shared/auth.js" defer></script>
+<script src="assets/shared/auth-ui.js" defer></script>
 <script src="assets/shared/home.js" defer></script>
 </head>
 <body>
@@ -20,9 +24,9 @@
 <span class="nav-planned">Challenges</span>
 <span class="nav-planned">Leaderboards</span>
 <a href="my-farm/index.html">My Farm</a>
-<span class="nav-planned">Profile</span>
+<a href="profile/index.html">Profile</a>
 </nav>
-<span class="button button--compact button--signin" aria-disabled="true">Sign in</span>
+<a class="button button--compact button--signin" data-auth-link data-sign-in-href="account/index.html" data-profile-href="profile/index.html" href="account/index.html">Sign in</a>
 </header>
 
 <main id="top">
@@ -143,8 +147,8 @@
 <div class="progress-panel__farmer" aria-hidden="true">🧑‍🌾</div>
 <div>
 <h2 id="progress-heading">Keep your progress</h2>
-<p>Accounts will eventually let you save scores across devices, grow your farm and join competitions. For now, each game safely keeps its best score on this device.</p>
-<span class="coming-soon">Accounts coming soon</span>
+<p>Create a free account to save new game scores across devices. Guest scores remain safely stored on this device and are never uploaded later.</p>
+<a class="coming-soon" href="account/index.html?mode=signup">Create an account</a>
 </div>
 </section>
 </div>
@@ -168,7 +172,7 @@
 <strong>Coming later</strong>
 <span>Challenges</span>
 <span>Leaderboards</span>
-<span>Accounts &amp; achievements</span>
+<a href="account/index.html">Account</a>
 </div>
 </div>
 <p class="copyright">© 2026 Farm League. All rights reserved.</p>
